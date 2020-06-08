@@ -1,0 +1,59 @@
+body{
+    margin: 0;
+    padding: 0;
+    font-size: 16pt;
+}
+
+#statusBar{
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    background-color: #212121;
+    margin:0;
+    padding: 0;
+    color: white;
+    height: 2rem;
+    -webkit-app-region: drag;
+}
+
+.bar_button{
+    float: left;
+    /* padding: 0.25rem 1rem; */
+    height: 100%;
+    width: 33%;
+    text-align: center;
+}
+
+.bar_button:hover{
+    cursor: default;
+    background-color: #333333;
+}
+
+#title_bar{
+    float: left;
+    width: 30%;
+    height: 100%;
+    line-height: 2rem;
+    padding: 0 0 0 1rem;
+}
+
+.buttons_bar{
+    -webkit-app-region: no-drag;
+    background-color: #121212;
+    padding: 0;
+    float: right;
+    height: 100%;
+    line-height: 2rem;
+    width: 8rem;
+}
+
+/* .button{
+    float: left;
+    height: 100%;
+    width: 100%;
+} */
+
+#close:hover{
+    background-color: maroon;
+}
