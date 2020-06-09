@@ -9,23 +9,36 @@
     <link rel="stylesheet" href="style_main.css">
 </head>
 
-<body>
+<body class="mentaDark">
     <nav id="statusBar">
         <div id="title_bar">
         </div>
-    <div class="buttons_bar">
-        <div class="bar_button" id="min"><span >&minus;</span></div>
-        <div class="bar_button" id="max"><span ></span>&plus;</span></div>
-        <div class="bar_button" id="close"><span >&times;</span></div>
-    </div>
+        <div class="buttons_bar">
+            <div class="bar_button" id="min"><span>&minus;</span></div>
+            <div class="bar_button" id="max"><span></span>&plus;</span></div>
+            <div class="bar_button" id="close"><span>&times;</span></div>
+        </div>
     </nav>
     <div class="content">
-        <h1>Quorum</h1>
-        <i class="fab fa-adobe"></i>
-        <input type="number" name="value3" id="input1">
-        <input type="button" value="calc" onclick="Calcular()">
+        <div id="login">
+            <div class="container">
+                <h1>Iniciar Sesión</h1>
+                <input class="inputText" type="email" name="mail" id="mail_input" placeholder="Correo electrónico">
+                
+                <input class="inputText" type="password" name="pass" id="password_input" placeholder="Contraseña">
+                <div class="button">
+                    <i class="fas fa-sign-in-alt"><span> Listo</span></i>
+                </div>
+            </div>
+        </div>
+        <!-- <div id="register">
+
+        </div>
+        <div id="main">
+
+        </div> -->
     </div>
-    
+    <script src="fire.js"></script>
     <script src="index.js"></script>
 </body>
 

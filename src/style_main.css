@@ -1,7 +1,48 @@
+@font-face{
+    font-family: 'Raleway';
+    src: url('../fonts/Raleway-Medium.ttf');
+    font-weight: 500;
+}
+@font-face{
+    font-family: 'Raleway';
+    src: url('../fonts/Raleway-Regular.ttf');
+    font-weight: 400;
+}
+@font-face{
+    font-family: 'Raleway';
+    src: url('../fonts/Raleway-Light.ttf');
+    font-weight: 300;
+}
+
+@font-face{
+    font-family: 'Raleway';
+    src: url('../fonts/Raleway-Thin.ttf');
+    font-weight: 200;
+}
+
 body{
     margin: 0;
     padding: 0;
     font-size: 16pt;
+    height: 100vh;
+    width: 100vw;
+    font-family: Raleway;
+    font-weight: 400;
+    color: var(--text);
+}
+
+.mentaLight{
+    --primary: #46fc9d;
+    --accent: #fb3f77;
+    --text: #000;
+}
+
+.mentaDark{
+    --primary: #237d4e;
+    --primaryDark: #1c6b42;
+    --accent: #902344;
+    --accentDark: #7e223e;
+    --text: #fff;
 }
 
 #statusBar{
@@ -9,10 +50,10 @@ body{
     top: 0;
     left: 0;
     position: absolute;
-    background-color: #212121;
+    background-color: transparent;
     margin:0;
     padding: 0;
-    color: white;
+    color: var(--text);
     height: 2rem;
     -webkit-app-region: drag;
 }
@@ -56,4 +97,67 @@ body{
 
 #close:hover{
     background-color: maroon;
+}
+
+.content{
+    height: 100%;
+    width: 100%;
+}
+
+#login{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+    
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    width: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.5);
+}
+
+input{
+    margin: 1rem;
+    -webkit-appearance: none;
+}
+
+.inputText{
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid var(--text);
+    font-weight: 200;
+}
+.inputText::placeholder{
+    color: #333333;
+}
+
+h1{
+    margin: 0.5rem;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.button{
+    padding: 5px 10px;
+    background-color: var(--primary);
+    border-radius: 1rem;
+    text-align: center;
+    cursor: default;
+    transition: ease 200ms;
+}
+
+.button:hover{
+    background-color: var(--primaryDark);
+}
+
+.button span{
+    font-family: Raleway;
+    font-weight: 500;
 }
