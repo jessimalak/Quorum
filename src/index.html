@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="title">Quorum</title>
-    <link rel="stylesheet" href="../css/all.css">
+    <link rel="stylesheet" media="all" href="../css/materialdesignicons.min.css" type="text/css">
     <link rel="stylesheet" href="style_main.css">
 </head>
 
-<body class="mentaDark">
+<body class="mentaLight">
     <nav id="statusBar">
         <div id="title_bar">
         </div>
@@ -20,25 +20,46 @@
         </div>
     </nav>
     <div class="content">
-        <div id="login">
+        <div id="login" class="screen">
             <div class="container">
-                <h1>Iniciar Sesión</h1>
+                <h1 class="mdi mdi-account"></h1>
                 <input class="inputText" type="email" name="mail" id="mail_input" placeholder="Correo electrónico">
                 
                 <input class="inputText" type="password" name="pass" id="password_input" placeholder="Contraseña">
-                <div class="button">
-                    <i class="fas fa-sign-in-alt"><span> Listo</span></i>
+                <div class="button" id="login_btn">
+                    <span> Listo</span> <i class="mdi mdi-send"></i>
+                </div>
+                <br>
+                <div class="button-container">
+                    <div class="button-mini" id="noCount"><span>No tengo cuenta</span><i class="mdi mdi-account-plus"></i>
+                    </div>
+                    <div class="button-mini" onclick="ResetPassword()"><span>Se me olvidó la contraseña</span><i class="mdi mdi-lock"></i>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- <div id="register">
-
+        <div id="register" class="screen" style="display: none;">
+            <div class="container">
+                <h1 class="mdi mdi-account-plus"></h1>
+                <input type="text" name="username" id="user_input" class="inputText" placeholder="Nombre de usuario" pattern=".{4,}" required>
+                <input type="email" name="R_mail" id="R_mail" class="inputText" placeholder="Correo electrónico" required>
+                <input type="password" name="R_password1" id="R_password1" class="inputText" placeholder="Contraseña" pattern=".{6,}" required>
+                <input type="password" name="R_password2" id="R_password2" class="inputText" placeholder="Repetir contraseña" pattern=".{6,}" required>
+                <div class="button" id="register_btn">
+                    <span>Listo</span><i class="mdi mdi-send"></i>
+                </div>
+                <div class="button-container">
+                    <div class="button-mini" id="withCount"><span>Ya tengo cuenta</span><i class="mdi mdi-account"></i>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="main">
-
-        </div> -->
+        <div id="main" class="screen">
+            <input type="button" value="color" onclick="color()">
+        </div>
     </div>
-    <script src="fire.js"></script>
+    <script>var exports = {"__esModule": true};</script>
+    <script src="styles.js"></script>
     <script src="index.js"></script>
 </body>
 

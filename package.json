@@ -1,14 +1,30 @@
 {
-  "name": "Quorum",
+  "name": "quorum",
   "version": "0.1.0",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
   "dependencies": {
-    "firebase": "^7.15.0"
+    "firebase": "^7.15.0",
+    "sweetalert2": "^9.14.4"
   },
   "devDependencies": {
     "electron": "^9.0.3"
-  }
+  },
+  "description": "App de chat",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jessimalak/Quorum.git"
+  },
+  "keywords": [
+    "chat",
+    "encrypted"
+  ],
+  "author": "malak;",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jessimalak/Quorum/issues"
+  },
+  "homepage": "https://github.com/jessimalak/Quorum#readme"
 }

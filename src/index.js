@@ -1,5 +1,6 @@
 "use strict";
-// exports.__esModule = true;
+/* #region Main */
+exports.__esModule = true;
 var firebase = require('firebase/app');
 require('firebase/auth');
 require('firebase/database');
@@ -14,6 +15,7 @@ var firebaseConfig = {
     measurementId: "G-VL1T8FXBQM"
 };
 firebase.initializeApp(firebaseConfig);
+/* #endregion Main */
 //BEGING STATUS-BAR
 var electron_1 = require("electron");
 var win = electron_1.remote.getCurrentWindow();
@@ -34,12 +36,57 @@ document.getElementById('close').addEventListener('click', function () {
     win.close();
 });
 //END STATUS-BAR
-firebase.auth().onAuthStateChanged(function (user) {
-    console.log(user);
+var sweetalert2_1 = require("sweetalert2");
+var login_screen = document.getElementById('login');
+var login_btn = document.getElementById('login_btn');
+var login_mail = document.getElementById('mail_input');
+var login_pass = document.getElementById('password_input');
+var toRegister = document.getElementById('noCount');
+var register_screen = document.getElementById('register');
+var main_screen = document.getElementById('main');
+var toLogin = document.getElementById('withCount');
+toRegister.addEventListener('click', function () {
+    login_screen.style.display = "none";
+    register_screen.style.display = "flex";
 });
-function Calcular() {
-    firebase.auth().signInAnonymously();
+toLogin.addEventListener('click', function () {
+    login_screen.style.display = "flex";
+    register_screen.style.display = "none";
+});
+function isValidMail(mail) {
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(mail);
 }
-function Cerrar() {
-    firebase.auth().signOut();
-}
+login_btn.addEventListener('click', function () {
+    var mail = login_mail.value;
+    var password = login_pass.value;
+    if (mail == "" || password == "") {
+        console.log("algo anda mal");
+    }
+    else if (!isValidMail(mail)) {
+        console.log("el correo ta malo");
+    }
+    else {
+        firebase.auth().signInWithEmailAndPassword(mail, password)["catch"](function (err) {
+            sweetalert2_1["default"].fire({ title: err.code, text: err.message, icon: 'error' });
+        });
+    }
+});
+firebase.auth().onAuthStateChanged(function (user) {
+    if (user) {
+        login_screen.style.display = "none";
+        register_screen.style.display = "none";
+        main_screen.style.display = "block";
+        console.log(user);
+    }
+    else {
+        login_screen.style.display = "flex";
+        main_screen.style.display = "none";
+    }
+});
+// function Calcular(){
+//     firebase.auth().signInAnonymously();
+// }
+// function Cerrar(){
+//     firebase.auth().signOut();
+// }

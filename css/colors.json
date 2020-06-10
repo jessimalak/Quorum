@@ -1,10 +1,14 @@
 {
     "mentaLight":{
-        "primary": "#46fc9d",
-        "accent": "#fb3f77"
+        "primary": "#f759ab",
+        "primaryDark": "#df396b",
+        "accent": "#13c2c2",
+        "accentDark": "#18b3b3"
     },
     "mentaDark":{
-        "primary": "#237d4e",
-        "accent": "#902344"
+        "primary": "#9e1068",
+        "primaryDark": "#7e223e",
+        "accent": "#006d75",
+        "accentDark": "#015e64"
     }
 }

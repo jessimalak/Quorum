@@ -1,3 +1,5 @@
+/* #region Main */
+
 const firebase = require('firebase/app')
 require('firebase/auth')
 require('firebase/database')
@@ -14,7 +16,9 @@ var firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-    
+
+/* #endregion Main */
+
     //BEGING STATUS-BAR
     import {remote} from 'electron';
     const win = remote.getCurrentWindow();
@@ -40,16 +44,66 @@ firebase.initializeApp(firebaseConfig);
     })
 
     //END STATUS-BAR
+import Swal from 'sweetalert2'
 
-firebase.auth().onAuthStateChanged(user =>{
-    console.log(user)
+const login_screen = document.getElementById('login');
+const login_btn:HTMLElement = document.getElementById('login_btn');
+const login_mail:HTMLInputElement = <HTMLInputElement> document.getElementById('mail_input');
+const login_pass:HTMLInputElement = <HTMLInputElement> document.getElementById('password_input');
+const toRegister:HTMLElement = document.getElementById('noCount');
+const register_screen = document.getElementById('register');
+const main_screen = document.getElementById('main');
+
+const toLogin = document.getElementById('withCount')
+
+toRegister.addEventListener('click', ()=>{
+    login_screen.style.display = "none";
+    register_screen.style.display = "flex";
 })
 
-function Calcular(){
-    firebase.auth().signInAnonymously();
-    
+toLogin.addEventListener('click', ()=>{
+    login_screen.style.display = "flex";
+    register_screen.style.display = "none";
+})
+
+function isValidMail(mail){
+    const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(mail);
 }
 
-function Cerrar(){
-    firebase.auth().signOut();
-}
+login_btn.addEventListener('click', () =>{
+    let mail = login_mail.value;
+    let password = login_pass.value;
+
+    if(mail == "" || password == ""){
+        console.log("algo anda mal")
+    }else if(!isValidMail(mail)){
+        console.log("el correo ta malo")
+    }
+    else{
+        firebase.auth().signInWithEmailAndPassword(mail, password).catch(function (err){
+            Swal.fire({title: err.code, text:err.message, icon: 'error'})
+        })
+    }
+})
+
+firebase.auth().onAuthStateChanged(user =>{
+    if(user){
+        login_screen.style.display = "none";
+        register_screen.style.display = "none";
+        main_screen.style.display = "block"
+        console.log(user)
+    }else{
+        login_screen.style.display = "flex";
+        main_screen.style.display = "none"
+    }
+})
+
+// function Calcular(){
+//     firebase.auth().signInAnonymously();
+    
+// }
+
+// function Cerrar(){
+//     firebase.auth().signOut();
+// }
