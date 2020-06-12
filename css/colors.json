@@ -1,7 +1,7 @@
 {
     "mentaLight":{
-        "primary": "#f759ab",
-        "primaryDark": "#df396b",
+        "primary": "#b37feb",
+        "primaryDark": "#a272d6",
         "accent": "#13c2c2",
         "accentDark": "#18b3b3"
     },

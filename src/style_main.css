@@ -29,7 +29,7 @@ body{
     font-family: Raleway;
     font-weight: 400;
     color: var(--text);
-    transition: ease 5000ms;
+    transition: ease 200ms;
 }
 
 .mentaLight{
@@ -128,11 +128,12 @@ body{
 }
 
 input{
-    margin: 1rem;
     -webkit-appearance: none;
+    font-size: 1rem;
 }
 
 .inputText{
+    margin: 1rem;
     background-color: transparent;
     border: none;
     border-bottom: 1px solid var(--text);
@@ -145,6 +146,10 @@ input{
     color: var(--primary);
 }
 
+#code_select{
+    width: 7rem;
+}
+
 .container h1{
     padding: 0;
     margin: 0;
@@ -154,6 +159,9 @@ input{
 }
 
 .button{
+    font-size: 1.1rem;
+    appearance: none;
+    border: none;
     padding: 5px 10px;
     background-color: var(--primary);
     border-radius: 1rem;
@@ -162,23 +170,31 @@ input{
     margin: 0.5rem 3rem;
 }
 
-.button-mini{
+.mini{
     margin: 5px 1rem;
     padding: 5px 8px;
-    background-color: var(--primary);
     border-radius: 5px;
     font-size: 0.8rem;
-    cursor: default;
     width: fit-content;
 }
 
-.button:hover, .button-mini:hover{
+.button:hover{
     background-color: var(--primaryDark);
+}
+
+.button:active{
+    background-color: var(--accentDark);
 }
 
 .button span{
     font-family: Raleway;
     font-weight: 500;
+}
+
+.send{
+    padding: 10px 10px;
+    border-radius: 2rem;
+    margin: 0.5rem;
 }
 
 .button-container{
@@ -190,4 +206,32 @@ input{
 #main{
     padding-top: 2rem;
     height: -webkit-fill-available;
+}
+
+.collaps_content{
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.2s ease-out;
+}
+.collapsible{
+    position: relative;
+}
+
+.collapsible::after{
+    /* &#710; */
+    color: var(--text);
+    content: '\02C7'; /* Unicode character for "plus" sign (+) */
+    font-size: 53pt;
+    float: right;
+    margin-left: 5px;
+    padding-top: 5px;
+    line-height: 23pt;
+}
+
+.active::after {
+    content: '\02C6';
+}
+
+option{
+    background-color: var(--accent);
 }
