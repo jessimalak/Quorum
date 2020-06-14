@@ -52,37 +52,15 @@ var firebaseConfig = {
     measurementId: "G-VL1T8FXBQM"
 };
 firebase.initializeApp(firebaseConfig);
-/** */
-// @ts-ignore
-window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier("recaptcha-container", {
-    size: "normal",
-    callback: function (response) {
-        // submitPhoneNumberAuth();
-    }
-});
-/** */
 /* #endregion Main */
-//BEGING STATUS-BAR
-var electron_1 = require("electron");
-var win = electron_1.remote.getCurrentWindow();
-var title = document.getElementById('title').innerHTML;
-document.getElementById('title_bar').innerHTML = title;
-document.getElementById('min').addEventListener('click', function () {
-    win.minimize();
-});
-document.getElementById('max').addEventListener('click', function () {
-    if (!win.isMaximized()) {
-        win.maximize();
-    }
-    else {
-        win.unmaximize();
-    }
-});
-document.getElementById('close').addEventListener('click', function () {
-    win.close();
-});
-//END STATUS-BAR
 var sweetalert2_1 = require("sweetalert2");
+var electron_1 = require("electron");
+var CryptoJS = require('crypto-js');
+// import sha256 from 'crypto-js/sha256';
+// import hmacSHA512 from 'crypto-js/hmac-sha512';
+// import Base64 from 'crypto-js/enc-base64';
+var AES = require("crypto-js/aes");
+var SHA256 = require("crypto-js/sha256");
 var login_screen = document.getElementById('login');
 var login_btn = document.getElementById('login_btn');
 var sendCode_btn = document.getElementById('sendCode_button');
@@ -98,32 +76,9 @@ var register_mail = document.getElementById('R_mail');
 var register_pass1 = document.getElementById('R_password1');
 var register_pass2 = document.getElementById('R_password2');
 var main_screen = document.getElementById('main');
+var sendReset_btn = document.getElementById('sendResetButton');
 var toLogin = document.getElementById('withCount');
-var phonecoll_btn = document.getElementById('phoneColl');
-var phone_login = document.getElementById('phoneContent');
-var mailcoll_btn = document.getElementById('mailColl');
-var mail_login = document.getElementById('mailContent');
-phonecoll_btn.addEventListener("click", function () {
-    this.classList.toggle("active");
-    if (phone_login.style.maxHeight) {
-        phone_login.style.maxHeight = null;
-    }
-    else {
-        phone_login.style.maxHeight = phone_login.scrollHeight + "px";
-        mail_login.style.maxHeight = null;
-    }
-});
-phonecoll_btn.click();
-mailcoll_btn.addEventListener("click", function () {
-    this.classList.toggle("active");
-    if (mail_login.style.maxHeight) {
-        mail_login.style.maxHeight = null;
-    }
-    else {
-        mail_login.style.maxHeight = mail_login.scrollHeight + "px";
-        phone_login.style.maxHeight = null;
-    }
-});
+var loaded;
 var Toast = sweetalert2_1["default"].mixin({
     toast: true,
     position: 'center',
@@ -143,6 +98,7 @@ toLogin.addEventListener('click', function () {
     login_screen.style.display = "flex";
     register_screen.style.display = "none";
 });
+var eventType;
 function isValidMail(mail) {
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(mail);
@@ -150,71 +106,91 @@ function isValidMail(mail) {
 login_btn.addEventListener('click', function () {
     var mail = login_mail.value;
     var password = login_pass.value;
+    loaded = true;
     if (mail == "" || password == "") {
-        console.log("algo anda mal");
+        Toast.fire({ title: 'Debes llenar todos los campos', icon: 'error' });
     }
     else if (!isValidMail(mail)) {
-        console.log("el correo ta malo");
+        login_mail.select();
+        Toast.fire({ icon: 'error', title: "Escribe un correo que sirva" });
     }
     else {
-        firebase.auth().signInWithEmailAndPassword(mail, password)["catch"](function (err) {
+        firebase.auth().signInWithEmailAndPassword(mail, password).then(function () {
+            eventType = 'login';
+            electron_1.ipcRenderer.send('loading', true);
+            electron_1.ipcRenderer.send('loadingchange', 'Desencripando...|Obteniendo información de perfil');
+        })["catch"](function (err) {
             sweetalert2_1["default"].fire({ title: err.code, text: err.message, icon: 'error' });
         });
     }
+    var cypher = CryptoJS.AES.encrypt(mail, 'ayuwokiEny').toString();
+    var rest = CryptoJS.AES.decrypt(cypher, 'ayuwokiEny');
+    var wii = rest.toString(CryptoJS.enc.Utf8);
+    console.log(cypher);
+    console.log(wii);
 });
-// let uiConfig = {signInSuccessUrl: 'main.html',
-//     signInOptions:[
-//         firebase.auth.PhoneAuthProvider.PROVIDER_ID
-//     ],
-//     tosUrl: 'main.html',
-//     recaptchaParameters:{
-//         size: 'invisible'
-//     }
-// }
-// let ui = new firebaseui.auth.AuthUI(firebase.auth());
-// ui.start('#PhoneContent', uiConfig);
-sendCode_btn.addEventListener('click', function () {
-    var phoneN = phone_input.value;
-    if (phoneN == "") {
-        phone_input.select();
-        Toast.fire({ icon: 'error', title: 'Sin tu número no sabemos quien eres' });
-    }
-    else {
-        firebase.auth().SignInWithPhoneNumber(country_select + phoneN).then(function () { return __awaiter(void 0, void 0, void 0, function () {
-            var phoneCode;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, sweetalert2_1["default"].fire({
-                            title: 'Dinos cuál fue el código que te enviamos',
-                            input: 'text',
-                            showCancelButton: true,
-                            inputValidator: function (value) {
-                                if (!value) {
-                                    return 'Si no te llega intenta pedirlo de nuevo';
-                                }
+sendReset_btn.addEventListener('click', function () { return __awaiter(void 0, void 0, void 0, function () {
+    var correo, mail;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                correo = login_mail.value;
+                return [4 /*yield*/, sweetalert2_1["default"].fire({
+                        title: 'Dinos cuál fue el código que te enviamos',
+                        input: 'email',
+                        showCancelButton: true,
+                        inputValue: correo,
+                        inputValidator: function (mail) {
+                            if (!mail) {
+                                return 'Escribe tu correo para poder ayudarte';
                             }
-                        })];
-                    case 1:
-                        phoneCode = (_a.sent()).value;
-                        return [2 /*return*/];
-                }
-            });
-        }); })["catch"](function (err) {
-            sweetalert2_1["default"].fire({ title: err.code, text: err.message, icon: 'error' });
-        });
-    }
-});
+                            else {
+                                firebase.auth().sendPasswordResetEmail(mail).then(function () {
+                                    sweetalert2_1["default"].fire({ title: 'Revisa tu correo',
+                                        text: 'Te enviamos un link para que puedas actualizar tu contraseña.',
+                                        icon: 'success' });
+                                    login_mail.value = mail;
+                                })["catch"](function (err) {
+                                    sweetalert2_1["default"].fire({ title: 'Algo salió mal',
+                                        text: 'Vuelve a intentarlo en un rato.',
+                                        icon: 'error' });
+                                });
+                            }
+                        }
+                    })];
+            case 1:
+                mail = (_a.sent()).value;
+                return [2 /*return*/];
+        }
+    });
+}); });
 firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
-        login_screen.style.display = "none";
-        register_screen.style.display = "none";
-        main_screen.style.display = "block";
-        ShowLoading('Obteniendo info', 'Desencriptando...');
-        console.log(user);
+        var uid = user.uid;
+        localStorage.setItem('uid', uid);
+        if (eventType == 'login') {
+            firebase.database().ref('Usuarios' + uid).once('value')
+                .then(function (snapshot) {
+                var user = snapshot.val();
+                console.log(user.username);
+                // localStorage.setItem('username', user.username)
+            });
+        }
+        else if (eventType == 'register') {
+            var username = register_user.value;
+            var mail = register_mail.value;
+            firebase.database().ref('Usuarios/' + uid).set({
+                'username': username,
+                "correo": mail,
+                "id": uid,
+                "mensajeEnc": CryptoJS.AES.encrypt(mail, uid).toString()
+            }).then(function () {
+                window.location.replace('main.html');
+            });
+        }
     }
     else {
-        login_screen.style.display = "flex";
-        main_screen.style.display = "none";
+        electron_1.ipcRenderer.send('loading', false);
     }
 });
 register_btn.addEventListener('click', function () {
@@ -222,6 +198,8 @@ register_btn.addEventListener('click', function () {
     var mail = register_mail.value;
     var password = register_pass1.value;
     var password2 = register_pass2.value;
+    loaded = true;
+    eventType = 'register';
     if (username == "") {
         register_user.select();
         Toast.fire({ icon: 'error', title: 'Escoge un nombre usuario' });
@@ -232,7 +210,7 @@ register_btn.addEventListener('click', function () {
     }
     else if (password == "") {
         register_pass1.select();
-        Toast.fire({ icon: 'error', title: "Tenemos que poner una contraseña" });
+        Toast.fire({ icon: 'error', title: "Debes poner una contraseña" });
     }
     else if (password !== password2) {
         register_pass2.select();
@@ -249,15 +227,15 @@ register_btn.addEventListener('click', function () {
             allowEscapeKey: false, allowOutsideClick: false
         }).then(function (result) {
             if (result) {
-                ShowLoading('Registrando', 'Estamos guardando tu info en un lugar seguro.');
+                firebase.auth().createUserWithEmailAndPassword(mail, password)["catch"](function (err) {
+                    sweetalert2_1["default"].fire({ title: err.code, text: err.message, icon: 'error' });
+                });
+                electron_1.ipcRenderer.send('loading', true);
+                electron_1.ipcRenderer.send('loadingchange', 'Registrando|Estamos guardando tu info en un lugar seguro');
             }
         });
     }
 });
-var loadingDialog;
-function ShowLoading(titulo, mensaje) {
-    loadingDialog = sweetalert2_1["default"].fire({ title: titulo, text: mensaje, allowEscapeKey: false, allowOutsideClick: false, onBeforeOpen: function () { sweetalert2_1["default"].showLoading(); } });
-}
 // function Cerrar(){
 //     firebase.auth().signOut();
 // }

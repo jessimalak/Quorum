@@ -3,9 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" media="all" href="../css/materialdesignicons.min.css" type="text/css">
+    <link rel="stylesheet" href="style_main.css">
+    <title id="title">Quorum</title>
 </head>
 <body>
-    
+    <nav id="statusBar">
+        <div id="title_bar">
+        </div>
+        <div class="buttons_bar">
+            <div class="bar_button" id="min"><span>&minus;</span></div>
+            <div class="bar_button" id="max"><span></span>&plus;</span></div>
+            <div class="bar_button" id="close"><span>&times;</span></div>
+        </div>
+    </nav>
+    <div class="content">
+        <button onclick="firebase.auth().signOut()">cerrar sesión</button>
+    </div>
 </body>
+<script>var exports = {"__esModule": true};</script>
+<script src="appBar.js"></script>
+<script src="main.js"></script>
 </html>

@@ -20,6 +20,15 @@
     font-weight: 200;
 }
 
+:root{
+    --primary: #b37feb;
+    --primaryDark: #a272d6;
+    --accent: #13c2c2;
+    --accentDark: #18b3b3;
+    --text: #111;
+    --back-Color: rgb(247, 247, 247);
+}
+
 body{
     margin: 0;
     padding: 0;
@@ -30,6 +39,7 @@ body{
     font-weight: 400;
     color: var(--text);
     transition: ease 200ms;
+    background-color: var(--back-Color);
 }
 
 .mentaLight{

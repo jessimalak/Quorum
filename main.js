@@ -1,4 +1,5 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
+const os = require('os');
 let win;
 
 function createWindow () {
@@ -9,11 +10,28 @@ function createWindow () {
       nodeIntegration: true,
       enableRemoteModule: true
     },
-    frame:false
+    show:false,
+    frame:isMacOrLinux()
   })
-  
+  Start();
   win.loadFile('src/index.html')
-  
+  win.on('ready-to-show', (e)=>{
+    win.show();
+    loadingWindow.show();
+  })
+  win.on('closed',(e) =>{
+    console.log('cerrada')
+    app.quit();
+  })
+}
+
+function isMacOrLinux(){
+  let platform = os.platform.name;
+  if(platform == 'win32'){
+    return false;
+  }else{
+    return true;
+  }
 }
 
 app.whenReady().then(createWindow)
@@ -33,4 +51,48 @@ app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow()
   }
+})
+
+// app.on('ready', ()=>{
+  
+// })
+
+let loadingWindow;
+
+function Start(){
+  loadingWindow = new BrowserWindow({
+    width:400,
+    height:200,
+    webPreferences:{
+      nodeIntegration:true
+    }, frame:false,
+    parent: win,
+    modal: true,
+    backgroundColor: '#b37feb',
+    resizable:false,
+    skipTaskbar:true
+})
+  loadingWindow.loadFile('src/loading/loading.html')
+}
+
+function ShowLoading(show){
+  if(show){
+    if(loadingWindow == null){
+      Start();
+    }else{
+      loadingWindow.show();
+    }
+  }
+  else{
+    loadingWindow.hide();
+  }
+}
+
+ipcMain.on('loading', (event, val)=>{
+  ShowLoading(val);
+})
+
+ipcMain.on('loadingchange', (e, info)=>{
+  console.log(info)
+  loadingWindow.webContents.send('loadingInfo', info)
 })

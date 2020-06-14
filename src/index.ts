@@ -3,7 +3,6 @@
 const firebase = require('firebase/app')
 require('firebase/auth')
 require('firebase/database')
-import * as firebaseui from 'firebaseui'
 // firebase.auth().useDeviceLanguage();
 
 var firebaseConfig = {
@@ -19,47 +18,16 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-/** */
-// @ts-ignore
-window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-    "sendCode_button",
-    {
-    size: "invisible",
-    callback: function(response) {
-        // submitPhoneNumberAuth();
-    }
-    }
-);
-/** */
-
 /* #endregion Main */
 
-    //BEGING STATUS-BAR
-    import {remote} from 'electron';
-    const win = remote.getCurrentWindow();
-
-    const title: string = ( < HTMLInputElement > document.getElementById('title')).innerHTML;
-
-    document.getElementById('title_bar').innerHTML = title;
-
-    document.getElementById('min').addEventListener('click', function () {
-        win.minimize();
-    })
-
-    document.getElementById('max').addEventListener('click', function () {
-        if (!win.isMaximized()) {
-            win.maximize();
-        } else {
-            win.unmaximize();
-        }
-    })
-
-    document.getElementById('close').addEventListener('click', function () {
-        win.close();
-    })
-
-    //END STATUS-BAR
 import Swal from 'sweetalert2'
+import { ipcRenderer } from 'electron';
+const CryptoJS = require('crypto-js')
+// import sha256 from 'crypto-js/sha256';
+// import hmacSHA512 from 'crypto-js/hmac-sha512';
+// import Base64 from 'crypto-js/enc-base64';
+const AES = require("crypto-js/aes");
+const SHA256 = require("crypto-js/sha256");
 
 const login_screen = document.getElementById('login');
 const login_btn = document.getElementById('login_btn');
@@ -76,36 +44,10 @@ const register_mail = <HTMLInputElement> document.getElementById('R_mail');
 const register_pass1 = <HTMLInputElement> document.getElementById('R_password1');
 const register_pass2 = <HTMLInputElement> document.getElementById('R_password2');
 const main_screen = document.getElementById('main');
-
+const sendReset_btn = document.getElementById('sendResetButton');
 const toLogin = document.getElementById('withCount');
 
-const phonecoll_btn = document.getElementById('phoneColl');
-const phone_login = document.getElementById('phoneContent');
-const mailcoll_btn = document.getElementById('mailColl');
-const mail_login = document.getElementById('mailContent');
-
-
-phonecoll_btn.addEventListener("click", function() {
-    this.classList.toggle("active");
-    if (phone_login.style.maxHeight) {
-        phone_login.style.maxHeight = null;
-    } else {
-        phone_login.style.maxHeight = phone_login.scrollHeight + "px";
-        mail_login.style.maxHeight = null;
-    }
-  });
-
-  phonecoll_btn.click();
-
-  mailcoll_btn.addEventListener("click", function() {
-    this.classList.toggle("active");
-    if (mail_login.style.maxHeight) {
-        mail_login.style.maxHeight = null;
-    } else {
-        mail_login.style.maxHeight = mail_login.scrollHeight + "px";
-        phone_login.style.maxHeight = null;
-    }
-  });
+let loaded:boolean;
 
 const Toast = Swal.mixin({
     toast: true,
@@ -129,6 +71,9 @@ toLogin.addEventListener('click', ()=>{
     register_screen.style.display = "none";
 })
 
+let eventType:string;
+
+
 
 function isValidMail(mail){
     const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -138,70 +83,83 @@ function isValidMail(mail){
 login_btn.addEventListener('click', () =>{
     let mail = login_mail.value;
     let password = login_pass.value;
-
+    loaded = true;
     if(mail == "" || password == ""){
-        console.log("algo anda mal")
+        Toast.fire({title: 'Debes llenar todos los campos', icon: 'error'});
     }else if(!isValidMail(mail)){
-        console.log("el correo ta malo")
+        login_mail.select();
+        Toast.fire({icon: 'error', title: "Escribe un correo que sirva"})
     }
     else{
-        firebase.auth().signInWithEmailAndPassword(mail, password).catch((err)=>{
+        firebase.auth().signInWithEmailAndPassword(mail, password).then(()=>{
+            eventType = 'login';
+            ipcRenderer.send('loading', true);
+            ipcRenderer.send('loadingchange', 'Desencripando...|Obteniendo información de perfil')
+        }).catch((err)=>{
             Swal.fire({title: err.code, text:err.message, icon: 'error'})
         })
     }
+    let cypher = CryptoJS.AES.encrypt(mail, 'ayuwokiEny').toString();
+    let rest = CryptoJS.AES.decrypt(cypher, 'ayuwokiEny');
+    let wii = rest.toString(CryptoJS.enc.Utf8);
+    console.log(cypher)
+    console.log(wii);
 })
 
-// let uiConfig = {signInSuccessUrl: 'main.html',
-//     signInOptions:[
-//         firebase.auth.PhoneAuthProvider.PROVIDER_ID
-//     ],
-//     tosUrl: 'main.html',
-//     recaptchaParameters:{
-//         size: 'invisible'
-//     }
-// }
-
-// let ui = new firebaseui.auth.AuthUI(firebase.auth());
-// ui.start('#PhoneContent', uiConfig);
-
-function signIn(){
-    let phoneN = phone_input.value;
-    if(phoneN == ""){
-        phone_input.select();
-        Toast.fire({icon: 'error', title: 'Sin tu número no sabemos quien eres'})
-    }else{
-        
-        firebase.auth().SignInWithPhoneNumber(country_select+phoneN).then(async()=>{
-            const { value: phoneCode } =  await Swal.fire({
-                title: 'Dinos cuál fue el código que te enviamos',
-                input: 'text',
-                showCancelButton: true,
-                inputValidator: (value) => {
-                  if (!value) {
-                    return 'Si no te llega intenta pedirlo de nuevo'
-                  }
-                }
+sendReset_btn.addEventListener('click', async ()=>{
+    let correo = login_mail.value;
+    const { value: mail } =  await Swal.fire({
+        title: 'Dinos cuál fue el código que te enviamos',
+        input: 'email',
+        showCancelButton: true,
+        inputValue: correo,
+        inputValidator: (mail) => {
+          if (!mail) {
+            return 'Escribe tu correo para poder ayudarte'
+          }else{
+              firebase.auth().sendPasswordResetEmail(mail).then(()=>{
+                  Swal.fire({title: 'Revisa tu correo',
+                  text: 'Te enviamos un link para que puedas actualizar tu contraseña.',
+                  icon: 'success'})
+                  login_mail.value = mail;
+              }).catch((err)=>{
+                  Swal.fire({title: 'Algo salió mal',
+                  text: 'Vuelve a intentarlo en un rato.',
+                  icon: 'error'})
               })
+          }
         }
-            
-        ).catch((err)=>{
-            Swal.fire({title: err.code, text:err.message, icon: 'error'})
-        })
-        
-    }
-    
+      })
 }
+)
 
 firebase.auth().onAuthStateChanged(user =>{
     if(user){
-        login_screen.style.display = "none";
-        register_screen.style.display = "none";
-        main_screen.style.display = "block"
-        ShowLoading('Obteniendo info', 'Desencriptando...')
-        console.log(user)
+        let uid = user.uid;
+        localStorage.setItem('uid', uid)
+        if(eventType == 'login'){
+            firebase.database().ref('Usuarios'+ uid).once('value')
+            .then(function(snapshot){
+                let user = snapshot.val();
+                console.log(user.username)
+                // localStorage.setItem('username', user.username)
+            })
+        }else if(eventType == 'register'){
+            let username = register_user.value;
+            let mail = register_mail.value
+            firebase.database().ref('Usuarios/'+ uid).set({
+                'username': username,
+                "correo": mail,
+                "id": uid,
+                "mensajeEnc": CryptoJS.AES.encrypt(username, uid).toString()
+            }).then(()=>{
+                window.location.replace('main.html');
+            })
+        }
+        
+        
     }else{
-        login_screen.style.display = "flex";
-        main_screen.style.display = "none"
+        ipcRenderer.send('loading', false);
     }
 })
 
@@ -210,6 +168,8 @@ register_btn.addEventListener('click', ()=>{
     let mail:string = register_mail.value;
     let password:string = register_pass1.value;
     let password2:string = register_pass2.value;
+    loaded = true;
+    eventType = 'register';
     if(username == ""){
         register_user.select();
         Toast.fire({icon: 'error', title: 'Escoge un nombre usuario'})
@@ -218,7 +178,7 @@ register_btn.addEventListener('click', ()=>{
         Toast.fire({icon: 'error', title: "Escribe un correo que sirva"})
     }else if(password == ""){
         register_pass1.select()
-        Toast.fire({icon: 'error', title: "Tenemos que poner una contraseña"})
+        Toast.fire({icon: 'error', title: "Debes poner una contraseña"})
     }else if(password !== password2){
         register_pass2.select();
         Toast.fire({icon: 'error', title: "Parece que escribiste algo distinto"});
@@ -233,17 +193,16 @@ register_btn.addEventListener('click', ()=>{
         allowEscapeKey: false, allowOutsideClick: false
     }).then((result)=>{
         if(result){
-            ShowLoading('Registrando', 'Estamos guardando tu info en un lugar seguro.');
+            firebase.auth().createUserWithEmailAndPassword(mail, password).catch((err)=>{
+                Swal.fire({title: err.code, text:err.message, icon: 'error'})
+            })
+            ipcRenderer.send('loading', true);
+            ipcRenderer.send('loadingchange', 'Registrando|Estamos guardando tu info en un lugar seguro');
         }
     })
     }
 })
 
-let loadingDialog;
-
-function ShowLoading(titulo:string, mensaje:string){
-   loadingDialog = Swal.fire({title: titulo, text: mensaje, allowEscapeKey: false, allowOutsideClick: false, onBeforeOpen: ()=>{ Swal.showLoading()}})
-}
 
 // function Cerrar(){
 //     firebase.auth().signOut();
