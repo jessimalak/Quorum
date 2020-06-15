@@ -26,7 +26,8 @@ function createWindow () {
 }
 
 function isMacOrLinux(){
-  let platform = os.platform.name;
+  let platform = os.platform();
+  console.log(platform);
   if(platform == 'win32'){
     return false;
   }else{

@@ -5,7 +5,7 @@ const os = require('os')
 
 const bar = document.getElementById('statusBar')
 
-if(os.platform.name !== 'win32'){
+if(os.platform() !== 'win32'){
     bar.style.display = 'none'
 }
 
