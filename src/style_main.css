@@ -117,6 +117,10 @@ body{
     width: 100%;
 }
 
+.Ui{
+    display: flex;
+}
+
 .screen{
     height: 100%;
     width: 100%;
@@ -244,4 +248,11 @@ input{
 
 option{
     background-color: var(--accent);
+}
+
+.contactsPanel{
+    display: flex;
+    flex-direction: column;
+    width: 20rem;
+    background-color: var(--primary);
 }
