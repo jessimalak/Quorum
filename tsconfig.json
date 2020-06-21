@@ -1,13 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "ES6",
     "module": "commonjs",
-    "sourceMap": false,
+    "sourceMap": true,
+    "removeComments": true,
     "moduleResolution": "node",
+    "preserveConstEnums": true,
     "lib": [
-      "es2016",
-      "dom",
-      "es6"
+      "DOM",
+      "ES6"
   ]
-  }
+  },
+  "include": ["./src/**/*"],
+  "exclude": ["./node_modules"]
 }

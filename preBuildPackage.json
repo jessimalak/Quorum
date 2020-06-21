@@ -1,0 +1,24 @@
+{
+    "build": {
+        "appId": "com.my-website.my-app",
+        "productName": "MyApp",
+        "copyright": "Copyright © 2019 ${author}",
+        "mac": {
+          "icon": "./public/icons/mac/icon.icns",     <---------- set Mac Icons
+          "category": "public.app-category.utilities"
+        },
+        "win": {
+          "icon": "./public/icons/png/256x256.png" <---------- set Win Icon
+        },
+        "files": [
+          "./build/**/*",
+          "./dist/**/*",
+          "./node_modules/**/*",
+          "./icons/**/*",       <---------- need for get access to icons
+          "*.js"
+        ],
+        "directories": {
+          "buildResources": "icons" <---------- folder where placed icons
+        }
+      }
+}

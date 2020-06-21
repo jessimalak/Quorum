@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="title">Configuración</title>
+    <link rel="stylesheet" media="all" href="../css/materialdesignicons.min.css" type="text/css">
+    <link rel="stylesheet" href="style_main.css">
+</head>
+<body>
+    <nav id="statusBar">
+        <div id="title_bar">
+        </div>
+        <div class="buttons_bar">
+            <div class="bar_button" id="min"><span>&minus;</span></div>
+            <div class="bar_button" id="max"><span></span>&plus;</span></div>
+            <div class="bar_button" id="close"><span>&times;</span></div>
+        </div>
+    </nav>
+    <div class="content panel" style="padding: 1rem;">
+        <label class="item-label">Perfil</label>
+        <div class="profile-container">
+            <img src="../icons/userAvatar.png" alt="foto de perfil" id="perfil">
+            <div>
+                <p id="usernameP">username</p>
+                <p id="mailP">jessimalak@protonmail.com</p>
+                <p id="stateP">Hola, soy nuev@ en Quorum</p>
+            <div style="display: flex; height: max-content;">
+                <button class="button mini"><span class="mdi mdi-lock"><span>Cambiar contraseña</span></span></button>
+                <button class="button mini" onclick="logout()"><span class="mdi mdi-close"><span>Cerrar sesión</span></span></button>
+            </div>
+        </div>
+        </div>
+        <label for="tema" class="item-label">Tema</label>
+        <select name="Tema" id="theme_selector" onchange="UpdateTheme(this.value)" class="inputText">
+            <optgroup label="Claro">
+                <option value="menta-light">Menta</option>
+                <option value="violeta-light">Ultravioleta</option>
+                <option value="azul-light">Azul como el mar azul</option>
+                <option value="rojo-light">Rojo pasión</option>
+                <option value="hiedra-light">Hiedra venenosa</option>
+                <option value="claro">El lado luminoso</option>
+            </optgroup>
+            <optgroup label="Oscuro">
+                <option value="menta-dark">Menta</option>
+                <option value="violeta-dark">Ultravioleta</option>
+                <option value="azul-dark">Azul como el mar azul</option>
+                <option value="rojo-dark">Rojo pasión</option>
+                <option value="hiedra-dark">Hiedra venenosa</option>
+                <option value="oscuro">El lado oscuro</option>
+            </optgroup>
+        </select>
+        <div style="background-color: var(--back-Color);">
+            <div class="mensaje reciver"><div class="mensaje-content reciver-content" ><p class="messageText">Hola nena soy Zeus y vamos a hablar de mi.</p><p class="mensaje-time">15 de Junio 10:30 am</p></div></div>
+                    <div class="mensaje sender"><div class="mensaje-content sender-content" ><p class="messageText">'ajam, y entonces?'</p><p class="mensaje-time">15 de Junio, 6:25 pm</p></div></div>
+        </div>
+    </div>
+</body>
+<script>
+    var exports = {"__esModule": true};
+</script>
+<script src="appBar.js"></script>
+<script src="styles.js"></script>
+<script src="settings.js"></script>
+</html>

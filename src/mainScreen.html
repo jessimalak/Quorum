@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" media="all" href="../css/materialdesignicons.min.css" type="text/css">
+    <link rel="stylesheet" href="style_main.css">
+    <link rel="shortcut icon" href="../icons/favicon.ico" type="image/x-icon">
+    <title id="title">Quorum</title>
+</head>
+<body>
+    <nav id="statusBar">
+        <div id="title_bar">Quorum
+        </div>
+        <div class="buttons_bar">
+            <div class="bar_button" id="min"><span>&minus;</span></div>
+            <div class="bar_button" id="max"><span></span>&plus;</span></div>
+            <div class="bar_button" id="close"><span>&times;</span></div>
+        </div>
+    </nav>
+    <div class="content Ui">
+        <div class="contactsPanel panel">
+            <div class="searchDiv">
+                <input type="search" name="search" id="searchInput" class="inputText">
+                <i class="mdi mdi-dots-vertical button dash-button" id="menu_btn">
+                    <ul class="menu">
+                        <li class="menu-item"><i class="mdi mdi-account-group"></i><span>Crear sala</span></li>
+                        <li class="menu-item"><i class="mdi mdi-account-cog"></i><span>Mi perfil</span></li>
+                        <li class="menu-item" id="settings_btn"><i class="mdi mdi-cog"></i><span>Configuración</span></li>
+                    </ul>
+                </i>
+                <i class="mdi mdi-account-multiple-plus button dash-button"></i>
+                <i class="mdi mdi-account-plus button dash-button"></i>
+                <i class="mdi mdi-magnify button dash-button"></i>
+            </div>
+            <ul id="contact-list">
+                <li class="contact-item">
+                    <img src="../icons/userAvatar.png" alt="perfil">
+                    <div>
+                        <p>Gatita</p>
+                        <span>Holi bebé 😘</span>
+                    </div>
+                </li>
+                <li class="contact-item">
+                    <img src="../icons/userAvatar.png" alt="perfil">
+                    <div>
+                        <p>ElYisus</p>
+                        <span>¿Puedes creer que Judas me acaba de escribir?</span>
+                    </div>
+                </li>
+                <li class="contact-item">
+                    <img src="../icons/userAvatar.png" alt="perfil">
+                    <div>
+                        <p>Zeus</p>
+                        <span>Hola nena, soy Zeus y vamos a hablar de mi.</span>
+                    </div>
+                </li>
+                <li class="contact-item">
+                    <img src="../icons/userAvatar.png" alt="perfil">
+                    <div>
+                        <p>Cronos</p>
+                        <span>Mi hijo menor es un calenturiento, ten cuidado con él.</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div id="rightPanel" class="content">
+            <div id="welcomeMessage" class="content">
+                <img src="../icons/logoC1.png" alt="Quorum Logo">
+                <p>Chatea de forma segura con tus amigos, familiares, conocidos y con quien quieras de forma completamante segura.</p>
+                <p>Tus mensajes e información están completamente cifrados y alejados de gente friki con ganas de chisme y del gobierno de turno.</p>
+            </div>
+            <div id="chatPanel" class="content"  style="display: none;">
+                <div class="mensaje-input">
+                    <textarea name="mensaje-input" placeholder="Escribe un mensaje..." id="mensaje-input" cols="30" rows="1" class="inputText"></textarea>
+                    <i class="mdi mdi-send button send"></i>
+                    <i class="mdi mdi-image button send"></i>
+                </div>
+                <div id="chatMessages">
+                    <div class="mensaje reciver"><div class="mensaje-content reciver-content" ><p class="messageText">Hola nena soy Zeus y vamos a hablar de mi.</p><p class="mensaje-time">15 de Junio 10:30 am</p></div></div>
+                    <div class="mensaje sender"><div class="mensaje-content sender-content" ><p class="messageText">'ajam, y entonces?'</p><p class="mensaje-time">15 de Junio, 6:25 pm</p></div></div>
+                </div>
+                <div id="topBar">
+                    <p><b>Zeus</b></p>
+                    <p><small>En linea</small></p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</body>
+<script>
+    var exports = {"__esModule": true};
+</script>
+<script src="appBar.js"></script>
+<script src="styles.js"></script>
+<script src="mainScreen.js"></script>
+</html>

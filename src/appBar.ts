@@ -1,12 +1,16 @@
 //BEGING STATUS-BAR
-import {remote, ipcRenderer} from 'electron';
+const remote = require('electron').remote;
 const win = remote.getCurrentWindow();
 const os = require('os')
 
-const bar = document.getElementById('statusBar')
+const bar = document.getElementById('statusBar');
+const contactPanel = <HTMLElement> document.getElementsByClassName('panel')[0];
 
 if(os.platform() !== 'win32'){
     bar.style.display = 'none'
+    if(contactPanel !== undefined){
+        contactPanel.style.paddingTop = '0';
+    }
 }
 
 const title: string = ( < HTMLInputElement > document.getElementById('title')).innerHTML;

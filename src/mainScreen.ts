@@ -21,29 +21,33 @@ const SHA256 = require("crypto-js/sha256");
 const uid = localStorage.getItem('uid')
 let mongo:string;
 
-const content = document.getElementsByClassName('content')[0];
+const settings_btn = document.getElementById('settings_btn');
+const content = document.getElementById('chatPanel');
 
 function updateS(){
     ipcRenderer.send('loadingchange', 'Desencrpitando...|Importando contactos')
-    setTimeout(()=>{
-    ipcRenderer.send('loadingchange', 'Desencrpitando...|Importando chats')
-    }, 3000)
-    ipcRenderer.send('loading', false);
+    
 }
 
 updateS()
-content.innerHTML += '<p>'+uid+'</p>';
 
 firebase.auth().onAuthStateChanged(user =>{
     if(!user){
-        window.location.replace('index.html')
+        window.location.replace('login.html')
     }else{
+        ipcRenderer.send('loadingchange', 'Desencrpitando...|Importando chats')
         firebase.database().ref('Usuarios/'+uid).once('value').then(function(snapshot){
             let user = snapshot.val();
             document.title = 'Quorum - '+ user.username;
-            let message = CryptoJS.AES.decrypt(user.mensajeEnc, user.id);
-            content.innerHTML += message.toString(CryptoJS.enc.Utf8);
+            ipcRenderer.send('loading', false);
         })
     }
 })
 
+settings_btn.addEventListener('click', ()=>{
+    ipcRenderer.send('openSettings', true);
+})
+
+ipcRenderer.on('signOut', (e)=>{
+    firebase.auth().signOut();
+})

@@ -14,13 +14,12 @@ function createWindow () {
     frame:isMacOrLinux()
   })
   Start();
-  win.loadFile('src/index.html')
+  win.loadFile('src/login.html')
   win.on('ready-to-show', (e)=>{
     win.show();
-    loadingWindow.show();
+    // loadingWindow.show();
   })
   win.on('closed',(e) =>{
-    console.log('cerrada')
     app.quit();
   })
 }
@@ -54,10 +53,6 @@ app.on('activate', () => {
   }
 })
 
-// app.on('ready', ()=>{
-  
-// })
-
 let loadingWindow;
 
 function Start(){
@@ -78,11 +73,7 @@ function Start(){
 
 function ShowLoading(show){
   if(show){
-    if(loadingWindow == null){
-      Start();
-    }else{
-      loadingWindow.show();
-    }
+    loadingWindow.show();
   }
   else{
     loadingWindow.hide();
@@ -94,6 +85,27 @@ ipcMain.on('loading', (event, val)=>{
 })
 
 ipcMain.on('loadingchange', (e, info)=>{
-  console.log(info)
   loadingWindow.webContents.send('loadingInfo', info)
+})
+
+let settings;
+
+ipcMain.on('openSettings', (e) =>{
+  settings = new BrowserWindow({
+    height:650,
+    width:450,
+    webPreferences:{
+      nodeIntegration:true,
+      enableRemoteModule:true
+    },
+    parent:win,
+    modal:true,
+    frame:isMacOrLinux()
+  })
+  settings.loadFile('src/settings.html');
+})
+
+ipcMain.on('signOut', (e)=>{
+  win.webContents.send('signOut', true);
+  settings.close();
 })

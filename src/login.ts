@@ -1,5 +1,3 @@
-/* #region Main */
-
 const firebase = require('firebase/app')
 require('firebase/auth')
 require('firebase/database')
@@ -18,16 +16,16 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-/* #endregion Main */
-
 import Swal from 'sweetalert2'
-import { ipcRenderer } from 'electron';
+// import { ipcRenderer } from 'electron';
+const ipcRenderer = require('electron').ipcRenderer;
 const CryptoJS = require('crypto-js')
 // import sha256 from 'crypto-js/sha256';
 // import hmacSHA512 from 'crypto-js/hmac-sha512';
 // import Base64 from 'crypto-js/enc-base64';
 const AES = require("crypto-js/aes");
 const SHA256 = require("crypto-js/sha256");
+const code:string = 'mYq3t6w9z$CF)J@NaS&fUjIn4r4u7x!A';
 
 const login_screen = document.getElementById('login');
 const login_btn = document.getElementById('login_btn');
@@ -48,6 +46,7 @@ const sendReset_btn = document.getElementById('sendResetButton');
 const toLogin = document.getElementById('withCount');
 
 let loaded:boolean;
+const mainScreen:string = 'mainScreen.html';
 
 const Toast = Swal.mixin({
     toast: true,
@@ -92,6 +91,7 @@ login_btn.addEventListener('click', () =>{
     }
     else{
         firebase.auth().signInWithEmailAndPassword(mail, password).then(()=>{
+            localStorage.setItem("mail", mail);
             eventType = 'login';
             ipcRenderer.send('loading', true);
             ipcRenderer.send('loadingchange', 'Desencripando...|Obteniendo información de perfil')
@@ -99,11 +99,11 @@ login_btn.addEventListener('click', () =>{
             Swal.fire({title: err.code, text:err.message, icon: 'error'})
         })
     }
-    let cypher = CryptoJS.AES.encrypt(mail, 'ayuwokiEny').toString();
-    let rest = CryptoJS.AES.decrypt(cypher, 'ayuwokiEny');
-    let wii = rest.toString(CryptoJS.enc.Utf8);
-    console.log(cypher)
-    console.log(wii);
+    // let cypher = CryptoJS.AES.encrypt(mail, 'ayuwokiEny').toString();
+    // let rest = CryptoJS.AES.decrypt(cypher, 'ayuwokiEny');
+    // let wii = rest.toString(CryptoJS.enc.Utf8);
+    // console.log(cypher)
+    // console.log(wii);
 })
 
 sendReset_btn.addEventListener('click', async ()=>{
@@ -138,26 +138,31 @@ firebase.auth().onAuthStateChanged(user =>{
         let uid = user.uid;
         localStorage.setItem('uid', uid)
         if(eventType == 'login'){
-            firebase.database().ref('Usuarios'+ uid).once('value')
+            ipcRenderer.send('loading', true);
+            firebase.database().ref('Usuarios/'+ uid).once('value')
             .then(function(snapshot){
                 let user = snapshot.val();
                 console.log(user.username)
-                // localStorage.setItem('username', user.username)
+                localStorage.setItem('username', user.username);
+                window.location.replace(mainScreen);
             })
         }else if(eventType == 'register'){
+            ipcRenderer.send('loading', true);
             let username = register_user.value;
-            let mail = register_mail.value
+            let mail = register_mail.value;
+            localStorage.setItem('username', username);
+            localStorage.setItem('mail', mail);
             firebase.database().ref('Usuarios/'+ uid).set({
                 'username': username,
-                "correo": mail,
+                "mail": CryptoJS.AES.encrypt(mail, code).toString(),
                 "id": uid,
-                "mensajeEnc": CryptoJS.AES.encrypt(username, uid).toString()
+                "estado": "Hola, soy nuev@ en Quorum"
             }).then(()=>{
-                window.location.replace('main.html');
+                window.location.replace(mainScreen);
             })
+        }else{
+            window.location.replace(mainScreen);
         }
-        
-        
     }else{
         ipcRenderer.send('loading', false);
     }

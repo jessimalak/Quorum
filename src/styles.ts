@@ -1,8 +1,17 @@
-const _body = document.getElementsByTagName('body')[0]
+const _body = document.getElementsByTagName('body')[0];
+
+let theme = localStorage.getItem("theme");
+
+if(theme !== null){
+    _body.classList.add(theme);
+}
 
 
-function color(){
-    setTimeout("", 1000)
-    _body.classList.add('mentaDark')
+
+function UpdateTheme(color:string){
+    let actual:string = _body.classList.item(0);
+    _body.classList.remove(actual);
+    _body.classList.add(color);
+    localStorage.setItem('theme', color);
 }
 

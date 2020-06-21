@@ -1,14 +1,15 @@
-"use strict";
-exports.__esModule = true;
-//BEGING STATUS-BAR
-var electron_1 = require("electron");
-var win = electron_1.remote.getCurrentWindow();
-var os = require('os');
-var bar = document.getElementById('statusBar');
+const remote = require('electron').remote;
+const win = remote.getCurrentWindow();
+const os = require('os');
+const bar = document.getElementById('statusBar');
+const contactPanel = document.getElementsByClassName('panel')[0];
 if (os.platform() !== 'win32') {
     bar.style.display = 'none';
+    if (contactPanel !== undefined) {
+        contactPanel.style.paddingTop = '0';
+    }
 }
-var title = document.getElementById('title').innerHTML;
+const title = document.getElementById('title').innerHTML;
 document.getElementById('title_bar').innerHTML = title;
 document.getElementById('min').addEventListener('click', function () {
     win.minimize();
@@ -24,4 +25,4 @@ document.getElementById('max').addEventListener('click', function () {
 document.getElementById('close').addEventListener('click', function () {
     win.close();
 });
-//END STATUS-BAR
+//# sourceMappingURL=appBar.js.map
