@@ -1,5 +1,4 @@
 {
-  
   "name": "Quorum",
   "version": "0.1.5",
   "main": "main.js",
@@ -8,8 +7,8 @@
   },
   "dependencies": {
     "crypto-js": "^4.0.0",
-    "firebase": "^7.15.1",
-    "firebaseui": "^4.5.1",
+    "cryptojs": "^2.5.3",
+    "firebase": "^7.15.3",
     "sweetalert2": "^9.15.1"
   },
   "devDependencies": {

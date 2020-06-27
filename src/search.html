@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" media="all" href="../css/materialdesignicons.min.css" type="text/css">
+    <link rel="stylesheet" href="style_main.css">
+    <title id="title">Buscar</title>
+</head>
+<body>
+    <nav id="statusBar">
+        <div id="title_bar">
+        </div>
+        <div class="buttons_bar">
+            <div class="bar_button" id="min"><span>&minus;</span></div>
+            <div class="bar_button" id="max"><span></span>&plus;</span></div>
+            <div class="bar_button" id="close"><span>&times;</span></div>
+        </div>
+    </nav>
+    <div class="content">
+        <div class="searchDiv">
+            <i class="mdi mdi-magnify button dash-button" onclick="Search()"></i>
+            <input class="inputText searchHeader" type="search" name="search" placeholder="@username" id="SearchInput">
+        </div>
+        <!-- <progress style="display: none;"></progress> -->
+        <div class="progress" style="display: none;">
+            <div class="progress-value">
+
+            </div>
+        </div>
+        <div id="resultados">
+            <div id='0' class="userCard"><img src="../icons/userAvatar.png" alt="imagen de perfil"><div><p>@'+this.username+'</p><p>'+this.name+'</p><i>Hola, soy nuev@ en Quorum</i></div><button class="button"><span class="mdi mdi-plus"></span></button></div>
+        </div>
+    </div>
+</body>
+<script src="appBar.js"></script>
+<script src="styles.js"></script>
+<script src="code.js"></script>
+<script src="classes/crypto.js"></script>
+<script src="classes/firebase.js"></script>
+<script src="search.js"></script>
+</html>

@@ -27,7 +27,7 @@ body{
     font-family: Raleway;
     display: flex;
     align-items: center;
-    background: linear-gradient(90deg, #b37feb 0%, #13c2c2 100%);
+    background: #b37feb;
 }
 
 h2{

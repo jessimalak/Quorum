@@ -22,11 +22,13 @@
         <div class="profile-container">
             <img src="../icons/userAvatar.png" alt="foto de perfil" id="perfil">
             <div>
-                <p id="usernameP">username</p>
-                <p id="mailP">jessimalak@protonmail.com</p>
-                <p id="stateP">Hola, soy nuev@ en Quorum</p>
+                <p id="usernameP">username</p><span id="username_btn" class="mdi mdi-border-color button mini dash-button"></span>
+                <br>
+                <p id="mailP">jessimalak@protonmail.com</p><span style="display: none;" id="mail_btn" class="mdi mdi-border-color button mini dash-button"></span>
+                <br>
+                <p id="stateP">Hola, soy nuev@ en Quorum</p><span id="state_btn" class="mdi mdi-border-color button mini dash-button"></span>
             <div style="display: flex; height: max-content;">
-                <button class="button mini"><span class="mdi mdi-lock"><span>Cambiar contraseña</span></span></button>
+                <button class="button mini" id="pass_btn"><span class="mdi mdi-lock"><span>Cambiar contraseña</span></span></button>
                 <button class="button mini" onclick="logout()"><span class="mdi mdi-close"><span>Cerrar sesión</span></span></button>
             </div>
         </div>
@@ -54,12 +56,14 @@
             <div class="mensaje reciver"><div class="mensaje-content reciver-content" ><p class="messageText">Hola nena soy Zeus y vamos a hablar de mi.</p><p class="mensaje-time">15 de Junio 10:30 am</p></div></div>
                     <div class="mensaje sender"><div class="mensaje-content sender-content" ><p class="messageText">'ajam, y entonces?'</p><p class="mensaje-time">15 de Junio, 6:25 pm</p></div></div>
         </div>
+        <button class="button" id="save-btn"><span>Guardar cambios </span><span class="mdi mdi-check"></span></button>
     </div>
 </body>
 <script>
     var exports = {"__esModule": true};
 </script>
 <script src="appBar.js"></script>
+<script src="classes/firebase.js"></script>
 <script src="styles.js"></script>
 <script src="settings.js"></script>
 </html>

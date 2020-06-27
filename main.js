@@ -3,6 +3,7 @@ const os = require('os');
 let win;
 
 function createWindow () {
+  Start();
   win = new BrowserWindow({
     width: 900,
     height: 700,
@@ -13,7 +14,7 @@ function createWindow () {
     show:false,
     frame:isMacOrLinux()
   })
-  Start();
+  
   win.loadFile('src/login.html')
   win.on('ready-to-show', (e)=>{
     win.show();
@@ -26,7 +27,6 @@ function createWindow () {
 
 function isMacOrLinux(){
   let platform = os.platform();
-  console.log(platform);
   if(platform == 'win32'){
     return false;
   }else{
@@ -73,7 +73,9 @@ function Start(){
 
 function ShowLoading(show){
   if(show){
+    
     loadingWindow.show();
+    loadingWindow.focus();
   }
   else{
     loadingWindow.hide();
@@ -85,6 +87,7 @@ ipcMain.on('loading', (event, val)=>{
 })
 
 ipcMain.on('loadingchange', (e, info)=>{
+  loadingWindow.focus();
   loadingWindow.webContents.send('loadingInfo', info)
 })
 
@@ -93,7 +96,7 @@ let settings;
 ipcMain.on('openSettings', (e) =>{
   settings = new BrowserWindow({
     height:650,
-    width:450,
+    width:550,
     webPreferences:{
       nodeIntegration:true,
       enableRemoteModule:true
@@ -102,10 +105,30 @@ ipcMain.on('openSettings', (e) =>{
     modal:true,
     frame:isMacOrLinux()
   })
+  settings.setMenu(null)
   settings.loadFile('src/settings.html');
 })
 
 ipcMain.on('signOut', (e)=>{
   win.webContents.send('signOut', true);
   settings.close();
+})
+
+ipcMain.on('updateTheme', (e, val)=>{
+  win.webContents.send('updateTheme', val);
+})
+
+ipcMain.on('search',(e)=>{
+  let window = new BrowserWindow({
+    height:650,
+    width:550,
+    webPreferences:{
+      nodeIntegration:true,
+      enableRemoteModule:true
+    },
+    parent:win,
+    modal:true,
+    frame:isMacOrLinux()
+  })
+  window.loadFile('src/search.html');
 })

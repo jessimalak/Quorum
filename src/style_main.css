@@ -406,6 +406,10 @@ optgroup{
     padding: 0;
 }
 
+.searchHeader{
+    width: 90%;
+}
+
 .searchDiv i{
     margin: 0;
     padding: 2px 5px;
@@ -632,9 +636,77 @@ optgroup{
 
 
 .profile-container button, .profile-container p{
-    margin: 1rem;
+    max-width: 90%;
+    display: inline-block;
+    margin: 0.5rem;
     margin-left: 5px;
 }
+
+.userCard{
+    color: var(--text);
+    font-size: 14pt;
+    display: flex;
+    border-radius: 1rem;
+    padding: 0.5rem;
+    margin: 5px 10px;
+    background-color: var(--back-Color);
+}
+
+.userCard img{
+    margin-right: 10px;
+    height: 5rem;
+}
+
+.userCard p{
+    margin: 5px;
+}
+
+.userCard i{
+    font-size: 13pt;
+    font-weight: 300;
+}
+.userCard div{
+    width: 100%;
+}
+
+.userCard button{
+    margin: 5px;
+}
+
+#stateP{
+    max-width: 75%;
+    font-weight: 300;
+}
+
+.progress{
+    position: relative;
+    padding: 0;
+    height: 1rem;
+    width: -webkit-fill-available;
+    background-color: var(--accent);
+    border-radius: 5px;
+}
+
+@keyframes indeterminate{
+    0%{transform: translate(0); background-color: var(--primary);}
+    25%{background-color: var(--primaryDark);}
+    50%{transform: translate(450px); background-color: var(--primary);}
+    75%{background-color: var(--primaryDark);}
+    100%{transform: translate(0); background-color: var(--primary);}
+}
+
+.progress-value{
+    position: absolute;
+    border-radius: 5px;
+    margin: 0;
+    background-color: var(--primaryDark);
+    height: 100%;
+    width: 6rem;
+    transition: ease 5s;
+    animation: indeterminate 2s linear infinite; 
+    /* transition: ease 5s; */
+}
+
 
 /* width */
 ::-webkit-scrollbar {

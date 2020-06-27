@@ -9,8 +9,17 @@
     "lib": [
       "DOM",
       "ES6"
-  ]
+  ],
   },
-  "include": ["./src/**/*"],
-  "exclude": ["./node_modules"]
+  "files": [
+    "src/appBar.ts",
+    "src/mainScreen.ts",
+    "src/login.ts",
+    "src/code.ts",
+    "src/styles.ts",
+    "src/settings.ts",
+    "src/classes/firebase.ts"
+  ],
+  "include": ["src/**/*"],
+  "exclude": ["./node_modules/**", "node_modules", "**/*.d.ts"]
 }

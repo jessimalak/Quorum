@@ -24,44 +24,17 @@
                 <input type="search" name="search" id="searchInput" class="inputText">
                 <i class="mdi mdi-dots-vertical button dash-button" id="menu_btn">
                     <ul class="menu">
-                        <li class="menu-item"><i class="mdi mdi-account-group"></i><span>Crear sala</span></li>
+                        <li class="menu-item" onclick="CreateRoom()"><i class="mdi mdi-account-group"></i><span>Crear sala</span></li>
                         <li class="menu-item"><i class="mdi mdi-account-cog"></i><span>Mi perfil</span></li>
                         <li class="menu-item" id="settings_btn"><i class="mdi mdi-cog"></i><span>Configuración</span></li>
                     </ul>
                 </i>
-                <i class="mdi mdi-account-multiple-plus button dash-button"></i>
-                <i class="mdi mdi-account-plus button dash-button"></i>
+                <i class="mdi mdi-account-multiple-plus button dash-button" onclick="OpenSearch('Salas')"></i>
+                <i class="mdi mdi-account-plus button dash-button" onclick="OpenSearch('Usuarios')"></i>
                 <i class="mdi mdi-magnify button dash-button"></i>
             </div>
             <ul id="contact-list">
-                <li class="contact-item">
-                    <img src="../icons/userAvatar.png" alt="perfil">
-                    <div>
-                        <p>Gatita</p>
-                        <span>Holi bebé 😘</span>
-                    </div>
-                </li>
-                <li class="contact-item">
-                    <img src="../icons/userAvatar.png" alt="perfil">
-                    <div>
-                        <p>ElYisus</p>
-                        <span>¿Puedes creer que Judas me acaba de escribir?</span>
-                    </div>
-                </li>
-                <li class="contact-item">
-                    <img src="../icons/userAvatar.png" alt="perfil">
-                    <div>
-                        <p>Zeus</p>
-                        <span>Hola nena, soy Zeus y vamos a hablar de mi.</span>
-                    </div>
-                </li>
-                <li class="contact-item">
-                    <img src="../icons/userAvatar.png" alt="perfil">
-                    <div>
-                        <p>Cronos</p>
-                        <span>Mi hijo menor es un calenturiento, ten cuidado con él.</span>
-                    </div>
-                </li>
+                
             </ul>
         </div>
         <div id="rightPanel" class="content">
@@ -92,6 +65,9 @@
 <script>
     var exports = {"__esModule": true};
 </script>
+<script src="code.js"></script>
+<script src="classes/crypto.js"></script>
+<script src="classes/firebase.js"></script>
 <script src="appBar.js"></script>
 <script src="styles.js"></script>
 <script src="mainScreen.js"></script>
