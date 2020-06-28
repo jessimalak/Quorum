@@ -58,8 +58,7 @@ login_btn.addEventListener('click', () => {
         firebase.auth().signInWithEmailAndPassword(mail, password).then(() => {
             localStorage.setItem("mail", mail);
             eventType = 'login';
-            ipcRenderer.send('loading', true);
-            ipcRenderer.send('loadingchange', 'Desencripando...|Obteniendo información de perfil')
+            Load();
         }).catch((err) => {
             switch (err.code) {
                 case "auth/user-disabled":
@@ -238,3 +237,8 @@ register_btn.addEventListener('click', () => {
 // function Cerrar(){
 //     firebase.auth().signOut();
 // }
+
+function Load(){
+    ipcRenderer.send('loading', true);
+            ipcRenderer.send('loadingchange', 'Desencripando...|Obteniendo información de perfil')
+}

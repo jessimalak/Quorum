@@ -119,7 +119,7 @@ body{
     --accent: #006d75;
     --accentDark: #015e64;
     --text: #fff;
-    --textAccent: #777;
+    --textAccent: rgb(165, 165, 165);
     --back-Color: rgb(43, 43, 43);
     --panel-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
@@ -130,7 +130,7 @@ body{
     --accent: #137485;
     --accentDark: #0f6a7a;
     --text: #fff;
-    --textAccent: #777;
+    --textAccent: rgb(165, 165, 165);
     --back-Color: rgb(43, 43, 43);
     --panel-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
@@ -141,7 +141,7 @@ body{
     --accent: #202675;
     --accentDark: #292075;
     --text: #fff;
-    --textAccent: #777;
+    --textAccent: rgb(165, 165, 165);
     --back-Color: rgb(43, 43, 43);
     --panel-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
@@ -152,7 +152,7 @@ body{
     --accent: #791a1f;
     --accentDark: #6b1317;
     --text: #fff;
-    --textAccent: #777;
+    --textAccent: rgb(165, 165, 165);
     --back-Color: rgb(43, 43, 43);
     --panel-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
@@ -163,7 +163,7 @@ body{
     --accent: #3b6d13;
     --accentDark: #406411;
     --text: #fff;
-    --textAccent: #777;
+    --textAccent: rgb(165, 165, 165);
     --back-Color: rgb(43, 43, 43);
     --panel-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
@@ -174,7 +174,7 @@ body{
     --accent: #4d4b4b;
     --accentDark: #333333;
     --text: #fff;
-    --textAccent: rgb(141, 141, 141);
+    --textAccent: rgb(165, 165, 165);
     --back-Color: rgb(31, 31, 31);
     --panel-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
@@ -419,7 +419,7 @@ optgroup{
     background-color: var(--primaryDark);
 } */
 
-#contact-list{
+#chat-list{
     margin: 0;
     padding-left: 0;
     font-size: 12pt;

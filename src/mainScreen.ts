@@ -1,3 +1,4 @@
+//@ts-ignore
 const { ipcRenderer } = require('electron')
 // const firebase = require('firebase')
 // require('firebase/auth')
@@ -17,15 +18,23 @@ const { ipcRenderer } = require('electron')
 // firebase.initializeApp(firebaseConfig);
 const uid = localStorage.getItem('uid')
 let mongo: string;
-let username: string;
+let username = localStorage.getItem('username');
+let databaseReference = firebase.database().ref("Usuarios/" + uid);
 
 const settings_btn = document.getElementById('settings_btn');
-const content = document.getElementById('chatPanel');
+const chat = document.getElementById('chatPanel');
+const welcomeScreen = document.getElementById('welcomeMessage');
+const chats = document.getElementById('chat-list');
+const chatContainer = document.getElementById('chatMessages');
+document.title = 'Quorum - ' + username;
 
 function updateS() {
     ipcRenderer.send('loadingchange', 'Desencrpitando...|Importando contactos')
-
 }
+
+const mensajeInput = <HTMLInputElement>document.getElementById('mensaje-input');
+
+let loadedChat: { id: string, tipo: string };
 
 updateS()
 
@@ -33,15 +42,30 @@ firebase.auth().onAuthStateChanged(user => {
     if (!user) {
         window.location.replace('login.html')
     } else {
+        let chats_ = "";
+        let c = "'";
         ipcRenderer.send('loadingchange', 'Desencrpitando...|Importando chats')
-        firebase.database().ref('Usuarios/' + uid).once('value').then(function (snapshot) {
-            let user = snapshot.val();
-            username = user.username;
-            document.title = 'Quorum - ' + username;
-            ipcRenderer.send('loading', false);
-        })
+        firebase.database().ref('Usuarios/' + uid + '/chats').once('value')
+            .then(function (snapshot) {
+                snapshot.forEach((element) => {
+                    let data = element.val();
+                    chats_ += '<li class="contact-item" onclick="OpenChat(' + c + element.key + c + ',' + c + data.tipo + c + ')"><img src="../icons/userAvatar.png" alt="perfi"><div><p>' + data.nombre + '</p><span>Mi hijo menor es un calenturiento, ten cuidado con él.</span></div></li>'
+                });
+            }).finally(() => {
+                chats.innerHTML = chats_;
+                ipcRenderer.send('loading', false);
+            })
     }
 })
+// if(loadedChat)
+// {databaseReference.on("value")
+//         .then((snapshot)=>{
+//             snapshot.forEach((element) => {
+//                 let data = element.val();
+//                 let mensaje = new Mensaje(data.sender, data.time, data.texto);
+//                 mensaje.Show();
+//             });
+//         })}
 
 settings_btn.addEventListener('click', () => {
     ipcRenderer.send('openSettings', true);
@@ -76,11 +100,11 @@ function CreateRoom() {
                 firebase.database().ref("Salas").push({
                     nombre: name,
                     keywords: keywords,
-                    miembros: {uid},
-                    admins: {uid}
+                    miembros: { uid },
+                    admins: { uid }
                 }).then((e) => {
                     console.log(e);
-                    firebase.database().ref("Usuarios/"+uid+"/chats/"+e.key).set({
+                    firebase.database().ref("Usuarios/" + uid + "/chats/" + e.key).set({
                         nombre: name
                     })
                 })
@@ -89,12 +113,76 @@ function CreateRoom() {
     })
 }
 
-function JoinRoom(id:string, name:string){
-    firebase.database().ref("Salas/"+id+"miembros").push({
+ipcRenderer.on('joinRoom', (e, values) => {
+    firebase.database().ref("Salas/" + values.id + "/miembros").push({
         uid
-    }).then(()=>{
-        firebase.database().ref("Usuarios/"+uid+"chats/"+id).set({
-            nombre: name
+    }).then(() => {
+        firebase.database().ref("Usuarios/" + uid + "/chats/" + values.id).set({
+            nombre: values.name
         })
     })
+})
+
+class Mensaje {
+    sender: string;
+    texto: string;
+    time: string
+    class: string
+    constructor(sender_, time_, texto_) {
+        this.sender = sender_;
+        this.time = time_;
+        this.texto = texto_;
+    }
+    Show() {
+        if (this.sender == username) {
+            this.class = "sender";
+        } else {
+            this.class = "reciver";
+        }
+        let resource = '<div class="mensaje ' + this.class + '"><div class="mensaje-content ' + this.class + '-content"><p class="messageText">' + this.texto + '</p><p class="mensaje-time">' + this.time + '</p></div></div>'
+        chatContainer.innerHTML += resource;
+        Scroll();
+    }
+}
+
+function OpenChat(id: string, tipo: string) {
+    welcomeScreen.style.display = "none";
+    chat.style.display = "flex";
+    loadedChat = { id, tipo };
+    chatContainer.innerHTML = "";
+    if (tipo == "Sala") {
+        firebase.database().ref("Salas/" + id + "/mensajes").on("value",
+            (snapshot) => {
+                chatContainer.innerHTML = "";
+                snapshot.forEach((element) => {
+                    let data = element.val();
+                    let mensaje = new Mensaje(data.sender, timeStamp(data.time), data.texto);
+                    mensaje.Show();
+                });
+            })
+    }
+}
+
+
+function SendMessage() {
+    let mensaje = mensajeInput.value;
+    if (mensaje !== "") {
+        if (loadedChat.tipo == "Sala") {
+            firebase.database().ref("Salas/" + loadedChat.id + "/mensajes").push({
+                sender: username,
+                time: Date.now(),
+                texto: mensaje
+            })
+        }
+    }
+}
+
+function timeStamp(time: number): string {
+    let date = new Date(time);
+    let M = date.getMonth() + 1;
+    return date.getDay() + '/' + M + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
+}
+
+function Scroll() {
+    chatContainer.scrollTo(0, chatContainer.scrollHeight)
 }

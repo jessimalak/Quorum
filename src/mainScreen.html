@@ -33,7 +33,7 @@
                 <i class="mdi mdi-account-plus button dash-button" onclick="OpenSearch('Usuarios')"></i>
                 <i class="mdi mdi-magnify button dash-button"></i>
             </div>
-            <ul id="contact-list">
+            <ul id="chat-list">
                 
             </ul>
         </div>
@@ -46,7 +46,7 @@
             <div id="chatPanel" class="content"  style="display: none;">
                 <div class="mensaje-input">
                     <textarea name="mensaje-input" placeholder="Escribe un mensaje..." id="mensaje-input" cols="30" rows="1" class="inputText"></textarea>
-                    <i class="mdi mdi-send button send"></i>
+                    <i class="mdi mdi-send button send" onclick="SendMessage()"></i>
                     <i class="mdi mdi-image button send"></i>
                 </div>
                 <div id="chatMessages">

@@ -1,23 +1,36 @@
 const { ipcRenderer } = require('electron');
 const uid = localStorage.getItem('uid');
 let mongo;
-let username;
+let username = localStorage.getItem('username');
+let databaseReference = firebase.database().ref("Usuarios/" + uid);
 const settings_btn = document.getElementById('settings_btn');
-const content = document.getElementById('chatPanel');
+const chat = document.getElementById('chatPanel');
+const welcomeScreen = document.getElementById('welcomeMessage');
+const chats = document.getElementById('chat-list');
+const chatContainer = document.getElementById('chatMessages');
+document.title = 'Quorum - ' + username;
 function updateS() {
     ipcRenderer.send('loadingchange', 'Desencrpitando...|Importando contactos');
 }
+const mensajeInput = document.getElementById('mensaje-input');
+let loadedChat;
 updateS();
 firebase.auth().onAuthStateChanged(user => {
     if (!user) {
         window.location.replace('login.html');
     }
     else {
+        let chats_ = "";
+        let c = "'";
         ipcRenderer.send('loadingchange', 'Desencrpitando...|Importando chats');
-        firebase.database().ref('Usuarios/' + uid).once('value').then(function (snapshot) {
-            let user = snapshot.val();
-            username = user.username;
-            document.title = 'Quorum - ' + username;
+        firebase.database().ref('Usuarios/' + uid + '/chats').once('value')
+            .then(function (snapshot) {
+            snapshot.forEach((element) => {
+                let data = element.val();
+                chats_ += '<li class="contact-item" onclick="OpenChat(' + c + element.key + c + ',' + c + data.tipo + c + ')"><img src="../icons/userAvatar.png" alt="perfi"><div><p>' + data.nombre + '</p><span>Mi hijo menor es un calenturiento, ten cuidado con él.</span></div></li>';
+            });
+        }).finally(() => {
+            chats.innerHTML = chats_;
             ipcRenderer.send('loading', false);
         });
     }
@@ -63,13 +76,67 @@ function CreateRoom() {
         }
     });
 }
-function JoinRoom(id, name) {
-    firebase.database().ref("Salas/" + id + "miembros").push({
+ipcRenderer.on('joinRoom', (e, values) => {
+    firebase.database().ref("Salas/" + values.id + "/miembros").push({
         uid
     }).then(() => {
-        firebase.database().ref("Usuarios/" + uid + "chats/" + id).set({
-            nombre: name
+        firebase.database().ref("Usuarios/" + uid + "/chats/" + values.id).set({
+            nombre: values.name
         });
     });
+});
+class Mensaje {
+    constructor(sender_, time_, texto_) {
+        this.sender = sender_;
+        this.time = time_;
+        this.texto = texto_;
+    }
+    Show() {
+        if (this.sender == username) {
+            this.class = "sender";
+        }
+        else {
+            this.class = "reciver";
+        }
+        let resource = '<div class="mensaje ' + this.class + '"><div class="mensaje-content ' + this.class + '-content"><p class="messageText">' + this.texto + '</p><p class="mensaje-time">' + this.time + '</p></div></div>';
+        chatContainer.innerHTML += resource;
+        Scroll();
+    }
+}
+function OpenChat(id, tipo) {
+    welcomeScreen.style.display = "none";
+    chat.style.display = "flex";
+    loadedChat = { id, tipo };
+    chatContainer.innerHTML = "";
+    if (tipo == "Sala") {
+        firebase.database().ref("Salas/" + id + "/mensajes").on("value", (snapshot) => {
+            chatContainer.innerHTML = "";
+            snapshot.forEach((element) => {
+                let data = element.val();
+                let mensaje = new Mensaje(data.sender, timeStamp(data.time), data.texto);
+                mensaje.Show();
+            });
+        });
+    }
+}
+function SendMessage() {
+    let mensaje = mensajeInput.value;
+    if (mensaje !== "") {
+        if (loadedChat.tipo == "Sala") {
+            firebase.database().ref("Salas/" + loadedChat.id + "/mensajes").push({
+                sender: username,
+                time: Date.now(),
+                texto: mensaje
+            });
+        }
+    }
+}
+function timeStamp(time) {
+    let date = new Date(time);
+    let M = date.getMonth() + 1;
+    return date.getDay() + '/' + M + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
+}
+function Scroll() {
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
 }
 //# sourceMappingURL=mainScreen.js.map

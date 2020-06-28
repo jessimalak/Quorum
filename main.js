@@ -132,3 +132,8 @@ ipcMain.on('search',(e)=>{
   })
   window.loadFile('src/search.html');
 })
+
+ipcMain.on('joinRoom',(e, values)=>{
+  console.log(values.id)
+  win.webContents.send('joinRoom', values);
+})

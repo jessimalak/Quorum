@@ -1,4 +1,5 @@
-// const {ipcRenderer} = require('electron');
+//@ts-ignore
+const {ipcRenderer} = require('electron');
 
 const searchType = localStorage.getItem('searchType');
 
@@ -51,7 +52,8 @@ class Room{
         this.miembros = miembros_;
     }
     Show(){
-        let structure = '<div class="userCard"><img src="../icons/userAvatar.png" loading="lazy" alt="imagen de perfil"><div><p>' + this.title +'</p><i>' + this.miembros +' miembros</i></div><button class="button" onclick="JoinRoom('+this.id+','+this.title+')"><span class="mdi mdi-plus"></span></button></div>';
+        let c = "'";
+        let structure = '<div class="userCard"><img src="../icons/userAvatar.png" loading="lazy" alt="imagen de perfil"><div><p>' + this.title +'</p><i>' + this.miembros +' miembros</i></div><button class="button" onclick="Join('+c+this.id+c+','+c+this.title+c+')"><span class="mdi mdi-plus"></span></button></div>';
         resultDiv.innerHTML += structure;
     }
 }
@@ -93,4 +95,8 @@ function Search() {
 
         }
     }
+}
+function Join(id:string, name:string){
+    console.log(id, name)
+    ipcRenderer.send('joinRoom', {id: id, name:name})
 }
