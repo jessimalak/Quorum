@@ -28,6 +28,8 @@ const chats = document.getElementById('chat-list');
 const chatContainer = document.getElementById('chatMessages');
 document.title = 'Quorum - ' + username;
 
+let chatsNames:string[] = new Array();
+
 function updateS() {
     ipcRenderer.send('loadingchange', 'Desencrpitando...|Importando contactos')
 }
@@ -45,11 +47,14 @@ firebase.auth().onAuthStateChanged(user => {
         let chats_ = "";
         let c = "'";
         ipcRenderer.send('loadingchange', 'Desencrpitando...|Importando chats')
+        let id = 0;
         firebase.database().ref('Usuarios/' + uid + '/chats').once('value')
             .then(function (snapshot) {
                 snapshot.forEach((element) => {
                     let data = element.val();
-                    chats_ += '<li class="contact-item" onclick="OpenChat(' + c + element.key + c + ',' + c + data.tipo + c + ')"><img src="../icons/userAvatar.png" alt="perfi"><div><p>' + data.nombre + '</p><span>Mi hijo menor es un calenturiento, ten cuidado con él.</span></div></li>'
+                    chatsNames.push(data.nombre)
+                    chats_ += '<li class="contact-item" onclick="OpenChat(' + c + element.key + c + ',' + c + data.tipo + c + ','+id+')"><img src="../icons/userAvatar.png" alt="perfi"><div><p>' + data.nombre + '</p><span>Mi hijo menor es un calenturiento, ten cuidado con él.</span></div></li>';
+                    id++;
                 });
             }).finally(() => {
                 chats.innerHTML = chats_;
@@ -145,7 +150,7 @@ class Mensaje {
     }
 }
 
-function OpenChat(id: string, tipo: string) {
+function OpenChat(id: string, tipo: string, index:number) {
     welcomeScreen.style.display = "none";
     chat.style.display = "flex";
     loadedChat = { id, tipo };
@@ -159,8 +164,10 @@ function OpenChat(id: string, tipo: string) {
                     let mensaje = new Mensaje(data.sender, timeStamp(data.time), data.texto);
                     mensaje.Show();
                 });
-            })
+            });
+            document.getElementById('chatSub').innerText = ""
     }
+    document.getElementById('chatName').innerText = chatsNames[index];
 }
 
 

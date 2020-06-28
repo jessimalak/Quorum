@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sweetalert2_1 = require("sweetalert2");
-const ipcRenderer = require('electron').ipcRender;
+const ipcRenderer = require('electron').ipcRenderer;
 const login_screen = document.getElementById('login');
 const login_btn = document.getElementById('login_btn');
 const sendCode_btn = document.getElementById('sendCode_button');
@@ -59,7 +59,7 @@ login_btn.addEventListener('click', () => {
         firebase.auth().signInWithEmailAndPassword(mail, password).then(() => {
             localStorage.setItem("mail", mail);
             eventType = 'login';
-            Load();
+            Load(true, 'Desencripando...', 'Obteniendo información de perfil');
         }).catch((err) => {
             switch (err.code) {
                 case "auth/user-disabled":
@@ -112,7 +112,7 @@ firebase.auth().onAuthStateChanged(user => {
         let uid = user.uid;
         localStorage.setItem('uid', uid);
         if (eventType == 'login') {
-            ipcRenderer.send('loading', true);
+            Load(true, "Leyendo información", "Desencriptando perfil");
             firebase.database().ref('Usuarios/' + uid).once('value')
                 .then(function (snapshot) {
                 let user = snapshot.val();
@@ -127,7 +127,7 @@ firebase.auth().onAuthStateChanged(user => {
             });
         }
         else if (eventType == 'register') {
-            ipcRenderer.send('loading', true);
+            Load(true, "Registrando", "Encriptando perfil");
             let username = register_user.value;
             let mail = register_mail.value;
             let personalname = register_name.value;
@@ -150,7 +150,7 @@ firebase.auth().onAuthStateChanged(user => {
         }
     }
     else {
-        ipcRenderer.send('loading', false);
+        Load(false, "", "");
     }
 });
 register_user.addEventListener('focusin', () => {
@@ -223,15 +223,16 @@ register_btn.addEventListener('click', () => {
                 firebase.auth().createUserWithEmailAndPassword(mail, password).catch((err) => {
                     sweetalert2_1.default.fire({ title: err.code, text: err.message, icon: 'error' });
                 }).then(() => {
-                    ipcRenderer.send('loading', true);
-                    ipcRenderer.send('loadingchange', 'Registrando|Estamos guardando tu info en un lugar seguro');
+                    Load(true, 'Registrando', 'Estamos guardando tu info en un lugar seguro');
                 });
             }
         });
     }
 });
-function Load() {
-    ipcRenderer.send('loading', true);
-    ipcRenderer.send('loadingchange', 'Desencripando...|Obteniendo información de perfil');
+function Load(show, title, message) {
+    ipcRenderer.send('loading', show);
+    if (title !== "") {
+        ipcRenderer.send('loadingchange', title + '|' + message);
+    }
 }
 //# sourceMappingURL=login.js.map
