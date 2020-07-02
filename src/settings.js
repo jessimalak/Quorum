@@ -11,8 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const Swalert = require('sweetalert2');
-const selector = document.getElementById('theme_selector');
-selector.value = theme;
+const themeSelector = document.getElementById('theme_selector');
+themeSelector.value = theme;
+const fondoSelector = document.getElementById('fondo_selector');
+fondoSelector.value = fondo;
 let user;
 const name_ = document.getElementById('usernameP');
 const mail_ = document.getElementById('mailP');
@@ -38,7 +40,7 @@ state_btn.addEventListener('click', () => {
     UpdateState(localStorage.getItem('estado'));
 });
 save_btn.addEventListener('click', () => {
-    theme = selector.value;
+    theme = themeSelector.value;
     localStorage.setItem('theme', theme);
     electron_1.ipcRenderer.send('updateTheme', theme);
 });

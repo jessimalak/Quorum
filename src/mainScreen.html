@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" media="all" href="../css/materialdesignicons.min.css" type="text/css">
     <link rel="stylesheet" href="style_main.css">
     <link rel="shortcut icon" href="../icons/favicon.ico" type="image/x-icon">
+    <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
     <title id="title">Quorum</title>
 </head>
 <body>
@@ -21,17 +22,32 @@
     <div class="content Ui">
         <div class="contactsPanel panel">
             <div class="searchDiv">
-                <input type="search" name="search" id="searchInput" class="inputText">
-                <i class="mdi mdi-dots-vertical button dash-button" id="menu_btn">
+                <!-- <input type="search" name="search" id="searchInput" class="inputText"> -->
+                <span class="mdi mdi-dots-vertical button dash-button" id="menu_btn">
                     <ul class="menu">
                         <li class="menu-item" onclick="CreateRoom()"><i class="mdi mdi-account-group"></i><span>Crear sala</span></li>
-                        <li class="menu-item"><i class="mdi mdi-account-cog"></i><span>Mi perfil</span></li>
+                        <li class="menu-item" onclick="JoinPrivate()"><i class="mdi mdi-guy-fawkes-mask"></i><span>Entrar a sala privada</span></li>
                         <li class="menu-item" id="settings_btn"><i class="mdi mdi-cog"></i><span>Configuración</span></li>
                     </ul>
-                </i>
+                </span>
                 <i class="mdi mdi-account-multiple-plus button dash-button" onclick="OpenSearch('Salas')"></i>
                 <i class="mdi mdi-account-plus button dash-button" onclick="OpenSearch('Usuarios')"></i>
-                <i class="mdi mdi-magnify button dash-button"></i>
+                <i class="mdi mdi-magnify button dash-button" id="searchContact_btn"></i>
+                <div id="contactSelectD" class="selector">
+                    <div class="custom-select">
+                        <div class="custom-select__trigger"><span>Contactos</span>
+                            <div class="arrow"></div>
+                        </div>
+                        <div class="custom-options">
+                            
+                        </div>
+                    </div>
+                </div>
+                <select style="display: none;" name="contactos" id="contactSelect" class="inputText selector">
+                    <optgroup label="Contactos" id="contactC">
+
+                    </optgroup>
+                </select>
             </div>
             <ul id="chat-list">
                 
@@ -54,8 +70,8 @@
                     <div class="mensaje sender"><div class="mensaje-content sender-content" ><p class="messageText">'ajam, y entonces?'</p><p class="mensaje-time">15 de Junio, 6:25 pm</p></div></div>
                 </div>
                 <div id="topBar">
-                    <p><b id="chatName">Zeus</b></p>
-                    <p><small id="chatSub">En linea</small></p>
+                    <p id="chatName">Zeus</p>
+                    <p id="chatSub">En linea</p>
                 </div>
             </div>
         </div>
@@ -64,11 +80,12 @@
 </body>
 <script>
     var exports = {"__esModule": true};
+    let modal = false;
 </script>
+<script src="appBar.js"></script>
+<script src="styles.js"></script>
 <script src="code.js"></script>
 <script src="classes/crypto.js"></script>
 <script src="classes/firebase.js"></script>
-<script src="appBar.js"></script>
-<script src="styles.js"></script>
 <script src="mainScreen.js"></script>
 </html>

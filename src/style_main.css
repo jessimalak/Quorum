@@ -20,6 +20,18 @@
     font-weight: 200;
 }
 
+@font-face{
+    font-family: 'emoji';
+    src: url('../fonts/OpenMoji-Color.ttf');
+}
+
+img.emoji {
+    height: 1em;
+    width: 1em;
+    margin: 0 .05em 0 .1em;
+    vertical-align: -0.1em;
+ }
+
 :root{
     --primary: #b37feb;
     --primaryDark: #a272d6;
@@ -58,8 +70,8 @@ body{
 }
 
 .violeta-light{
-    --primary: #9254de;
-    --primaryDark: #b37feb;
+    --primary: #b37feb;
+    --primaryDark: b#9254de;
     --accent: #7159f7;
     --accentDark: #7c4ee7;
     --text: #111;
@@ -80,10 +92,10 @@ body{
 }
 
 .rojo-light{
-    --primary: #fc4c4e;
+    --primary: #ff343e;
     --primaryDark: #ff5d60;
-    --accent: #ff534d;
-    --accentDark: #e0635f;
+    --accent: #ff4d4f;
+    --accentDark: #ec4345;
     --text: #111;
     --textAccent: #333;
     --back-Color: rgb(247, 247, 247);
@@ -280,7 +292,7 @@ input{
     font-weight: 200;
 }
 .inputText::placeholder{
-    color: #333333;
+    color: var(--textAccent);
 }
 .inputText:invalid{
     color: var(--primary);
@@ -327,6 +339,10 @@ input{
     background-color: var(--accentDark);
 }
 
+.button:disabled{
+    background-color: var(--textAccent);
+}
+
 .button span{
     font-family: Raleway;
     font-weight: 500;
@@ -369,6 +385,10 @@ input{
     line-height: 23pt;
 }
 
+select{
+    font-family: Raleway;
+    font-weight: 500;
+}
 
 option, optgroup{
     background-color: var(--back-Color);
@@ -394,12 +414,12 @@ optgroup{
 }
 
 .searchDiv{
+    z-index: 1;
     font-size: 18pt;
     position: relative;
     display: flex;
     align-items: center;
     flex-direction: row-reverse;
-    /* background-color: rgba(255, 255, 255, 0.3); */
     border-radius: 1rem;
     margin: 0;
     margin-left: 0.5rem;
@@ -410,7 +430,7 @@ optgroup{
     width: 90%;
 }
 
-.searchDiv i{
+.searchDiv i, .searchDiv span{
     margin: 0;
     padding: 2px 5px;
 }
@@ -430,6 +450,7 @@ optgroup{
 }
 
 .contact-item{
+    position: relative;
     cursor: default;
     padding: 10px 0 10px 10px;
     display: flex;
@@ -468,10 +489,145 @@ optgroup{
     font-weight: 300;
 }
 
+.notify{
+    color: #cb2b83;
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 1.2rem;
+    margin: 1rem;
+}
+
 #searchInput{
     display: none;
     margin: 0 15px;
 }
+
+.setting-selector{
+    font-weight: 400;
+}
+
+.selector{
+    position: relative;
+     user-select: none;
+    font-weight: 500;
+    margin: 5px;
+    transform: scale(0);
+    transition: ease 200ms;
+}
+
+.visible{
+    transform: scale(1);
+}
+
+
+.custom-select-wrapper {
+    position: relative;
+    user-select: none;
+    width: 100%;
+}
+.custom-select {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: none;
+
+}
+.custom-select__trigger {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px;
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--text);
+    height: max-content;
+    line-height: 1.5rem;
+    background: transparent;
+    cursor: pointer;
+    border-bottom: 1px solid var(--text);
+}
+.custom-options {
+    position: absolute;
+    display: block;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--back-Color);
+    transition: all 0.5s;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 2;
+    width: 10rem;
+}
+.custom-select.open .custom-options {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+}
+.custom-option {
+    position: relative;
+    display: block;
+    padding: 5px;
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--text);
+    
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+.custom-option p{
+    margin: 0;
+    font-weight: 400;
+}
+
+.custom-option span{
+    font-size: 10pt;
+    line-height: 10pt;
+}
+
+.custom-option:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+
+.arrow {
+    position: relative;
+    height: 15px;
+    width: 15px;
+    margin: 10px;
+}
+.arrow::before, .arrow::after {
+    content: "";
+    position: absolute;
+    bottom: 0px;
+    width: 1px;
+    height: 100%;
+    transition: all 0.5s;
+}
+.arrow::before {
+    left: -5px;
+    transform: rotate(-45deg);
+    background-color: var(--text);
+}
+.arrow::after {
+    left: 5px;
+    transform: rotate(45deg);
+    background-color: var(--text);
+}
+.open .arrow::before {
+    left: -5px;
+    transform: rotate(45deg);
+}
+.open .arrow::after {
+    left: 5px;
+    transform: rotate(-45deg);
+}
+
 
 #menu_btn{
     position: relative;
@@ -482,12 +638,13 @@ optgroup{
 }
 
 .menu{
+    z-index: -1;
     position: absolute;
     bottom: -7.5rem;
     right: 0;
     display: none;
     padding: 2px;
-    width: fit-content;
+    width: max-content;
     font-size: 12pt;
     background-color: var(--back-Color);
     list-style: none;
@@ -525,9 +682,10 @@ optgroup{
 }
 
 #chatMessages{
-    background-color: var(--back-Color);
+    background: var(--back-Color);
     overflow-y: scroll;
     height: 100%;
+    padding: 1rem 5px;
     margin-top: 3.5rem;
     /* padding-bottom: 2rem; */
 }
@@ -547,25 +705,67 @@ optgroup{
 
 .mensaje-content{
     max-width: 80%;
-    margin: 1rem;
-    padding: 10px;
+    margin: 1rem 1.2rem 0 1.2rem;
+    padding: 10px 1rem;
     border-radius: 1rem;
     box-shadow: 2px 2px 10px 0 rgba(17, 17, 17, 0.473);
+    
 }
+
+.messageText{
+    font-family: Raleway;
+    white-space: pre-wrap;
+}
+
 .reciver-content{
+    margin-top: 1.5rem;
     background-color: var(--accent);
 }
 
 .reciver{
+    position: relative;
     justify-content: flex-start;
+}
+
+.reciver-content::before{
+    content: ' ';
+	position: absolute;
+	width: 0;
+	height: 0;
+    left: 0;
+	right: auto;
+    top: auto;
+	bottom: 0;
+	border: 22px solid;
+	border-color: transparent transparent var(--accent) transparent;
 }
 
 .sender-content{
     background-color: var(--primary);
 }
 
+.sender-content::after{
+    content: ' ';
+	position: absolute;
+	width: 0;
+	height: 0;
+    left: auto;
+	right: 0;
+    top: auto;
+	bottom: 0;
+	border: 22px solid;
+	border-color: transparent transparent var(--primary) transparent;
+}
+
 .sender{
+    position: relative;
     justify-content: flex-end;
+}
+
+.senderLabel{
+    position: absolute;
+    left: 1rem;
+    top: 5px
 }
 
 .mensaje p{
@@ -579,11 +779,12 @@ optgroup{
     align-items: center;
     width: -webkit-fill-available;
     background-color: transparent;
-    /* position: absolute; */
     bottom: 0; 
 }
 
 .mensaje-input textarea{
+    font-weight: 400;
+    resize: vertical;
     font-size: 14pt;
     font-family: Raleway;
     outline: none;
@@ -617,7 +818,13 @@ optgroup{
     box-shadow: 8px 2px 10px 0 rgba(17, 17, 17, 0.473);
 }
 #topBar p{
+    text-align: center;
     margin: 5px 10px;
+}
+
+#chatSub{
+    font-weight: 300;
+    font-size: 1rem;
 }
 
 .item-label{
@@ -704,8 +911,72 @@ optgroup{
     width: 6rem;
     transition: ease 5s;
     animation: indeterminate 2s linear infinite; 
-    /* transition: ease 5s; */
 }
+
+.chip{
+    display: inline-block;
+    padding: 2px 5px;
+    font-size: 12pt;
+    border-radius: 1em;
+    background-color: var(--primaryDark);
+}
+
+.check-container {
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  .check-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  
+  .checkmark {
+    border: 1.3px solid var(--text);
+    border-radius: 5px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: transparent;
+  }
+  
+  .check-container:hover input ~ .checkmark {
+    background-color: #ccc;
+  }
+  
+  .check-container input:checked ~ .checkmark {
+    background-color: var(--accent);
+  }
+  
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  .check-container input:checked ~ .checkmark:after {
+    display: block;
+  }
+  
+  .check-container .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+  }
 
 
 /* width */

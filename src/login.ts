@@ -4,9 +4,6 @@ const ipcRenderer = require('electron').ipcRenderer;
 
 const login_screen = document.getElementById('login');
 const login_btn = document.getElementById('login_btn');
-const sendCode_btn = document.getElementById('sendCode_button');
-const country_select = <HTMLInputElement>document.getElementById('code_select');
-const phone_input = <HTMLInputElement>document.getElementById('phone_input');
 const login_mail = <HTMLInputElement>document.getElementById('mail_input');
 const login_pass = <HTMLInputElement>document.getElementById('password_input');
 const toRegister = document.getElementById('noCount');
@@ -17,10 +14,9 @@ const register_name = <HTMLInputElement>document.getElementById('R_name');
 const register_mail = <HTMLInputElement>document.getElementById('R_mail');
 const register_pass1 = <HTMLInputElement>document.getElementById('R_password1');
 const register_pass2 = <HTMLInputElement>document.getElementById('R_password2');
-const main_screen = document.getElementById('main');
 const sendReset_btn = document.getElementById('sendResetButton');
 const toLogin = document.getElementById('withCount');
-
+let view:string = "login";
 
 let loaded: boolean;
 const mainScreen: string = 'mainScreen.html';
@@ -28,16 +24,27 @@ const mainScreen: string = 'mainScreen.html';
 toRegister.addEventListener('click', () => {
     login_screen.style.display = "none";
     register_screen.style.display = "flex";
+    view = "registro";
 })
 
 toLogin.addEventListener('click', () => {
     login_screen.style.display = "flex";
     register_screen.style.display = "none";
+    view = "login";
 })
+
 
 let eventType: string;
 
-
+document.addEventListener('keyup',(k)=>{
+    if(k.keyCode == 13){
+        if(view == "login"){
+            login_mail.click();
+        }else{
+            register_btn.click();
+        }
+    }
+})
 
 function isValidMail(mail) {
     const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -76,11 +83,6 @@ login_btn.addEventListener('click', () => {
 
         })
     }
-    // let cypher = CryptoJS.AES.encrypt(mail, 'ayuwokiEny').toString();
-    // let rest = CryptoJS.AES.decrypt(cypher, 'ayuwokiEny');
-    // let wii = rest.toString(CryptoJS.enc.Utf8);
-    // console.log(cypher)
-    // console.log(wii);
 })
 
 sendReset_btn.addEventListener('click', async () => {
@@ -116,6 +118,8 @@ sendReset_btn.addEventListener('click', async () => {
 
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
+        localStorage.setItem('theme', 'menta-light');
+        localStorage.setItem('fondo', 'theme');
         let uid = user.uid;
         localStorage.setItem('uid', uid)
         if (eventType == 'login') {
@@ -190,24 +194,31 @@ register_btn.addEventListener('click', () => {
     eventType = 'register';
     if (username == "" || username.length <= 4) {
         register_user.select();
+        register_user.focus();
         Toast.fire({ icon: 'error', title: 'Escoge un nombre usuario' });
     } else if (!isValidUsername) {
         register_user.select();
+        register_user.focus();
         Toast.fire({ icon: 'error', title: 'Alguien ya tiene ese nombre' });
     } else if (name == "" || name.length <= 3) {
-        register_user.select();
+        register_name.select();
+        register_name.focus();
         Toast.fire({ icon: 'error', title: 'Tu nombre para que tus amigos sepan que eres tu.' });
     } else if (mail == "" || !isValidMail(mail)) {
         register_mail.select();
+        register_mail.focus();
         Toast.fire({ icon: 'error', title: "Escribe un correo que sirva" });
     } else if (password == "") {
         register_pass1.select();
+        register_pass1.focus();
         Toast.fire({ icon: 'error', title: "Debes poner una contraseña" });
     } else if (password.length < 6) {
         register_pass1.select();
+        register_pass1.focus();
         Toast.fire({ icon: 'error', title: "Elige una mejor contraseña" });
     } else if (password !== password2) {
         register_pass2.select();
+        register_pass2.focus();
         Toast.fire({ icon: 'error', title: "Parece que escribiste algo distinto" });
     } else {
         Swal.fire({
@@ -232,10 +243,6 @@ register_btn.addEventListener('click', () => {
     }
 })
 
-
-// function Cerrar(){
-//     firebase.auth().signOut();
-// }
 
 function Load(show:boolean,title:string, message:string){
     ipcRenderer.send('loading', show);

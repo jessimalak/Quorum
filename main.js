@@ -137,3 +137,7 @@ ipcMain.on('joinRoom',(e, values)=>{
   console.log(values.id)
   win.webContents.send('joinRoom', values);
 })
+
+ipcMain.on('addContact', (e, values)=>{
+  win.webContents.send('addContact', values);
+})

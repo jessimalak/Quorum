@@ -49,8 +49,8 @@
         <div id="register" class="screen" style="display: none;">
             <div class="container">
                 <h1 class="mdi mdi-account-plus"></h1>
-                <input type="text" name="username" id="R_user" class="inputText" placeholder="Nombre de usuario" pattern=".{4,}" required>
-                <input type="text" name="personalname" id="R_name" class="inputText" placeholder="Tu nombre" pattern=".{3,}" required>
+                <input type="text" name="username" id="R_user" class="inputText" placeholder="Nombre de usuario" maxlength="24" pattern=".{4,}" required>
+                <input type="text" name="personalname" id="R_name" class="inputText" placeholder="Tu nombre" maxlength="40" pattern=".{3,}" required>
                 <input type="email" name="R_mail" id="R_mail" class="inputText" placeholder="Correo electrónico" required>
                 <input type="password" name="R_password1" id="R_password1" class="inputText" placeholder="Contraseña" pattern=".{6,}" required>
                 <input type="password" name="R_password2" id="R_password2" class="inputText" placeholder="Repetir contraseña" pattern=".{6,}" required>
@@ -70,6 +70,7 @@
     </div>
     <script>
         var exports = {"__esModule": true};
+        let modal = false;
         </script>
     <script src="code.js"></script>
     <script src="classes/crypto.js"></script>

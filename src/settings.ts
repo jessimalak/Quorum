@@ -1,8 +1,10 @@
 import { ipcRenderer } from 'electron';
 const Swalert = require('sweetalert2');
 
-const selector = <HTMLInputElement> document.getElementById('theme_selector');
-selector.value = theme;
+const themeSelector = <HTMLInputElement> document.getElementById('theme_selector');
+themeSelector.value = theme;
+const fondoSelector = <HTMLInputElement> document.getElementById('fondo_selector');
+fondoSelector.value = fondo;
 let user;
 
 const name_ = document.getElementById('usernameP');
@@ -36,7 +38,7 @@ state_btn.addEventListener('click', ()=>{
 })
 
 save_btn.addEventListener('click', ()=>{
-    theme = selector.value;
+    theme = themeSelector.value;
     localStorage.setItem('theme', theme);
     ipcRenderer.send('updateTheme', theme)
 })

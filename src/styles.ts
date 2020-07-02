@@ -8,7 +8,15 @@ if(theme !== null || theme !== undefined){
     theme = 'mental-light';
 }
 
+let fondo = localStorage.getItem("fondo");
 
+let chat_screen = document.getElementById('chatMessages')
+
+if(fondo == "theme"){
+    chat_screen.style.background = "var(--back-Color)"
+}else{
+    chat_screen.style.background = fondo
+}
 
 function UpdateTheme(color:string){
     let actual:string = _body.classList.item(0);

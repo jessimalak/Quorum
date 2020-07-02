@@ -17,11 +17,13 @@ const title: string = ( < HTMLInputElement > document.getElementById('title')).i
 
 document.getElementById('title_bar').innerHTML = title;
 
-document.getElementById('min').addEventListener('click', function () {
+let min = document.getElementById('min');
+min.addEventListener('click', function () {
     win.minimize();
 })
 
-document.getElementById('max').addEventListener('click', function () {
+let max = document.getElementById('max');
+max.addEventListener('click', function () {
     if (!win.isMaximized()) {
         win.maximize();
     } else {
@@ -32,5 +34,8 @@ document.getElementById('max').addEventListener('click', function () {
 document.getElementById('close').addEventListener('click', function () {
     win.close();
 })
-
-//END STATUS-BAR
+//@ts-ignore
+if(modal){
+    min.style.display = "none";
+    max.style.display = "none"
+}
