@@ -1,21 +1,5 @@
 //@ts-ignore
 const { ipcRenderer } = require('electron')
-// const firebase = require('firebase')
-// require('firebase/auth')
-// require('firebase/database')
-
-// var firebaseConfig = {
-//     apiKey: "AIzaSyDGLP6V1uQx9Mxc6FXp6oO6HKD7qZbnbeE",
-//     authDomain: "quorumchat.firebaseapp.com",
-//     databaseURL: "https://quorumchat.firebaseio.com",
-//     projectId: "quorumchat",
-//     storageBucket: "quorumchat.appspot.com",
-//     messagingSenderId: "339371371649",
-//     appId: "1:339371371649:web:1e68336580ea7117003180",
-//     measurementId: "G-VL1T8FXBQM"
-// };
-
-// firebase.initializeApp(firebaseConfig);
 const uid = localStorage.getItem('uid')
 let mongo: string;
 let username = localStorage.getItem('username');
@@ -29,11 +13,11 @@ const chatContainer = document.getElementById('chatMessages');
 document.title = 'Quorum - ' + username;
 
 ipcRenderer.send('loadingchange', 'Desencrpitando...|Importando chats')
-let chatsNames: string[] = new Array();
+let chatsData: { name: string, time: number }[] = new Array();
 
 const mensajeInput = <HTMLInputElement>document.getElementById('mensaje-input');
 
-let loadedChat: { id: string, tipo: string, nombre: string };
+let loadedChat: { id: string, tipo: string, nombre: string, tiempo: number };
 
 const contactSelector = <HTMLInputElement>document.getElementById('contactSelect');
 const contactC = <HTMLOptGroupElement>document.getElementById('contactC')
@@ -45,14 +29,19 @@ let c = "'";
 let ContRooms: string[] = new Array();
 let chating: string[] = new Array();
 
+
+let roomData: { admin: boolean, isPrivate: boolean }
+// let admin:boolean;
+// let isPrivate:boolean
+
 firebase.database().ref('Usuarios/' + uid + '/chats').on('value',
     (snapshot) => {
         let id = 0;
         let chats_ = "";
-
+        chats.innerHTML = ""
         snapshot.forEach((element) => {
             let data = element.val();
-            chatsNames.push(data.nombre)
+            chatsData.push({ name: data.nombre, time: data.tiempo })
             let Rname = "";
             if (data.tipo == "Contacto") {
                 Rname = decrypt(data.name, code, "A");
@@ -60,14 +49,15 @@ firebase.database().ref('Usuarios/' + uid + '/chats').on('value',
             let notify = ""
             if (data.leido !== undefined) {
                 if (!data.leido) {
-                    notify = '<span id="'+element.key+'_notify" class="mdi mdi-bell-circle notify"></span>'
+                    notify = '<span id="' + element.key + '_notify" class="mdi mdi-bell-circle notify"></span>'
                 }
             }
-            chats_ += '<li class="contact-item" id="chat_' + id + '" onclick="OpenChat(' + c + element.key + c + ',' + c + data.tipo + c + ',' + c + id + c + ', ' + c + Rname + c + ')"><img src="../icons/userAvatar.png" alt="perfi"><div><p>' + data.nombre + '</p><span>' + Rname + '</span>'+notify+'</div></li>';
+            chats_ += '<li class="contact-item" id="chat_' + id + '" onclick="OpenChat(' + c + element.key + c + ',' + c + data.tipo + c + ',' + c + id + c + ', ' + c + Rname + c + ', ' + data.tiempo + ')"><img src="../icons/userAvatar.png" alt="perfi"><div><p>' + data.nombre + '</p><span>' + Rname + '</span>' + notify + '</div></li>';
             id++;
             ContRooms.push(element.key);
             chating.push(element.key);
-        }); chats.innerHTML = chats_;
+        });
+        chats.innerHTML = chats_;
     })
 firebase.auth().onAuthStateChanged(user => {
     if (!user) {
@@ -99,7 +89,8 @@ ipcRenderer.on('signOut', (e) => {
 })
 
 ipcRenderer.on('updateTheme', (e, val) => {
-    UpdateTheme(val);
+    UpdateTheme(val.theme);
+    UpdateBackground(val.fondo)
 })
 
 function OpenSearch(type: string) {
@@ -112,10 +103,13 @@ function CreateRoom() {
         title: "Crear nueva Sala",
         html: '<input class="inputText searchHeader" type="text" placeholder="Nombre" maxlength="24" name="roomName" id="roomNameInput">' +
             '<input class="inputText searchHeader" type="text" placeholder="Etiquetas (separadas por comas ( , ))" name="roomkeys" id="roomKeywordsInput">' +
-            '<label class="check-container">Sala privada<input type="checkbox" id="privateCheck"><span class="checkmark"></span></label>',
+            '<label><input type="checkbox" class="filled-in pink" id="privateCheck"><span style="font-size: 1.5rem;">Sala privada</span></label>',
         showCloseButton: true,
         background: 'var(--back-Color)',
-        confirmButtonColor: 'var(--primary)',
+        buttonsStyling: false,
+        customClass:{
+            confirmButton: 'button confirm'
+        },
         confirmButtonText: '<i class="mdi mdi-chat-plus"></i> Crear'
     }).then((result) => {
         if (result.value) {
@@ -127,15 +121,24 @@ function CreateRoom() {
                 firebase.database().ref("Salas").push({
                     nombre: name,
                     keywords: keywords,
-                    miembros: { uid },
-                    admins: { uid },
-                    private: isPrivate
+                    private: isPrivate,
+                    tiempo: Date.now()
                 }).then((e) => {
                     id = e.key;
                     firebase.database().ref("Usuarios/" + uid + "/chats/" + e.key).set({
-                        nombre: name
+                        nombre: name,
+                        tipo: "Sala",
+                        tiempo: Date.now()
                     }).then(() => {
-                        showChat(name, id, "Sala", "")
+                        firebase.database().ref("Salas/" + e.key + "/admins").push({
+                            uid,
+                            username
+                        })
+                        firebase.database().ref("Salas/" + e.key + "/miembros").push({
+                            uid,
+                            username
+                        })
+                        showChat(name, id, "Sala", "", Date.now())
                     })
                 })
             } else {
@@ -143,26 +146,28 @@ function CreateRoom() {
             }
         }
     })
+    // (<HTMLElement> document.getElementsByClassName('buttonsStyling')[0]).style.color = "var(--text)"
 }
 
 ipcRenderer.on('joinRoom', (e, values) => {
     firebase.database().ref("Salas/" + values.id + "/miembros").push({
-        uid
+        uid,
+        username
     }).then(() => {
         firebase.database().ref("Usuarios/" + uid + "/chats/" + values.id).set({
             nombre: values.name,
             tipo: "Sala"
         })
     })
-    showChat(values.name, values.id, "Sala", "");
+    showChat(values.name, values.id, "Sala", "", Date.now());
     ContRooms.push(values.id)
     localStorage.setItem('ContRoomS', ContRooms.toString())
 })
 
-function showChat(name, id, tipo, Rname) {
+function showChat(name, id, tipo, Rname, tiempo) {
     let c = "'";
-    chatsNames.push(name);
-    let index = chatsNames.length - 1;
+    chatsData.push({ name: name, time: tiempo });
+    let index = chatsData.length - 1;
     chats.innerHTML += '<li class="contact-item" id="chat_' + index + '" onclick="OpenChat(' + c + id + c + ',' + c + tipo + c + ',' + c + index + c + ',' + c + Rname + c + ')"><img src="../icons/userAvatar.png" alt="perfi"><div><p>' + name + '</p><span>' + Rname + '</span></div></li>';
 }
 
@@ -195,15 +200,29 @@ class Mensaje {
 
 let firstTime: boolean;
 
-function OpenChat(id: string, tipo: string, index: number, nombre: string) {
+function OpenChat(id: string, tipo: string, index: number, nombre: string, tiempo: number) {
     welcomeScreen.style.display = "none";
     chat.style.display = "flex";
-    loadedChat = { id, tipo, nombre };
+    loadedChat = { id, tipo, nombre, tiempo };
     chatContainer.innerHTML = "";
     mensajeInput.focus();
     let titleP = document.getElementById('chatName');
     let subTitleP = document.getElementById('chatSub');
     if (tipo == "Sala") {
+        firebase.database().ref("Salas/" + id).once('value').then((snapshot) => {
+            let data = snapshot.val()
+            let admins = Object.entries(data.admins);
+            let isPrivate = data.private
+            let isAdmin = false;
+            admins.forEach(([key, value]) => {
+                //@ts-ignore
+                if (value.uid == uid) {
+                    isAdmin = true;
+                    return false
+                }
+            });
+            roomData = { isPrivate: isPrivate, admin: isAdmin }
+        })
         firebase.database().ref("Salas/" + id + "/mensajes").on("value",
             (snapshot) => {
                 chatContainer.innerHTML = "";
@@ -217,6 +236,7 @@ function OpenChat(id: string, tipo: string, index: number, nombre: string) {
             });
         titleP.style.fontSize = "2rem"
         titleP.style.fontWeight = "300"
+        titleP.style.lineHeight = '2rem'
     } else if (tipo == "Contacto") {
         firebase.database().ref("Usuarios/" + uid + "/chats/" + id + "/mensajes").on("value",
             (snapshot) => {
@@ -247,8 +267,9 @@ function OpenChat(id: string, tipo: string, index: number, nombre: string) {
             })
         titleP.style.fontSize = "1rem"
         titleP.style.fontWeight = "500"
+        titleP.style.lineHeight = '1rem'
     }
-    titleP.innerText = chatsNames[index];
+    titleP.innerText = chatsData[index].name;
     subTitleP.innerText = nombre;
 
 }
@@ -278,7 +299,8 @@ function SendMessage() {
                     firebase.database().ref("Usuarios/" + loadedChat.id + "/chats/" + uid).set({
                         nombre: username,
                         name: encrypt(localStorage.getItem('nombre'), code, "A"),
-                        tipo: "Contacto"
+                        tipo: "Contacto",
+                        tiempo: Date.now()
                     })
                     firstTime = false;
                 }
@@ -328,7 +350,7 @@ ipcRenderer.on('addContact', (e, values) => {
         nombre: encrypt(values.name, code, "A"),
         username: values.user
     }).then(() => {
-        contactSelector.innerHTML += '<option value="' + values.id + '">' + values.user + ' / ' + values.name + '</option>'
+        options.innerHTML += '<div class="custom-option" onclick="showContact(' + c + values.user + c + ', ' + c + values.id + c + ', ' + c + values.name + c + ')"><p>' + values.user + ' </p><span> ' + values.name + '</span></div>'
     })
     ContRooms.push(values.id);
     localStorage.setItem('ContRoomS', ContRooms.toString())
@@ -350,8 +372,11 @@ async function JoinPrivate() {
         imageHeight: 167,
         imageAlt: 'Guy Fawkes',
         showCloseButton: true,
-        confirmButtonColor: 'var(--primary)',
-        confirmButtonText: 'Entrar <i class="mdi mdi-lock-open-variant"></i>'
+        confirmButtonText: 'Entrar <i class="mdi mdi-lock-open-variant"></i>',
+        buttonsStyling: false,
+        customClass:{
+            confirmButton: 'button confirm'
+        }
     })
     if (id) {
         let canJoin: boolean;
@@ -363,7 +388,8 @@ async function JoinPrivate() {
                 if (element.key == id && data.private) {
                     canJoin = true;
                     firebase.database().ref("Salas/" + id + "/miembros").push({
-                        uid
+                        uid,
+                        username
                     }).then(() => {
                         firebase.database().ref("Usuarios/" + uid + "/chats/" + id).set({
                             nombre: nombre,
@@ -376,8 +402,8 @@ async function JoinPrivate() {
             if (!canJoin) {
                 Toast.fire({ title: "Ninguna sala privada usa ese código", icon: 'warning' })
             } else {
-                showChat(nombre, id, "Sala", "");
-                let index = chatsNames.length - 1;
+                showChat(nombre, id, "Sala", "", Date.now());
+                let index = chatsData.length - 1;
                 document.getElementById('chat_' + index).click();
             }
         })
@@ -444,15 +470,114 @@ function showContact(name, id, Rname) {
     let values = contactSelector.value.split("|");
     if (!chating.includes(id)) {
         chating.push(id)
-        showChat(name, id, "Contacto", Rname)
-        let index = chatsNames.length - 1;
+        showChat(name, id, "Contacto", Rname, Date.now())
+        let index = chatsData.length - 1;
         document.getElementById('chat_' + index).click();
         firebase.database().ref("Usuarios/" + uid + "/chats/" + id).set({
             nombre: name,
             name: encrypt(Rname, code, "A"),
-            tipo: "Contacto"
+            tipo: "Contacto",
+            tiempo: Date.now()
         })
     } else {
-        document.getElementById('chat_' + chatsNames.indexOf(name)).click();
+        document.getElementById('chat_' + chatsData.indexOf(name)).click();
     }
 }
+
+function ShowInfo(id: string, tipo: string) {
+    if (id == "0") {
+        id = loadedChat.id;
+        tipo = loadedChat.tipo
+    }
+    const usuario = document.getElementById('modal-contacto')
+    const sala = document.getElementById('modal-sala')
+    const title = document.getElementById('modal-title');
+    if (tipo == "Sala") {
+        usuario.style.display = 'none'
+        sala.style.display = 'block'
+        const etiquetas = document.getElementById('modal-etiquetas')
+        const miembros = document.getElementById('modal-members')
+        const input = <HTMLInputElement>document.getElementById('private_key');
+        const keyContainer = document.getElementById('key-container')
+        const leave_btn = document.getElementById('modal-leave')
+        const delete_btn = document.getElementById('modal-delete')
+        firebase.database().ref("Salas/" + id).once('value').then((snap) => {
+            let data = snap.val();
+            title.innerText = data.nombre;
+            miembros.innerText = Object.keys(data.miembros).length + ' miembros'
+            let etiquetas_ = data.keywords
+            let chips = "";
+            etiquetas_.split(',').forEach((element) => {
+                chips += '<p class="chip">' + element + '</p>'
+            });
+            etiquetas.innerHTML = chips;
+            leave_btn.style.display = 'inline-block'
+            if (roomData.admin) {
+                delete_btn.style.display = 'inline-block'
+                if (roomData.isPrivate) {
+                    keyContainer.style.display = 'block'
+                    input.value = id
+                } else {
+                    keyContainer.style.display = 'none'
+                }
+                if (Object.keys(data.admins).length == 1) {
+                    leave_btn.style.display = 'none';
+                }
+            } else {
+                delete_btn.style.display = 'none'
+                keyContainer.style.display = 'none'
+                input.value = ""
+            }
+            let tiempo = new Date(data.tiempo)
+            document.getElementById('modal-date').innerText = 'Creación: ' + tiempo.getDate() + '/' + (tiempo.getMonth() + 1) + '/' + tiempo.getFullYear();
+        })
+    } else {
+        sala.style.display = 'none'
+        usuario.style.display = 'block'
+        firebase.database().ref("Usuarios/" + id).once('value').then((snap) => {
+            let data = snap.val()
+            title.innerText = data.username
+            if (data.verified) {
+                title.innerHTML += '<span class="mdi mdi-check verifyIcon" style="color: var(--accent)"><span>'
+            } else {
+                title.innerHTML += '<span class="mdi mdi-close verifyIcon" style="color: var(--primary)"><i class="tooltip">Usuario no verificado</i><span>'
+            }
+            document.getElementById('modal-name').innerText = decrypt(data.nombre, code, "B");
+            document.getElementById('modal-estado').innerText = data.estado;
+
+        })
+    }
+    document.getElementById('modal-time').innerText = CalcTime(loadedChat.tiempo)
+    Modal(true)
+}
+
+function CopyKey() {
+    let input = <HTMLInputElement>document.getElementById('private_key');
+    input.select();
+    document.execCommand('copy')
+    Toast.fire({ title: "clave copiada", icon: 'success' })
+}
+
+function Modal(show: boolean) {
+    document.getElementById('modal-content').classList.toggle('visible')
+    if (show) {
+        document.getElementById('modal').style.display = 'flex';
+        document.getElementById('modal-content').style.display = 'block';
+    } else {
+        setTimeout(() => {
+            document.getElementById('modal').style.display = 'none'
+            document.getElementById('modal-content').style.display = 'none';
+        }, 200);
+    }
+}
+
+function CalcTime(fecha): string {
+    let oldDate = new Date(fecha);
+    let now = new Date(Date.now())
+    let diference = Math.floor((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) - Date.UTC(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate())) / (1000 * 60 * 60 * 24));
+    return diference + " días conversando"
+}
+
+document.getElementById('modal-leave').addEventListener('click', () => {
+
+})

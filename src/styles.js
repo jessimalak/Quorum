@@ -8,15 +8,25 @@ else {
 }
 let fondo = localStorage.getItem("fondo");
 let chat_screen = document.getElementById('chatMessages');
-if (fondo == "theme") {
-    chat_screen.style.background = "var(--back-Color)";
-}
-else {
-    chat_screen.style.background = fondo;
+if (chat_screen !== null) {
+    if (fondo == "theme") {
+        chat_screen.style.background = "var(--back-Color)";
+    }
+    else {
+        chat_screen.style.background = fondo;
+    }
 }
 function UpdateTheme(color) {
     let actual = _body.classList.item(0);
     _body.classList.remove(actual);
     _body.classList.add(color);
+}
+function UpdateBackground(fondo) {
+    if (fondo == "theme") {
+        chat_screen.style.background = "var(--back-Color)";
+    }
+    else {
+        chat_screen.style.background = fondo;
+    }
 }
 //# sourceMappingURL=styles.js.map

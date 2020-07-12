@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" media="all" href="../css/materialdesignicons.min.css" type="text/css">
     <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="../css/materialize.css">
     <link rel="shortcut icon" href="../icons/favicon.ico" type="image/x-icon">
     <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
     <title id="title">Quorum</title>
 </head>
+
 <body>
     <nav id="statusBar">
         <div id="title_bar">Quorum
@@ -25,9 +27,12 @@
                 <!-- <input type="search" name="search" id="searchInput" class="inputText"> -->
                 <span class="mdi mdi-dots-vertical button dash-button" id="menu_btn">
                     <ul class="menu">
-                        <li class="menu-item" onclick="CreateRoom()"><i class="mdi mdi-account-group"></i><span>Crear sala</span></li>
-                        <li class="menu-item" onclick="JoinPrivate()"><i class="mdi mdi-guy-fawkes-mask"></i><span>Entrar a sala privada</span></li>
-                        <li class="menu-item" id="settings_btn"><i class="mdi mdi-cog"></i><span>Configuración</span></li>
+                        <li class="menu-item" onclick="CreateRoom()"><i class="mdi mdi-account-group"></i><span>Crear
+                                sala</span></li>
+                        <li class="menu-item" onclick="JoinPrivate()"><i
+                                class="mdi mdi-guy-fawkes-mask"></i><span>Entrar a sala privada</span></li>
+                        <li class="menu-item" id="settings_btn"><i class="mdi mdi-cog"></i><span>Configuración</span>
+                        </li>
                     </ul>
                 </span>
                 <i class="mdi mdi-account-multiple-plus button dash-button" onclick="OpenSearch('Salas')"></i>
@@ -39,7 +44,7 @@
                             <div class="arrow"></div>
                         </div>
                         <div class="custom-options">
-                            
+
                         </div>
                     </div>
                 </div>
@@ -50,42 +55,78 @@
                 </select>
             </div>
             <ul id="chat-list">
-                
+
             </ul>
         </div>
         <div id="rightPanel" class="content">
             <div id="welcomeMessage" class="content">
                 <img src="../icons/logoC1.png" alt="Quorum Logo">
-                <p>Chatea de forma segura con tus amigos, familiares, conocidos y con quien quieras de forma completamante segura.</p>
-                <p>Tus mensajes e información están completamente cifrados y alejados de gente friki con ganas de chisme y del gobierno de turno.</p>
+                <p>Chatea de forma segura con tus amigos, familiares, conocidos y con quien quieras de forma
+                    completamante segura.</p>
+                <p>Tus mensajes e información están completamente cifrados y alejados de gente friki con ganas de chisme
+                    y del gobierno de turno.</p>
             </div>
-            <div id="chatPanel" class="content"  style="display: none;">
+            <div id="chatPanel" class="content" style="display: none;">
                 <div class="mensaje-input">
-                    <textarea name="mensaje-input" placeholder="Escribe un mensaje..." id="mensaje-input" cols="30" rows="1" class="inputText"></textarea>
+                    <textarea name="mensaje-input" placeholder="Escribe un mensaje..." class="materialize-textarea" id="mensaje-input" cols="30"
+                        rows="1" class="inputText"></textarea>
                     <i class="mdi mdi-send button send" onclick="SendMessage()"></i>
                     <i class="mdi mdi-image button send"></i>
                 </div>
                 <div id="chatMessages">
-                    <div class="mensaje reciver"><div class="mensaje-content reciver-content" ><p class="messageText">Hola nena soy Zeus y vamos a hablar de mi.</p><p class="mensaje-time">15 de Junio 10:30 am</p></div></div>
-                    <div class="mensaje sender"><div class="mensaje-content sender-content" ><p class="messageText">'ajam, y entonces?'</p><p class="mensaje-time">15 de Junio, 6:25 pm</p></div></div>
+                    <div class="mensaje reciver">
+                        <div class="mensaje-content reciver-content">
+                            <p class="messageText">Hola nena soy Zeus y vamos a hablar de mi.</p>
+                            <p class="mensaje-time">15 de Junio 10:30 am</p>
+                        </div>
+                    </div>
+                    <div class="mensaje sender">
+                        <div class="mensaje-content sender-content">
+                            <p class="messageText">'ajam, y entonces?'</p>
+                            <p class="mensaje-time">15 de Junio, 6:25 pm</p>
+                        </div>
+                    </div>
                 </div>
                 <div id="topBar">
-                    <p id="chatName">Zeus</p>
-                    <p id="chatSub">En linea</p>
+                    <p id="chatName" onclick="ShowInfo('0')">Zeus</p>
+                    <p id="chatSub">Júpiter</p>
                 </div>
             </div>
         </div>
-        
+        <div class="modal-back" id="modal">
+            <div class="modal-window" id="modal-content">
+                <span id="modal-time"></span>
+                <i style="padding: 1rem; top: 0;" onclick="Modal(false)" class="mdi mdi-close"></i>
+                <h1 id="modal-title"></h1>
+                <div id="modal-sala">
+                    <p style="font-size: 14pt;" id="modal-date"></p>
+                    <div id="modal-etiquetas"></div>
+                    <p id="modal-members"></p>
+                    <div id="key-container">
+                        <b>Clave de acceso: </b><input type="text" class="inputText" id="private_key" style="width: 80%;" readonly><span
+                            class="button mini dash-button mdi mdi-content-copy" onclick="CopyKey()"></span>
+                    </div>
+                    <button id="modal-leave" class="waves-effect waves-light button"><span class="mdi mdi-chat-remove"> Dejar sala</span></button>
+                    <button id="modal-delete" class="waves-effect waves-light button"><span class="mdi mdi-chat-minus"> Eliminar sala</span></button>
+                </div>
+                <div id="modal-contacto">
+                    <p style="font-weight: 300;" id="modal-name"></p>
+                    <p id="modal-estado"></p>
+                </div>
+                
+            </div>
+        </div>
     </div>
 </body>
 <script>
-    var exports = {"__esModule": true};
-    let modal = false;
+    var exports = { "__esModule": true };
+    const modal = false;
 </script>
 <script src="appBar.js"></script>
 <script src="styles.js"></script>
 <script src="code.js"></script>
 <script src="classes/crypto.js"></script>
 <script src="classes/firebase.js"></script>
+<script src="../css/materialize.js"></script>
 <script src="mainScreen.js"></script>
 </html>

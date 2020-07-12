@@ -1,20 +1,20 @@
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const electron_1 = require("electron");
+const { ipcRenderer } = require('electron');
 const Swalert = require('sweetalert2');
 const themeSelector = document.getElementById('theme_selector');
 themeSelector.value = theme;
 const fondoSelector = document.getElementById('fondo_selector');
-fondoSelector.value = fondo;
+const colorPicker = document.getElementById('fondoCPicker');
+if (fondo.includes("#")) {
+    fondoSelector.value = 'color';
+    colorPicker.value = fondo;
+    colorPicker.style.display = 'inline-block';
+}
+else if (fondo == "theme") {
+    fondoSelector.value = fondo;
+}
+else {
+    fondoSelector.value = 'imagen';
+}
 let user;
 const name_ = document.getElementById('usernameP');
 const mail_ = document.getElementById('mailP');
@@ -28,13 +28,29 @@ name_.innerText = "@" + localStorage.getItem('username');
 mail_.innerText = localStorage.getItem('mail');
 state_.innerText = localStorage.getItem('estado');
 function logout() {
-    electron_1.ipcRenderer.send('signOut', true);
+    ipcRenderer.send('signOut', true);
 }
 name_btn.addEventListener('click', () => {
     ChangeUsername(localStorage.getItem('username'), '¿Cuál será tu nuevo nombre?');
 });
 mail_btn.addEventListener('click', () => {
-    ChangeMail(localStorage.getItem('mail'));
+    Swal.fire({
+        title: 'No has verificado tu correo',
+        text: 'Ésto es para asegurarnos que tu correo es real y no una cuenta falsa',
+        confirmButtonColor: 'var(--primary)',
+        confirmButtonText: 'Verificar',
+        showCloseButton: true
+    }).then((result) => {
+        if (result) {
+            firebase.auth().currentUser.sendEmailVerification()
+                .then(function () {
+                Toast.fire({ title: 'Te hemos enviado un mensaje de confirmación a tu correo', icon: 'success' });
+            })
+                .catch(function (error) {
+                Toast.fire({ title: 'Ha ocurrido un problema, intentalo mas tarde', icon: 'error' });
+            });
+        }
+    });
 });
 state_btn.addEventListener('click', () => {
     UpdateState(localStorage.getItem('estado'));
@@ -42,124 +58,168 @@ state_btn.addEventListener('click', () => {
 save_btn.addEventListener('click', () => {
     theme = themeSelector.value;
     localStorage.setItem('theme', theme);
-    electron_1.ipcRenderer.send('updateTheme', theme);
+    localStorage.setItem('fondo', fondo);
+    ipcRenderer.send('updateTheme', { theme: theme, fondo: fondo });
 });
+const verifyText = document.getElementById('verified');
 firebase.auth().onAuthStateChanged((userData) => {
     user = userData;
+    let verified = user.emailVerified;
+    if (verified === true) {
+        mail_btn.style.display = 'none';
+    }
+    else {
+        document.getElementById('verifyIcon').style.display = 'none';
+    }
+    firebase.database().ref("Usuarios/" + user.uid + "/verified").once('value')
+        .then((snap) => {
+        let data = snap.val();
+        console.log(data);
+        if (verified !== data) {
+            firebase.database().ref("Usuarios/" + user.uid).update({
+                verified: true
+            });
+        }
+    });
 });
-function ChangeUsername(initValue, title) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { value: val } = yield Swalert.fire({
-            title: title,
-            input: 'text',
-            inputValue: initValue,
-            showCancelButton: true,
-            inputValidator: (val) => {
-                if (!val || val == initValue) {
-                    return 'No hay nada que cambiar aquí';
-                }
-                else {
-                    let name = val.toLowerCase().trim();
-                    console.log("nameTo: " + val);
-                    ValidateUsername(name).then((valid) => {
-                        if (valid) {
-                            console.log("validado: " + valid);
-                            let uid = user.uid;
-                            user.updateProfile({
-                                displayName: val
-                            }).then(() => {
-                                localStorage.setItem('username', name);
-                                firebase.database().ref("Usuarios/" + uid).update({
-                                    username: name
-                                }).then(() => {
-                                    name_.innerHTML = "@" + name;
-                                    localStorage.setItem('username', name);
-                                    console.log('listo');
-                                }).catch(() => {
-                                    console.log('error al escribir');
-                                });
-                            }).catch(() => {
-                                Toast.fire({ title: "algo pasó, intentalo mas tarde" });
-                            });
-                        }
-                        else {
-                            ChangeUsername(initValue, "Alguien ya tiene ese nombre");
-                        }
-                    });
-                }
+async function ChangeUsername(initValue, title) {
+    const { value: val } = await Swalert.fire({
+        title: title,
+        input: 'text',
+        inputValue: initValue,
+        showCancelButton: true,
+        inputValidator: (val) => {
+            if (!val || val == initValue) {
+                return 'No hay nada que cambiar aquí';
             }
-        });
+            else {
+                let name = val.toLowerCase().trim();
+                console.log("nameTo: " + val);
+                ValidateUsername(name).then((valid) => {
+                    if (valid) {
+                        console.log("validado: " + valid);
+                        let uid = user.uid;
+                        user.updateProfile({
+                            displayName: val
+                        }).then(() => {
+                            localStorage.setItem('username', name);
+                            firebase.database().ref("Usuarios/" + uid).update({
+                                username: name
+                            }).then(() => {
+                                name_.innerHTML = "@" + name;
+                                localStorage.setItem('username', name);
+                                console.log('listo');
+                            }).catch(() => {
+                                console.log('error al escribir');
+                            });
+                        }).catch(() => {
+                            Toast.fire({ title: "algo pasó, intentalo mas tarde" });
+                        });
+                    }
+                    else {
+                        ChangeUsername(initValue, "Alguien ya tiene ese nombre");
+                    }
+                });
+            }
+        }
     });
 }
-function ChangeMail(initValue) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { value: pass } = yield Swalert.fire({
-            title: 'Escribe tu contraseña para saber que eres tu',
-            input: 'password',
-            inputPlaceholder: 'Contraseña',
-            showCancelButton: true,
-            inputValidator: (pass) => {
-                if (!pass) {
-                    return 'Sin tu contraseña no podemos ayudarte';
-                }
-                else {
-                    console.log(pass);
-                    let AuthCredential = firebase.auth().EmailAuthProvider.credential(initValue, pass);
-                    firebase.auth().reauthenticateWithCredential(AuthCredential).then(() => __awaiter(this, void 0, void 0, function* () {
-                        const { value: newMail } = yield Swalert.fire({
-                            title: '¿Cuál será tu correo ahora?',
-                            input: 'email',
-                            inputValue: initValue,
-                            showCancelButton: true,
-                            inputValidator: (newMail) => {
-                                if (!newMail || newMail == initValue) {
-                                    return 'No hay nada que cambiar';
-                                }
-                                else {
-                                    user.updateEmail(newMail).then(() => {
-                                        let uid = user.uid;
-                                        let eMail = CryptoJS.AES.encrypt(newMail, code).toString();
-                                        firebase.database().ref("Usuarios/" + uid).update({
-                                            mail: eMail
-                                        }).then(() => {
-                                            Toast.fire({ title: 'Ahora puedes iniciar sesión con ' + newMail, icon: 'success' });
-                                        }).catch((err) => {
-                                            console.log(err);
-                                        });
+async function ChangeMail(initValue) {
+    const { value: pass } = await Swalert.fire({
+        title: 'Escribe tu contraseña para saber que eres tu',
+        input: 'password',
+        inputPlaceholder: 'Contraseña',
+        showCancelButton: true,
+        inputValidator: (pass) => {
+            if (!pass) {
+                return 'Sin tu contraseña no podemos ayudarte';
+            }
+            else {
+                console.log(pass);
+                let AuthCredential = firebase.auth().EmailAuthProvider.credential(initValue, pass);
+                firebase.auth().reauthenticateWithCredential(AuthCredential).then(async () => {
+                    const { value: newMail } = await Swalert.fire({
+                        title: '¿Cuál será tu correo ahora?',
+                        input: 'email',
+                        inputValue: initValue,
+                        showCancelButton: true,
+                        inputValidator: (newMail) => {
+                            if (!newMail || newMail == initValue) {
+                                return 'No hay nada que cambiar';
+                            }
+                            else {
+                                user.updateEmail(newMail).then(() => {
+                                    let uid = user.uid;
+                                    let eMail = CryptoJS.AES.encrypt(newMail, code).toString();
+                                    firebase.database().ref("Usuarios/" + uid).update({
+                                        mail: eMail
+                                    }).then(() => {
+                                        Toast.fire({ title: 'Ahora puedes iniciar sesión con ' + newMail, icon: 'success' });
                                     }).catch((err) => {
                                         console.log(err);
                                     });
-                                }
+                                }).catch((err) => {
+                                    console.log(err);
+                                });
                             }
-                        });
-                    }));
-                }
+                        }
+                    });
+                });
             }
-        });
+        }
     });
 }
-function UpdateState(current) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { value: nEstado } = yield Swalert.fire({
-            title: "Ponte filosofic@",
-            input: 'text',
-            inputValue: current,
-            showCancelButton: true,
-            inputValidator: (nEstado) => {
-                if (!nEstado || nEstado == current) {
-                    return 'No hay nada que cambiar';
-                }
-                else {
-                    let uid = user.uid;
-                    firebase.database().ref("Usuarios/" + uid).update({
-                        estado: nEstado
-                    }).then(() => {
-                        localStorage.setItem('estado', nEstado);
-                        state_.innerText = nEstado;
-                    });
-                }
+async function UpdateState(current) {
+    const { value: nEstado } = await Swalert.fire({
+        title: "Ponte filosofic@",
+        input: 'text',
+        inputValue: current,
+        showCancelButton: true,
+        inputValidator: (nEstado) => {
+            if (!nEstado || nEstado == current) {
+                return 'No hay nada que cambiar';
             }
+            else {
+                let uid = user.uid;
+                firebase.database().ref("Usuarios/" + uid).update({
+                    estado: nEstado
+                }).then(() => {
+                    localStorage.setItem('estado', nEstado);
+                    state_.innerText = nEstado;
+                });
+            }
+        }
+    });
+}
+fondoSelector.addEventListener('change', () => {
+    let value = fondoSelector.value;
+    if (value == 'theme') {
+        fondo = 'theme';
+        colorPicker.style.display = 'none';
+    }
+    else if (value == 'color') {
+        fondo = colorPicker.value;
+        colorPicker.style.display = 'inline-block';
+    }
+    else if (value == 'imagen') {
+    }
+});
+colorPicker.addEventListener('change', () => {
+    let color = colorPicker.value;
+    fondo = color;
+    chat_screen.style.background = color;
+});
+const qr = require('qrcode');
+function ShowQR() {
+    qr.toDataURL('Quorum |' + user.uid).then((result) => {
+        Swal.fire({
+            title: "Mi QR",
+            imageUrl: result,
+            showConfirmButton: false,
+            showCloseButton: true
         });
+    }).catch((err) => {
+        console.log(err);
     });
 }
 //# sourceMappingURL=settings.js.map

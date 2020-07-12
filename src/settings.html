@@ -23,12 +23,15 @@
         <label class="item-label">Perfil</label>
         <div class="profile-container">
             <img src="../icons/userAvatar.png" alt="foto de perfil" id="perfil">
+            <span id="verified"></span>
             <div>
                 <p id="usernameP">username</p><span id="username_btn"
-                    class="mdi mdi-border-color button mini dash-button"></span>
+                    class="mdi mdi-border-color button mini dash-button"></span><span onclick="ShowQR()" style="margin: 0;" class="button dash-button mdi mdi-qrcode"></span>
                 <br>
-                <p id="mailP">jessimalak@protonmail.com</p><span style="display: none;" id="mail_btn"
-                    class="mdi mdi-border-color button mini dash-button"></span>
+                <p id="mailP">jessimalak@protonmail.com</p>
+                <span style="margin: 0; padding: 0;" id="mail_btn"
+                    class="mdi mdi-close button mini dash-button">Sin verificar</span>
+                <span class="mdi mdi-check" id="verifyIcon"></span>
                 <br>
                 <p id="stateP">Hola, soy nuev@ en Quorum</p><span id="state_btn"
                     class="mdi mdi-border-color button mini dash-button"></span>
@@ -37,6 +40,7 @@
                                 contraseña</span></span></button>
                     <button class="button mini" onclick="logout()"><span class="mdi mdi-close"><span>Cerrar
                                 sesión</span></span></button>
+                    <button class="button mini" ><span class="mdi mdi-delete"></span></button>
                 </div>
             </div>
         </div>
@@ -86,7 +90,7 @@
                 </div>
             </div>
         </div>
-        <button class="button" id="save-btn"><span>Guardar cambios </span><span class="mdi mdi-check"></span></button>
+        <button class="button waves-effect waves-pink" id="save-btn"><span>Guardar cambios </span><span class="mdi mdi-check"></span></button>
     </div>
 </body>
 <script>
@@ -95,7 +99,6 @@
 </script>
 <script src="appBar.js"></script>
 <script src="styles.js"></script>
-<script src="settings.js"></script>
 <script src="classes/firebase.js"></script>
-
+<script src="settings.js"></script>
 </html>

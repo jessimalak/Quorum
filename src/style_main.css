@@ -26,6 +26,7 @@
 }
 
 img.emoji {
+    cursor: text;
     height: 1em;
     width: 1em;
     margin: 0 .05em 0 .1em;
@@ -115,7 +116,7 @@ body{
 
 .claro{
     --primary: #f0efef;
-    --primaryDark: #eeeeee;
+    --primaryDark: #e7e7e7;
     --accent: #d8d8d8;
     --accentDark: #c0c0c0;
     --text: #111;
@@ -317,10 +318,18 @@ input{
     border: none;
     padding: 5px 10px;
     background-color: var(--primary);
-    border-radius: 1rem;
+    border-radius: 5px;
     text-align: center;
     cursor: default;
     margin: 0.5rem 3rem;
+    line-height: 1em;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+}
+
+.confirm{
+    font-size: 1.5rem;
+    line-height: 2rem;
+    padding: 5px 2rem;
 }
 
 .mini{
@@ -638,9 +647,9 @@ optgroup{
 }
 
 .menu{
-    z-index: -1;
+    z-index: 1;
     position: absolute;
-    bottom: -7.5rem;
+    bottom: -10rem;
     right: 0;
     display: none;
     padding: 2px;
@@ -659,6 +668,7 @@ optgroup{
 
 .dash-button{
     background-color: transparent;
+    box-shadow: none;
 }
 
 #rightPanel{
@@ -708,7 +718,7 @@ optgroup{
     margin: 1rem 1.2rem 0 1.2rem;
     padding: 10px 1rem;
     border-radius: 1rem;
-    box-shadow: 2px 2px 10px 0 rgba(17, 17, 17, 0.473);
+    box-shadow: 0 3px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
     
 }
 
@@ -773,6 +783,7 @@ optgroup{
 }
 
 .mensaje-input{
+    color: var(--text);
     border-top-left-radius: 1em;
     border-top-right-radius: 1em;
     display: flex;
@@ -780,6 +791,7 @@ optgroup{
     width: -webkit-fill-available;
     background-color: transparent;
     bottom: 0; 
+    padding-left: 1rem;
 }
 
 .mensaje-input textarea{
@@ -792,6 +804,11 @@ optgroup{
     display: block;
     margin: 5px;
     width: 100%;
+    border-bottom: 1px solid var(--text);
+}
+
+.mensaje-input textarea::placeholder{
+    color: var(--textAccent);
 }
 
 .mensaje-time{
@@ -809,6 +826,7 @@ optgroup{
 }
 
 #topBar{
+    cursor: default;
     z-index: 2;
     height: 3.5rem;
     background-color: transparent;
@@ -818,6 +836,7 @@ optgroup{
     box-shadow: 8px 2px 10px 0 rgba(17, 17, 17, 0.473);
 }
 #topBar p{
+    line-height: 1rem;
     text-align: center;
     margin: 5px 10px;
 }
@@ -832,6 +851,7 @@ optgroup{
     font-weight: 300;
 }
 .profile-container{
+    position: relative;
     padding-left: 1rem;
     display: flex;
 }
@@ -885,14 +905,14 @@ optgroup{
     font-weight: 300;
 }
 
-.progress{
+/* .progress{
     position: relative;
     padding: 0;
     height: 1rem;
     width: -webkit-fill-available;
     background-color: var(--accent);
     border-radius: 5px;
-}
+} */
 
 @keyframes indeterminate{
     0%{transform: translate(0); background-color: var(--primary);}
@@ -978,7 +998,83 @@ optgroup{
     transform: rotate(45deg);
   }
 
+.modal-back{
+    z-index: 2;
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: -webkit-fill-available;
+    width: -webkit-fill-available;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+}
 
+@keyframes popout{
+    from{transform: scale(0); opacity: 0;}
+    to{transform: scale(1); opacity: 1;}
+}
+
+.modal-window{
+    transform: scale(0);
+    position: relative;
+    background-color: var(--back-Color);
+    border-radius: 1rem;
+    padding: 1rem;
+    opacity: 1;
+    animation: popout ease 200ms;
+    transition: ease 200ms;
+}
+
+.modal-window.visible{
+    transform: scale(1);
+}
+
+
+.modal-window i{
+    position: absolute;
+    right: 0;
+}
+
+.modal-window i:hover{
+    color: var(--accent);
+}
+
+.modal-window p, .modal-window h1{
+    margin: 1rem 2px;
+    text-align: center;
+}
+
+.verifyIcon{
+    position: relative;
+}
+
+.tooltip{
+    border-radius: 1rem;
+    padding: 2px;
+    width: max-content;
+    color: var(--text);
+    font-size: 12pt;
+    font-weight: normal;
+    display: none;
+    position: absolute;
+    top: 1rem;
+    left: 105%;
+    background-color: var(--primaryDark);
+}
+
+.verifyIcon:hover .tooltip{
+    display: inline-block;
+}
+
+#modal-time{
+    position: absolute;
+    top: 0;
+    font-size: 14pt;
+    width: 100%;
+    text-align: center;
+}
 /* width */
 ::-webkit-scrollbar {
     width: 5px;
@@ -986,7 +1082,7 @@ optgroup{
   
   /* Track */
   ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--back-Color);
   }
   
   /* Handle */

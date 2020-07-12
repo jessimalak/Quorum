@@ -2,6 +2,8 @@ const { app, BrowserWindow, ipcMain } = require('electron')
 const os = require('os');
 let win;
 
+app.commandLine.appendSwitch('--lang', 'ES')
+
 function createWindow () {
   Start();
   win = new BrowserWindow({
@@ -16,10 +18,6 @@ function createWindow () {
   })
   
   win.loadFile('src/login.html')
-  win.on('ready-to-show', (e)=>{
-    win.show();
-    // loadingWindow.show();
-  })
   win.on('closed',(e) =>{
     app.quit();
   })
@@ -105,7 +103,7 @@ ipcMain.on('openSettings', (e) =>{
     modal:true,
     frame:isMacOrLinux()
   })
-  settings.setMenu(null)
+  // settings.setMenu(null)
   settings.loadFile('src/settings.html');
 })
 
@@ -140,4 +138,8 @@ ipcMain.on('joinRoom',(e, values)=>{
 
 ipcMain.on('addContact', (e, values)=>{
   win.webContents.send('addContact', values);
+})
+
+ipcMain.on('showWindow',(e, val)=>{
+  win.show()
 })

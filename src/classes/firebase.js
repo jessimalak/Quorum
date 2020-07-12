@@ -1,12 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 const Swal = require('sweetalert2');
 const firebase = require('firebase/app');
 require('firebase/auth');
@@ -34,18 +25,16 @@ const Toast = Swal.mixin({
     }
 });
 let isValidUsername;
-function ValidateUsername(username) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let isValid = true;
-        isValidUsername = true;
-        yield firebase.database().ref("Usuarios").orderByChild("username").equalTo(username).once("value")
-            .then((snapshot) => {
-            snapshot.forEach((element) => {
-                isValidUsername = false;
-                isValid = false;
-            });
+async function ValidateUsername(username) {
+    let isValid = true;
+    isValidUsername = true;
+    await firebase.database().ref("Usuarios").orderByChild("username").equalTo(username).once("value")
+        .then((snapshot) => {
+        snapshot.forEach((element) => {
+            isValidUsername = false;
+            isValid = false;
         });
-        return isValid;
     });
+    return isValid;
 }
 //# sourceMappingURL=firebase.js.map

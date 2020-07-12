@@ -1,5 +1,4 @@
-import Swal from 'sweetalert2'
-// import { ipcRenderer } from 'electron';
+import Swal from '../node_modules/sweetalert2/src/sweetalert2.js';
 const ipcRenderer = require('electron').ipcRenderer;
 
 const login_screen = document.getElementById('login');
@@ -39,7 +38,7 @@ let eventType: string;
 document.addEventListener('keyup',(k)=>{
     if(k.keyCode == 13){
         if(view == "login"){
-            login_mail.click();
+            login_btn.click();
         }else{
             register_btn.click();
         }
@@ -117,6 +116,7 @@ sendReset_btn.addEventListener('click', async () => {
 )
 
 firebase.auth().onAuthStateChanged(user => {
+    ipcRenderer.send('showWindow', true)
     if (user) {
         localStorage.setItem('theme', 'menta-light');
         localStorage.setItem('fondo', 'theme');
@@ -128,12 +128,12 @@ firebase.auth().onAuthStateChanged(user => {
                 .then(function (snapshot) {
                     let user = snapshot.val();
                     console.log(user.username);
-                    let mail = CryptoJS.AES.decrypt(user.mail, code);
-                    let nombre = CryptoJS.AES.decrypt(user.nombre, code);
+                    let mail = decrypt(user.mail, code, "B");
+                    let nombre = decrypt(user.nombre, code, "B");
                     localStorage.setItem('username', user.username);
-                    localStorage.setItem('mail', mail.toString(CryptoJS.enc.Utf8));
+                    localStorage.setItem('mail', mail);
                     localStorage.setItem('estado', user.estado);
-                    localStorage.setItem('nombre', nombre.toString(CryptoJS.enc.Utf8));
+                    localStorage.setItem('nombre', nombre);
                     window.location.replace(mainScreen);
                 })
         } else if (eventType == 'register') {
@@ -147,10 +147,10 @@ firebase.auth().onAuthStateChanged(user => {
             localStorage.setItem('nombre', personalname);
             firebase.database().ref('Usuarios/' + uid).set({
                 'username': username,
-                "mail": CryptoJS.AES.encrypt(mail, code).toString(),
-                "id": uid,
+                "mail": encrypt(mail, code, "B"),
                 "estado": "Hola, soy nuev@ en Quorum",
-                "nombre": CryptoJS.AES.encrypt(personalname, code).toString()
+                "nombre": encrypt(personalname, code, "B"),
+                "verified": false
             }).then(() => {
                 window.location.replace(mainScreen);
             })

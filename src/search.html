@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" media="all" href="../css/materialdesignicons.min.css" type="text/css">
     <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="../css/materialize.css">
     <title id="title">Buscar</title>
 </head>
 <body>
@@ -20,11 +21,11 @@
     <div class="content">
         <div class="searchDiv">
             <i class="mdi mdi-magnify button dash-button" onclick="Search()"></i>
-            <input class="inputText searchHeader" type="search" name="search" placeholder="@username" id="SearchInput">
+            <input class="inputText searchHeader" type="search" name="search" id="SearchInput">
         </div>
         <!-- <progress style="display: none;"></progress> -->
         <div class="progress" style="display: none;">
-            <div class="progress-value">
+            <div class="indeterminate">
 
             </div>
         </div>
@@ -34,7 +35,7 @@
     </div>
 </body>
 <script>
-    let modal = true;
+    const modal = true;
 </script>
 <script src="appBar.js"></script>
 <script src="styles.js"></script>

@@ -3,8 +3,6 @@ const { ipcRenderer } = require('electron');
 
 const searchType = localStorage.getItem('searchType');
 
-console.log(searchType)
-
 const inputSearch = <HTMLInputElement>document.getElementById('SearchInput');
 const resultDiv = document.getElementById('resultados');
 const progressbar = <HTMLInputElement>document.getElementsByClassName('progress')[0];
@@ -30,6 +28,8 @@ if (searchType == "Salas") {
     }).finally(() => {
         progressbar.style.display = "none";
     })
+}else{
+    inputSearch.placeholder = "@username"
 }
 
 class User {
@@ -38,12 +38,12 @@ class User {
     estado: string;
     id: string
     isAdded:boolean
-    constructor(user_name: string, name_: string, estado_: string, id_: string, added:boolean) {
+    constructor(user_name: string, name_: string, estado_: string, id_: string) {
         this.username = user_name;
         this.name = name_;
         this.estado = estado_;
         this.id = id_
-        this.isAdded = added;
+        this.isAdded = adds.includes(id_)
     }
 
     Show() {
@@ -126,10 +126,10 @@ function Search() {
                     snapshot.forEach((element) => {
                         let data = element.val();
                         let username = data.username;
-                        let nombre = CryptoJS.AES.decrypt(data.nombre, code)
+                        let nombre = decrypt(data.nombre, code, "B")
                         if (username !== localStorage.getItem('username')) {
                             result = true;
-                            let user = new User(data.username, nombre.toString(CryptoJS.enc.Utf8), data.estado, element.key, adds.includes(data.id));
+                            let user = new User(data.username, nombre, data.estado, element.key);
                             user.Show();
                         }
                     });

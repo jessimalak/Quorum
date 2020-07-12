@@ -9,6 +9,7 @@
     "crypto-js": "^4.0.0",
     "cryptojs": "^2.5.3",
     "firebase": "^7.15.3",
+    "qrcode": "^1.4.4",
     "sweetalert2": "^9.15.1"
   },
   "devDependencies": {
