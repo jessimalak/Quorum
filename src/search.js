@@ -84,7 +84,7 @@ class Room {
         else {
             icon = 'mdi-chat-plus';
         }
-        let structure = '<div class="userCard"><img src="../icons/userAvatar.png" loading="lazy" alt="imagen de perfil"><div><p>' + this.title + '</p><i>' + this.miembros + ' miembros</i><br>' + this.chips + '</div><button class="button" id="' + this.id + '_btn" onclick="Join(' + c + this.id + c + ',' + c + this.title + c + ')" ' + dis + '><span id="' + this.id + '_span" class="mdi ' + icon + '"></span></button></div>';
+        let structure = '<div class="userCard z-depth-3"><img src="../icons/userAvatar.png" loading="lazy" alt="imagen de perfil"><div><p>' + this.title + '</p><i>' + this.miembros + ' miembros</i><br>' + this.chips + '</div><button class="button" id="' + this.id + '_btn" onclick="Join(' + c + this.id + c + ',' + c + this.title + c + ')" ' + dis + '><span id="' + this.id + '_span" class="mdi ' + icon + '"></span></button></div>';
         resultDiv.innerHTML += structure;
     }
 }

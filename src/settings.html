@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="title">Configuración</title>
     <link rel="stylesheet" media="all" href="../css/materialdesignicons.min.css" type="text/css">
-    <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="../css/materialize.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
@@ -20,15 +21,15 @@
         </div>
     </nav>
     <div class="content panel" style="padding: 1rem;">
-        <label class="item-label">Perfil</label>
-        <div class="profile-container">
+        <div class="profile-container z-depth-3">
+            <label class="item-label" style="position: absolute; top: 0; line-height: 2rem; margin-left: 0.5rem;">Perfil</label>
             <img src="../icons/userAvatar.png" alt="foto de perfil" id="perfil">
             <span id="verified"></span>
             <div>
                 <p id="usernameP">username</p><span id="username_btn"
                     class="mdi mdi-border-color button mini dash-button"></span><span onclick="ShowQR()" style="margin: 0;" class="button dash-button mdi mdi-qrcode"></span>
                 <br>
-                <p id="mailP">jessimalak@protonmail.com</p>
+                <p id="mailP" style="font-size: 13pt;">jessimalak@protonmail.com</p>
                 <span style="margin: 0; padding: 0;" id="mail_btn"
                     class="mdi mdi-close button mini dash-button">Sin verificar</span>
                 <span class="mdi mdi-check" id="verifyIcon"></span>
@@ -46,7 +47,7 @@
         </div>
         <div style="display: inline-block;">
             <label for="tema" class="item-label">Tema</label>
-            <select name="Tema" id="theme_selector" onchange="UpdateTheme(this.value)"
+            <select style="font-size: 1rem; display:block; margin: 0;" name="Tema" id="theme_selector" onchange="UpdateTheme(this.value)"
                 class="inputText setting-selector">
                 <optgroup label="Claro">
                     <option value="menta-light">Menta</option>
@@ -54,7 +55,7 @@
                     <option value="azul-light">Azul como el mar azul</option>
                     <option value="rojo-light">Rojo pasión</option>
                     <option value="hiedra-light">Hiedra venenosa</option>
-                    <option value="claro">El lado luminoso</option>
+                    <option value="light">El lado luminoso</option>
                 </optgroup>
                 <optgroup label="Oscuro">
                     <option value="menta-dark">Menta</option>
@@ -62,13 +63,13 @@
                     <option value="azul-dark">Azul como el mar azul</option>
                     <option value="rojo-dark">Rojo pasión</option>
                     <option value="hiedra-dark">Hiedra venenosa</option>
-                    <option value="oscuro">El lado oscuro</option>
+                    <option value="dark">El lado oscuro</option>
                 </optgroup>
             </select>
         </div>
         <div style="display: inline-block;">
             <label for="tema" class="item-label">Fondo de chat</label>
-            <select name="Tema" id="fondo_selector" class="inputText setting-selector">
+            <select style="font-size: 1rem; display:inline-block; margin: 0;width: fit-content;" name="Tema" id="fondo_selector" class="inputText setting-selector">
                 <option value="theme">Según el tema</option>
                 <option value="color">Color personalizado</option>
                 <option value="imagen">Imagen</option>
@@ -76,7 +77,15 @@
             <input style="display: none;" type="color" name="fondo" id="fondoCPicker">
             <input style="width: 5rem; font-size: 0.5rem; display: none;" type="file" name="imgFondo" id="imgFondo">
         </div>
-        <div id="chatMessages" style="height: fit-content;">
+        <div class="switch" style="display: none;">
+            <label>
+              Izquierda
+              <input id="orderSwitch" type="checkbox" checked>
+              <span class="lever"></span>
+              Derecha
+            </label>
+          </div>
+        <div id="chatMessages" style="height: fit-content; margin: 0;">
             <div class="mensaje reciver">
                 <div class="mensaje-content reciver-content">
                     <p class="messageText">Hola nena soy Zeus y vamos a hablar de mi.</p>

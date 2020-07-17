@@ -16,6 +16,7 @@ else {
     fondoSelector.value = 'imagen';
 }
 let user;
+let order = null;
 const name_ = document.getElementById('usernameP');
 const mail_ = document.getElementById('mailP');
 const state_ = document.getElementById('stateP');
@@ -27,6 +28,28 @@ const pass_btn = document.getElementById('pass_btn');
 name_.innerText = "@" + localStorage.getItem('username');
 mail_.innerText = localStorage.getItem('mail');
 state_.innerText = localStorage.getItem('estado');
+const _switch = document.getElementById('orderSwitch');
+if (platform == 'linux') {
+    const switch_ = document.getElementsByClassName('switch')[0];
+    switch_.style.display = 'inline-block';
+    if (customOrder == 'left') {
+        _switch.checked = false;
+    }
+}
+_switch.addEventListener('change', () => {
+    if (_switch.checked) {
+        order = null;
+    }
+    else {
+        order = 'left';
+    }
+    if (order !== customOrder) {
+        Toast.fire({
+            title: 'Es necesario reiniciar Qourum para aplicar el cambio',
+            icon: 'warning'
+        });
+    }
+});
 function logout() {
     ipcRenderer.send('signOut', true);
 }
@@ -59,6 +82,7 @@ save_btn.addEventListener('click', () => {
     theme = themeSelector.value;
     localStorage.setItem('theme', theme);
     localStorage.setItem('fondo', fondo);
+    localStorage.setItem('buttonOrder', order);
     ipcRenderer.send('updateTheme', { theme: theme, fondo: fondo });
 });
 const verifyText = document.getElementById('verified');
@@ -87,7 +111,9 @@ async function ChangeUsername(initValue, title) {
         title: title,
         input: 'text',
         inputValue: initValue,
+        background: 'var(--panel-color)',
         showCancelButton: true,
+        cancelButtonText: 'Cancelar',
         inputValidator: (val) => {
             if (!val || val == initValue) {
                 return 'No hay nada que cambiar aquí';
@@ -174,7 +200,9 @@ async function UpdateState(current) {
         title: "Ponte filosofic@",
         input: 'text',
         inputValue: current,
+        background: 'var(--panel-color)',
         showCancelButton: true,
+        cancelButtonText: 'Cancelar',
         inputValidator: (nEstado) => {
             if (!nEstado || nEstado == current) {
                 return 'No hay nada que cambiar';
@@ -196,6 +224,7 @@ fondoSelector.addEventListener('change', () => {
     if (value == 'theme') {
         fondo = 'theme';
         colorPicker.style.display = 'none';
+        _body.style.background = 'var(--back-color)';
     }
     else if (value == 'color') {
         fondo = colorPicker.value;
@@ -207,7 +236,7 @@ fondoSelector.addEventListener('change', () => {
 colorPicker.addEventListener('change', () => {
     let color = colorPicker.value;
     fondo = color;
-    chat_screen.style.background = color;
+    _body.style.background = color;
 });
 const qr = require('qrcode');
 function ShowQR() {

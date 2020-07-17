@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" media="all" href="../css/materialdesignicons.min.css" type="text/css">
-    <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="../css/materialize.css">
     <link rel="shortcut icon" href="../icons/favicon.ico" type="image/x-icon">
     <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
@@ -23,7 +23,7 @@
     </nav>
     <div class="content Ui">
         <div class="contactsPanel panel">
-            <div class="searchDiv">
+            <div class="searchDiv z-depth-3">
                 <!-- <input type="search" name="search" id="searchInput" class="inputText"> -->
                 <span class="mdi mdi-dots-vertical button dash-button" id="menu_btn">
                     <ul class="menu">
@@ -54,7 +54,7 @@
                     </optgroup>
                 </select>
             </div>
-            <ul id="chat-list">
+            <ul id="chat-list" class="z-depth-3">
 
             </ul>
         </div>
@@ -87,7 +87,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="topBar">
+                <div id="topBar" class="z-depth-2">
                     <p id="chatName" onclick="ShowInfo('0')">Zeus</p>
                     <p id="chatSub">Júpiter</p>
                 </div>
@@ -106,12 +106,24 @@
                         <b>Clave de acceso: </b><input type="text" class="inputText" id="private_key" style="width: 80%;" readonly><span
                             class="button mini dash-button mdi mdi-content-copy" onclick="CopyKey()"></span>
                     </div>
+                    <div class="row" id="modal-room-selectors">
+                        <div class="collection with-header col s6" id="room-members-select">
+                            
+                        </div>
+                        <div class="input-field col s6">
+                            <select name="room-admins" id="room-admins-select">
+                                <option value="" disabled selected id="admins-count-op">... admins</option>
+                            </select>
+                        </div>
+                    </div>
                     <button id="modal-leave" class="waves-effect waves-light button"><span class="mdi mdi-chat-remove"> Dejar sala</span></button>
                     <button id="modal-delete" class="waves-effect waves-light button"><span class="mdi mdi-chat-minus"> Eliminar sala</span></button>
                 </div>
                 <div id="modal-contacto">
                     <p style="font-weight: 300;" id="modal-name"></p>
                     <p id="modal-estado"></p>
+                    <button id="modal-lock" class="waves-effect waves-light button"><span class="mdi mdi-lock"> Bloquear</span></button>
+                    <button id="modal-clear" class="waves-effect waves-light button"><span class="mdi mdi-chat-minus"> Eliminar mensajes</span></button>
                 </div>
                 
             </div>

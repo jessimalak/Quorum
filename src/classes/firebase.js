@@ -28,13 +28,23 @@ let isValidUsername;
 async function ValidateUsername(username) {
     let isValid = true;
     isValidUsername = true;
-    await firebase.database().ref("Usuarios").orderByChild("username").equalTo(username).once("value")
-        .then((snapshot) => {
-        snapshot.forEach((element) => {
-            isValidUsername = false;
-            isValid = false;
+    if (isValidUser(username)) {
+        await firebase.database().ref("Usuarios").orderByChild("username").equalTo(username).once("value")
+            .then((snapshot) => {
+            snapshot.forEach((element) => {
+                isValidUsername = false;
+                isValid = false;
+            });
         });
-    });
+    }
+    else {
+        isValidUsername = false;
+        isValid = false;
+    }
     return isValid;
+}
+function isValidUser(username) {
+    const re = /\w+/;
+    return re.test(username);
 }
 //# sourceMappingURL=firebase.js.map

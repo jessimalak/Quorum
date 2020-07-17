@@ -1,41 +1,37 @@
 //BEGING STATUS-BAR
-const remote = require('electron').remote;
-const win = remote.getCurrentWindow();
+// const remote = require('electron').remote;
+// const win = remote.getCurrentWindow();
 const os = require('os')
+// const customTitlebar = require('custom-electron-titlebar');
+const { Themebar, Titlebar, Color } = require('custom-electron-titlebar');
 
-const bar = document.getElementById('statusBar');
-const contactPanel = <HTMLElement> document.getElementsByClassName('panel')[0];
+const customOrder = localStorage.getItem('buttonOrder');
+const platform = os.platform() 
 
-if(os.platform() !== 'win32'){
-    bar.style.display = 'none'
-    if(contactPanel !== undefined){
-        contactPanel.style.paddingTop = '0';
+function system() {
+    let tema = Themebar.win;
+    let orden = null
+    if (platform == 'darwin' || customOrder == 'left') {
+        orden = 'first-buttons'
+        tema = Themebar.mac
+    }else if(platform == 'linux'){
+        tema = Themebar.linux
     }
+    return {theme: tema, order: orden}
 }
 
-const title: string = ( < HTMLInputElement > document.getElementById('title')).innerHTML;
-
-document.getElementById('title_bar').innerHTML = title;
-
-let min = document.getElementById('min');
-min.addEventListener('click', function () {
-    win.minimize();
+let bar = new Titlebar({
+    backgroundColor: Color.fromHex('#b37feb'),
+    menu: null,
+    iconsTheme: system().theme,
+    order: system().order,
+    //@ts-ignore
+    minimizable: !modal,
+    //@ts-ignore
+    maximizable: !modal
 })
 
-let max = document.getElementById('max');
-max.addEventListener('click', function () {
-    if (!win.isMaximized()) {
-        win.maximize();
-    } else {
-        win.unmaximize();
-    }
-})
-
-document.getElementById('close').addEventListener('click', function () {
-    win.close();
-})
-//@ts-ignore
-if(modal){
-    min.style.display = "none";
-    max.style.display = "none"
+if (os.platform() == 'darwin' || customOrder == 'left') {
+    (<HTMLElement> document.getElementsByClassName('window-controls-container')[0]).style.flexDirection = 'row-reverse'
 }
+

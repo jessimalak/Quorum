@@ -9,6 +9,7 @@ const welcomeScreen = document.getElementById('welcomeMessage');
 const chats = document.getElementById('chat-list');
 const chatContainer = document.getElementById('chatMessages');
 document.title = 'Quorum - ' + username;
+bar.updateTitle();
 ipcRenderer.send('loadingchange', 'Desencrpitando...|Importando chats');
 let chatsData = new Array();
 const mensajeInput = document.getElementById('mensaje-input');
@@ -66,6 +67,8 @@ firebase.auth().onAuthStateChanged(user => {
         });
     }
 });
+const selectors_ = document.querySelectorAll('select');
+let instances = M.FormSelect.init(selectors_);
 settings_btn.addEventListener('click', () => {
     ipcRenderer.send('openSettings', true);
 });
@@ -87,7 +90,7 @@ function CreateRoom() {
             '<input class="inputText searchHeader" type="text" placeholder="Etiquetas (separadas por comas ( , ))" name="roomkeys" id="roomKeywordsInput">' +
             '<label><input type="checkbox" class="filled-in pink" id="privateCheck"><span style="font-size: 1.5rem;">Sala privada</span></label>',
         showCloseButton: true,
-        background: 'var(--back-Color)',
+        background: 'var(--panel-color)',
         buttonsStyling: false,
         customClass: {
             confirmButton: 'button confirm'
@@ -120,7 +123,6 @@ function CreateRoom() {
                             uid,
                             username
                         });
-                        showChat(name, id, "Sala", "", Date.now());
                     });
                 });
             }
@@ -331,7 +333,7 @@ async function JoinPrivate() {
     const { value: id } = await Swal.fire({
         title: "Entrar a sala privada",
         input: 'text',
-        background: "var(--back-Color)",
+        background: "var(--panel-color)",
         inputPlaceholder: 'Código de acceso',
         imageUrl: '../icons/GuyFawkesIcon.png',
         imageWidth: 150,
@@ -377,6 +379,7 @@ async function JoinPrivate() {
     }
 }
 const saludos = ["Hola, ¿qué tal has estado?", "Hola $N, ¿Cómo has estado?", "Hola $N ¿qué tal estás?"];
+const philos = ["Solo sé que nada sé, aunque sé mas que los que aún no lo saben", "La peor lucha es la que no se hace", "Frecuentemente hay más que aprender de las preguntas inesperadas de un niño que de los discursos de un hombre", "Vivir sin filosofar es, propiamente, tener los ojos cerrados, sin tratar de abrirlos jamás", "Quien sabe de dolor, todo lo sabe", "La religión es excelente para mantener callada a la gente común", "Quienes creen que el dinero lo hace todo terminan haciendo todo por dinero", "La felicidad no brota de la razón sino de la imaginación", "Si un individuo es pasivo intelectualmente, no conseguirá ser libre moralmente"];
 function Command(mensaje) {
     let type = mensaje.split("~")[1];
     let extra = "";
@@ -399,12 +402,16 @@ function Command(mensaje) {
             message = "$invalid_";
             break;
         case "holi":
-            let index = Math.floor(Math.random() * saludos.length);
-            let saludo = saludos[index];
+            let indexS = Math.floor(Math.random() * saludos.length);
+            let saludo = saludos[indexS];
             if (saludo.includes("$N")) {
                 saludo = saludo.replace("$N", loadedChat.nombre);
             }
             message = saludo;
+            break;
+        case "filosofar":
+            let indexF = Math.floor(Math.random() * philos.length);
+            message = philos[indexF];
             break;
         case "suavemente":
             message = 'suavemente besame, que quiero sentir tus labios besandome otra vez, ¡Suavemente!';
@@ -421,6 +428,11 @@ function Command(mensaje) {
             break;
         case "tflag":
             message = "🏳️‍⚧️";
+            break;
+        case "hechizo":
+            message = "si fue hechizo o no fue hechizo,\n" +
+                "eso no me importa ya, pues mis ojos son sus ojos,\n" +
+                "y mi ser solo su ser.";
             break;
     }
     newmessage = mensaje.replace("~" + type, message);
@@ -464,10 +476,12 @@ function ShowInfo(id, tipo) {
         const keyContainer = document.getElementById('key-container');
         const leave_btn = document.getElementById('modal-leave');
         const delete_btn = document.getElementById('modal-delete');
+        const members_select = document.getElementById('room-members-select');
+        const admins_select = document.getElementById('room-admins-select');
+        const selectors = document.getElementById('modal-room-selectors');
         firebase.database().ref("Salas/" + id).once('value').then((snap) => {
             let data = snap.val();
             title.innerText = data.nombre;
-            miembros.innerText = Object.keys(data.miembros).length + ' miembros';
             let etiquetas_ = data.keywords;
             let chips = "";
             etiquetas_.split(',').forEach((element) => {
@@ -476,7 +490,20 @@ function ShowInfo(id, tipo) {
             etiquetas.innerHTML = chips;
             leave_btn.style.display = 'inline-block';
             if (roomData.admin) {
+                let miembros_ = data.miembros;
+                let admins_ = data.admins;
+                members_select.innerHTML = '<div class="collection-header"><p>' + Object.keys(miembros_).length + ' miembros</p></div>';
+                admins_select.innerHTML = '<div class="collection-header"><p>' + Object.keys(admins_).length + ' admins</p></div>';
                 delete_btn.style.display = 'inline-block';
+                selectors.style.display = 'block';
+                let miembros = Object.entries(miembros_);
+                miembros.forEach((element) => {
+                    members_select.innerHTML += '<a href="#!" onclick="editUser(' + c + element[1].uid + c + ', ' + c + element[1].username + c + ')" class="collection-item">' + element[1].username + '</a>';
+                });
+                let admins = Object.entries(admins_);
+                admins.forEach((element) => {
+                    admins_select.innerHTML += '<a href="#!" onclick="editUser(' + c + element[1].uid + c + ', ' + c + element[1].username + c + ')" class="collection-item">' + element[1].username + '</a>';
+                });
                 if (roomData.isPrivate) {
                     keyContainer.style.display = 'block';
                     input.value = id;
@@ -484,11 +511,12 @@ function ShowInfo(id, tipo) {
                 else {
                     keyContainer.style.display = 'none';
                 }
-                if (Object.keys(data.admins).length == 1) {
+                if (Object.keys(admins_).length == 1) {
                     leave_btn.style.display = 'none';
                 }
             }
             else {
+                selectors.style.display = 'none';
                 delete_btn.style.display = 'none';
                 keyContainer.style.display = 'none';
                 input.value = "";
@@ -541,6 +569,41 @@ function CalcTime(fecha) {
     let diference = Math.floor((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) - Date.UTC(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate())) / (1000 * 60 * 60 * 24));
     return diference + " días conversando";
 }
-document.getElementById('modal-leave').addEventListener('click', () => {
+function editUser(id, username) {
+    Swal.fire({
+        title: username,
+        text: '¿Qué vas a hacer con éste usuario?',
+        confirmButtonText: 'Eliminar',
+        cancelButtonText: 'Hacer admin',
+        background: 'var(--panel-color)',
+        showCloseButton: true,
+        showCancelButton: true
+    });
+}
+document.getElementById('modal-clear').addEventListener('click', async () => {
+    const { values: time } = await Swal.fire({
+        title: 'Eliminar mensajes',
+        showCloseButton: true,
+        input: 'radio',
+        inputOptions: {
+            'ahora': 'Ahora',
+            '1': 'Diariamente',
+            '14': 'Cada 2 semanas',
+            '30': 'Cada mes'
+        },
+        inputValidator: (value) => {
+            if (!value) {
+                return 'Selecciona una opción';
+            }
+        }
+    });
+    if (time !== 'ahora') {
+        console.log(time);
+    }
+    else {
+        firebase.database().ref('Usuarios/' + uid + "/chats/" + loadedChat.id).update({
+            mensajes: null
+        });
+    }
 });
 //# sourceMappingURL=mainScreen.js.map

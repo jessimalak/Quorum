@@ -26,17 +26,27 @@ const Toast = Swal.mixin({
     }
 })
 
-let isValidUsername:boolean;
+let isValidUsername: boolean;
 
-async function ValidateUsername(username:string){
+async function ValidateUsername(username: string) {
     let isValid = true;
     isValidUsername = true;
-    await firebase.database().ref("Usuarios").orderByChild("username").equalTo(username).once("value")
-    .then((snapshot) =>{
-        snapshot.forEach((element) => {
-            isValidUsername = false;
-            isValid = false;
-        });
-    });
+    if (isValidUser(username)) {
+        await firebase.database().ref("Usuarios").orderByChild("username").equalTo(username).once("value")
+            .then((snapshot) => {
+                snapshot.forEach((element) => {
+                    isValidUsername = false;
+                    isValid = false;
+                });
+            });
+    }else{
+        isValidUsername = false
+        isValid = false
+    }
     return isValid;
+}
+
+function isValidUser(username: string): boolean {
+    const re = /\w+/;
+    return re.test(username)
 }

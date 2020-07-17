@@ -14,7 +14,7 @@ function createWindow () {
       enableRemoteModule: true
     },
     show:false,
-    frame:isMacOrLinux()
+    frame: false
   })
   
   win.loadFile('src/login.html')
@@ -59,7 +59,8 @@ function Start(){
     height:200,
     webPreferences:{
       nodeIntegration:true
-    }, frame:false,
+    },
+    frame:false,
     parent: win,
     modal: true,
     backgroundColor: '#b37feb',
@@ -101,7 +102,7 @@ ipcMain.on('openSettings', (e) =>{
     },
     parent:win,
     modal:true,
-    frame:isMacOrLinux()
+    frame: false
   })
   // settings.setMenu(null)
   settings.loadFile('src/settings.html');
@@ -126,7 +127,7 @@ ipcMain.on('search',(e)=>{
     },
     parent:win,
     modal:true,
-    frame:isMacOrLinux()
+    frame: false
   })
   window.loadFile('src/search.html');
 })
