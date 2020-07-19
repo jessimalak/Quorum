@@ -6,23 +6,21 @@ let color_: string = '#444'
 if (theme !== null || theme !== undefined) {
     _body.classList.add(theme);
 } else {
-    theme = 'mental-light';
+    theme = 'menta-light';
 }
+
 if (theme.includes('light')) {
     bar.updateBackground(Color.fromHex('#ffffff00'))
-}else{
+} else {
     bar.updateBackground(Color.fromHex('#00000000'))
 }
+
 let fondo = localStorage.getItem("fondo");
 
-let chat_screen = document.getElementById('chatMessages')
-
-if (chat_screen !== null) {
-    if (fondo == "theme") {
-        _body.style.background = "var(--back-color)"
-    } else {
-        _body.style.background = fondo
-    }
+if (fondo == "theme") {
+    _body.style.background = "var(--back-color)"
+} else {
+    _body.style.background = fondo
 }
 
 function UpdateTheme(color: string) {
@@ -31,7 +29,7 @@ function UpdateTheme(color: string) {
     _body.classList.add(color);
     if (color.includes('light')) {
         bar.updateBackground(Color.fromHex('#ffffff00'))
-    }else{
+    } else {
         bar.updateBackground(Color.fromHex('#00000000'))
     }
 }

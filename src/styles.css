@@ -41,6 +41,7 @@ img.emoji {
     --text: #111;
     --textAccent: #333;
     --panel-color: rgb(247, 247, 247);
+    --menu: rgb(200,200,200);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
 
@@ -64,9 +65,11 @@ body{
     --primaryDark: #a272d6;
     --accent: #13c2c2;
     --accentDark: #18b3b3;
+    --hover: #b37feb91;
     --text: #111;
     --textAccent: #333;
     --panel-color: rgb(247, 247, 247);
+    --menu: rgb(200,200,200);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
 
@@ -75,9 +78,11 @@ body{
     --primaryDark: b#9254de;
     --accent: #7159f7;
     --accentDark: #7c4ee7;
+    --hover: #b37feb91;
     --text: #111;
     --textAccent: #151515;
     --panel-color: rgb(247, 247, 247);
+    --menu: rgb(200,200,200);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
 
@@ -86,20 +91,24 @@ body{
     --primaryDark: #349cf1;
     --accent: #36cfc9;
     --accentDark: #28b9b5;
+    --hover: #40a9ff91;
     --text: #111;
     --textAccent: #333;
     --panel-color: rgb(247, 247, 247);
+    --menu: rgb(200,200,200);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
 
 .rojo-light{
-    --primary: #ff343e;
+    --primary: #ff7875;
     --primaryDark: #ff5d60;
     --accent: #ff4d4f;
     --accentDark: #ec4345;
+    --hover: #ff787591;
     --text: #111;
-    --textAccent: #333;
+    --textAccent: #252525;
     --panel-color: rgb(247, 247, 247);
+    --menu: rgb(200,200,200);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
 
@@ -108,20 +117,24 @@ body{
     --primaryDark: #7cde64;
     --accent: #bae637;
     --accentDark: #a7cf2d;
+    --hover: #56d13d91;
     --text: #111;
     --textAccent: #333;
     --panel-color: rgb(247, 247, 247);
+    --menu: rgb(200,200,200);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
 
-.light{
+.light-light{
     --primary: #f0efef;
     --primaryDark: #e7e7e7;
     --accent: #d8d8d8;
     --accentDark: #c0c0c0;
+    --hover: #30303091;
     --text: #111;
     --textAccent: #333;
     --panel-color: rgb(247, 247, 247);
+    --menu: rgb(200,200,200);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
 
@@ -131,9 +144,11 @@ body{
     --primaryDark: #7e223e;
     --accent: #006d75;
     --accentDark: #015e64;
+    --hover: #9e106891;
     --text: #fff;
     --textAccent: rgb(165, 165, 165);
     --panel-color: rgb(43, 43, 43);
+    --menu: rgb(50,50,50);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
 
@@ -142,9 +157,11 @@ body{
     --primaryDark: rgb(18, 117, 209);
     --accent: #137485;
     --accentDark: #0f6a7a;
+    --hover: #164c7e91;
     --text: #fff;
     --textAccent: rgb(165, 165, 165);
     --panel-color: rgb(43, 43, 43);
+    --menu: rgb(50,50,50);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
 
@@ -153,9 +170,11 @@ body{
     --primaryDark: #391085;
     --accent: #202675;
     --accentDark: #292075;
+    --hover: #51258f91;
     --text: #fff;
     --textAccent: rgb(165, 165, 165);
     --panel-color: rgb(43, 43, 43);
+    --menu: rgb(50,50,50);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
 
@@ -164,9 +183,11 @@ body{
     --primaryDark: #820014;
     --accent: #791a1f;
     --accentDark: #6b1317;
+    --hover: #a8071a91;
     --text: #fff;
     --textAccent: rgb(165, 165, 165);
     --panel-color: rgb(43, 43, 43);
+    --menu: rgb(50,50,50);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
 
@@ -175,80 +196,28 @@ body{
     --primaryDark: #295811;
     --accent: #3b6d13;
     --accentDark: #406411;
+    --hover: #30631791;
     --text: #fff;
     --textAccent: rgb(165, 165, 165);
     --panel-color: rgb(43, 43, 43);
+    --menu: rgb(50,50,50);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
 
-.dark{
+.dark-dark{
     --primary: #111111;
     --primaryDark: #080808;
     --accent: #4d4b4b;
     --accentDark: #333333;
+    --hover: rgba(165, 165, 165, 0.521);
     --text: #fff;
     --textAccent: rgb(165, 165, 165);
     --panel-color: rgb(31, 31, 31);
+    --menu: rgb(50,50,50);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
 
 /*END THEMES*/
-
-#statusBar{
-    display: none;
-    z-index: 1;
-    width: 100%;
-    top: 0;
-    left: 0;
-    position: absolute;
-    background-color: transparent;
-    margin:0;
-    padding: 0;
-    color: var(--text);
-    height: 2rem;
-    -webkit-app-region: drag;
-}
-
-.bar_button{
-    float: left;
-    /* padding: 0.25rem 1rem; */
-    height: 100%;
-    width: 33%;
-    text-align: center;
-}
-
-.bar_button:hover{
-    cursor: default;
-    background-color: var(--primaryDark);
-}
-
-#title_bar{
-    float: left;
-    width: 30%;
-    height: 100%;
-    line-height: 2rem;
-    padding: 0 0 0 1rem;
-}
-
-.buttons_bar{
-    -webkit-app-region: no-drag;
-    background-color: var(--primary);
-    padding: 0;
-    float: right;
-    height: 100%;
-    line-height: 2rem;
-    width: 8rem;
-}
-
-/* .button{
-    float: left;
-    height: 100%;
-    width: 100%;
-} */
-
-#close:hover{
-    background-color: var(--accentDark);
-}
 
 .content{
     height: -webkit-fill-available;
@@ -314,6 +283,7 @@ input{
 }
 
 .button{
+    transition: ease 300ms;
     color: var(--text);
     font-size: 1.1em;
     appearance: none;
@@ -442,9 +412,6 @@ optgroup{
     padding: 2px 5px;
 }
 
-/* .searchDiv i:hover{
-    background-color: var(--primaryDark);
-} */
 
 #chat-list{
     margin: 0;
@@ -461,6 +428,7 @@ optgroup{
 }
 
 .contact-item{
+    transition: ease 300ms;
     position: relative;
     cursor: default;
     padding: 10px 0 10px 10px;
@@ -484,7 +452,7 @@ optgroup{
 }
 
 .contact-item:hover, .menu-item:hover{
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: var(--hover);
 }
 
 .contact-item img{
@@ -530,7 +498,7 @@ optgroup{
 
 .selector{
     position: relative;
-     user-select: none;
+    user-select: none;
     font-weight: 500;
     margin: 5px;
     transform: scale(0);
@@ -574,15 +542,16 @@ optgroup{
     top: 100%;
     left: 0;
     right: 0;
-    background: var(--panel-color);
+    background: var(--menu);
     transition: all 0.5s;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     z-index: 2;
-    width: 10rem;
-    max-height: 6rem;
+    width: 12rem;
+    max-height: 15rem;
     overflow-y: auto;
+    margin-left: 5px;
 }
 .custom-select.open .custom-options {
     opacity: 1;
@@ -613,7 +582,7 @@ optgroup{
 
 .custom-option:hover {
     cursor: pointer;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: var(--hover);
 }
 
 
@@ -668,7 +637,7 @@ optgroup{
     padding: 2px;
     width: max-content;
     font-size: 12pt;
-    background-color: var(--panel-color);
+    background-color: var(--menu);
     list-style: none;
     box-shadow: 0px 8px 16px 0px rgba(26, 19, 19, 0.3);
 }

@@ -17,7 +17,7 @@ else {
     fondoSelector.value = 'imagen';
 }
 let user;
-let order = null;
+let order:string = null;
 
 const name_ = document.getElementById('usernameP');
 const mail_ = document.getElementById('mailP');
@@ -92,7 +92,8 @@ save_btn.addEventListener('click', () => {
     theme = themeSelector.value;
     localStorage.setItem('theme', theme);
     localStorage.setItem('fondo', fondo);
-    localStorage.setItem('buttonOrder', order)
+    localStorage.setItem('buttonOrder', order);
+    customOrder = order,
     ipcRenderer.send('updateTheme', { theme: theme, fondo: fondo })
 })
 const verifyText = document.getElementById('verified');
@@ -259,7 +260,6 @@ function ShowQR() {
     qr.toDataURL('Quorum |' + user.uid).then((result) => {
         Swal.fire({
             title: "Mi QR",
-            // html: '<canvas></canvas>',
             imageUrl: result,
             showConfirmButton: false,
             showCloseButton: true

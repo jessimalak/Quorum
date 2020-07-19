@@ -83,7 +83,8 @@ save_btn.addEventListener('click', () => {
     localStorage.setItem('theme', theme);
     localStorage.setItem('fondo', fondo);
     localStorage.setItem('buttonOrder', order);
-    ipcRenderer.send('updateTheme', { theme: theme, fondo: fondo });
+    customOrder = order,
+        ipcRenderer.send('updateTheme', { theme: theme, fondo: fondo });
 });
 const verifyText = document.getElementById('verified');
 firebase.auth().onAuthStateChanged((userData) => {

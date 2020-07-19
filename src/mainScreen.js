@@ -64,6 +64,9 @@ firebase.auth().onAuthStateChanged(user => {
         }).finally(() => {
             localStorage.setItem('ContRoomS', ContRooms.toString());
             ipcRenderer.send('loading', false);
+            if (options.childElementCount == 0) {
+                options.innerHTML += '<div class="custom-option"><p>Sin contactos disponibles</p></div>';
+            }
         });
     }
 });

@@ -1,10 +1,39 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, Menu } = require('electron')
 const os = require('os');
 let win;
 
 app.commandLine.appendSwitch('--lang', 'ES')
+const menuTemplate = [
+  { role: 'editMenu' },
+  { role: 'viewMenu' },
+  {
+    label: 'add',
+    submenu: [
+      {
+        label: 'Terminal',
+        accelerator: 'CmdOrCtrl+T',
+        click() {
+          let T = new BrowserWindow({
+            height: 350,
+            width: 600,
+            frame: false,
+            webPreferences:{
+              nodeIntegration:true
+            }
+          })
+          T.loadFile('src/eggs/terminal.html')
+        }
+      },
+      {
+        label: "No sep"
+      }
+    ]
+  }
+]
+const menu = Menu.buildFromTemplate(menuTemplate)
+Menu.setApplicationMenu(menu)
 
-function createWindow () {
+function createWindow() {
   Start();
   win = new BrowserWindow({
     width: 900,
@@ -13,21 +42,21 @@ function createWindow () {
       nodeIntegration: true,
       enableRemoteModule: true
     },
-    show:false,
+    show: false,
     frame: false
   })
-  
+
   win.loadFile('src/login.html')
-  win.on('closed',(e) =>{
+  win.on('closed', (e) => {
     app.quit();
   })
 }
 
-function isMacOrLinux(){
+function isMacOrLinux() {
   let platform = os.platform();
-  if(platform == 'win32'){
+  if (platform == 'win32') {
     return false;
-  }else{
+  } else {
     return true;
   }
 }
@@ -53,94 +82,94 @@ app.on('activate', () => {
 
 let loadingWindow;
 
-function Start(){
+function Start() {
   loadingWindow = new BrowserWindow({
-    width:400,
-    height:200,
-    webPreferences:{
-      nodeIntegration:true
+    width: 400,
+    height: 200,
+    webPreferences: {
+      nodeIntegration: true
     },
-    frame:false,
+    frame: false,
     parent: win,
     modal: true,
     backgroundColor: '#b37feb',
-    resizable:false,
-    skipTaskbar:true
-})
+    resizable: false,
+    skipTaskbar: true
+  })
   loadingWindow.loadFile('src/loading/loading.html')
 }
 
-function ShowLoading(show){
-  if(show){
-    
+function ShowLoading(show) {
+  if (show) {
+
     loadingWindow.show();
     loadingWindow.focus();
   }
-  else{
+  else {
     loadingWindow.hide();
   }
 }
 
-ipcMain.on('loading', (event, val)=>{
+ipcMain.on('loading', (event, val) => {
   ShowLoading(val);
 })
 
-ipcMain.on('loadingchange', (e, info)=>{
+ipcMain.on('loadingchange', (e, info) => {
   loadingWindow.focus();
   loadingWindow.webContents.send('loadingInfo', info)
 })
 
 let settings;
 
-ipcMain.on('openSettings', (e) =>{
+ipcMain.on('openSettings', (e) => {
   settings = new BrowserWindow({
-    height:650,
-    width:550,
-    webPreferences:{
-      nodeIntegration:true,
-      enableRemoteModule:true
+    height: 650,
+    width: 550,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true
     },
-    parent:win,
-    modal:true,
+    parent: win,
+    modal: true,
     frame: false
   })
   // settings.setMenu(null)
   settings.loadFile('src/settings.html');
 })
 
-ipcMain.on('signOut', (e)=>{
+ipcMain.on('signOut', (e) => {
   win.webContents.send('signOut', true);
   settings.close();
 })
 
-ipcMain.on('updateTheme', (e, val)=>{
+ipcMain.on('updateTheme', (e, val) => {
   win.webContents.send('updateTheme', val);
 })
 
-ipcMain.on('search',(e)=>{
+ipcMain.on('search', (e) => {
   let window = new BrowserWindow({
-    height:650,
-    width:550,
-    webPreferences:{
-      nodeIntegration:true,
-      enableRemoteModule:true
+    height: 650,
+    width: 550,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true
     },
-    parent:win,
-    modal:true,
+    parent: win,
+    modal: true,
     frame: false
   })
   window.loadFile('src/search.html');
 })
 
-ipcMain.on('joinRoom',(e, values)=>{
+ipcMain.on('joinRoom', (e, values) => {
   console.log(values.id)
   win.webContents.send('joinRoom', values);
 })
 
-ipcMain.on('addContact', (e, values)=>{
+ipcMain.on('addContact', (e, values) => {
   win.webContents.send('addContact', values);
 })
 
-ipcMain.on('showWindow',(e, val)=>{
+ipcMain.on('showWindow', (e, val) => {
   win.show()
 })

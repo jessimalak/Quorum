@@ -5,8 +5,8 @@ const os = require('os')
 // const customTitlebar = require('custom-electron-titlebar');
 const { Themebar, Titlebar, Color } = require('custom-electron-titlebar');
 
-const customOrder = localStorage.getItem('buttonOrder');
-const platform = os.platform() 
+let customOrder = localStorage.getItem('buttonOrder');
+const platform = os.platform();
 
 function system() {
     let tema = Themebar.win;
@@ -14,7 +14,7 @@ function system() {
     if (platform == 'darwin' || customOrder == 'left') {
         orden = 'first-buttons'
         tema = Themebar.mac
-    }else if(platform == 'linux'){
+    }else if(platform == 'linux' && customOrder !== 'left'){
         tema = Themebar.linux
     }
     return {theme: tema, order: orden}
@@ -22,7 +22,7 @@ function system() {
 
 let bar = new Titlebar({
     backgroundColor: Color.fromHex('#b37feb'),
-    menu: null,
+    // menu: null,
     iconsTheme: system().theme,
     order: system().order,
     //@ts-ignore
