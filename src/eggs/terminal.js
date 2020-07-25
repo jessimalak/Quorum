@@ -83,6 +83,13 @@ document.addEventListener('keyup', (k) => {
                     olds.innerHTML += '<span class="error">OK</span>';
                     encoding = true;
                     break;
+                case "getrandom":
+                    firebase.database().ref("Usuarios/" + uid_ + "/random").once("value").then((snap) => {
+                        snap.forEach((element) => {
+                            olds.innerHTML += '<span>' + element.val() + '</span><span>' + decrypt(element.val(), code, "R") + '</span>';
+                        });
+                    });
+                    break;
                 default:
                     olds.innerHTML += '<span>Comando no encontrado</span>';
                     break;

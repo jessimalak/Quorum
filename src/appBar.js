@@ -24,4 +24,15 @@ let bar = new Titlebar({
 if (os.platform() == 'darwin' || customOrder == 'left') {
     document.getElementsByClassName('window-controls-container')[0].style.flexDirection = 'row-reverse';
 }
+function settingsIcon() {
+    const container = document.getElementsByClassName('window-controls-container')[0];
+    let tema = system().theme.toString();
+    let order = system().order;
+    if (platform == 'darwin' || customOrder == 'left') {
+        container.innerHTML += '<div class="window-icon-bg" id="settings_btn" onclick="openSettings()"><i class="mdi mdi-cog"></i></div>';
+    }
+    else {
+        container.innerHTML = '<div class="window-icon-bg" id="settings_btn" onclick="openSettings()"><i class="mdi mdi-cog"></i></div>' + container.innerHTML;
+    }
+}
 //# sourceMappingURL=appBar.js.map

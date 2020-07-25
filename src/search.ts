@@ -1,7 +1,7 @@
 //@ts-ignore
 const { ipcRenderer } = require('electron');
 
-const searchType = localStorage.getItem('searchType');
+let searchType = "Usuarios"
 
 const inputSearch = <HTMLInputElement>document.getElementById('SearchInput');
 const resultDiv = document.getElementById('resultados');
@@ -10,34 +10,42 @@ const progressbar = <HTMLInputElement>document.getElementsByClassName('progress'
 let adds = localStorage.getItem('ContRoomS');
 // adds = JSON.parse()
 
-if (searchType == "Salas") {
-    progressbar.style.display = "block";
-    inputSearch.placeholder = "Sala de chat";
-    let count: number = 0;
-    firebase.database().ref("Salas").once("value").then((snapshot) => {
-        snapshot.forEach((element) => {
-            let data = element.val();
-            if(!data.private){
-            let sala = new Room(element.key, data.nombre, Object.keys(data.miembros).length, data.keywords, adds.includes(element.key));
+
+progressbar.style.display = "block";
+resultDiv.innerHTML += '<p style="margin: 0 1rem">Sala aleatorias</p>'
+let count: number = 0;
+firebase.database().ref("Salas").once("value").then((snapshot) => {
+    let rooms = []
+    console.log(Object.keys(snapshot.val()).length)
+    snapshot.forEach(element => {
+        let data = element.val()
+        let room = {key: element.key, nombre: data.nombre, miembros: data.miembros, keywords: data.keywords, private: data.private }
+        rooms.push(room)
+    });
+    for (count; count < 5; count++) {
+        let index = Math.floor(Math.random() * (rooms.length - 1))
+        console.log(index)
+        let data = rooms[index];
+        console.log(data)
+        if (!data.private) {
+            let sala = new Room(data.key, data.nombre, Object.keys(data.miembros).length, data.keywords, adds.includes(data.key));
             sala.Show()
             if (count == 5) {
                 return true;
             }
-            count++}
-        });
-    }).finally(() => {
-        progressbar.style.display = "none";
-    })
-}else{
-    inputSearch.placeholder = "@username"
-}
+        }
+    };
+}).finally(() => {
+    progressbar.style.display = "none";
+})
+
 
 class User {
     username: string;
     name: string;
     estado: string;
     id: string
-    isAdded:boolean
+    isAdded: boolean
     constructor(user_name: string, name_: string, estado_: string, id_: string) {
         this.username = user_name;
         this.name = name_;
@@ -49,14 +57,14 @@ class User {
     Show() {
         let c = "'";
         let icon;
-        let dis= "";
-        if(this.isAdded){
+        let dis = "";
+        if (this.isAdded) {
             icon = 'mdi-check'
             dis = 'disabled'
-        }else{
+        } else {
             icon = 'mdi-account-plus'
         }
-        let structure = '<div class="userCard"><img src="../icons/userAvatar.png" loading="lazy" alt="imagen de perfil"><div><p>@' + this.username + '</p><p>' + this.name + '</p><i>' + this.estado + '</i></div><button id="'+this.id+'_btn" class="button" onclick="AddContact(' + c + this.id + c + ',' + c + this.username + c + ',' + c + this.name + c + ')" '+dis+'><span id="'+this.id+'_span" class="mdi '+icon+'"></span></button></div>';
+        let structure = '<div class="userCard"><img src="../icons/userAvatar.png" loading="lazy" alt="imagen de perfil"><div><p>@' + this.username + '</p><p>' + this.name + '</p><i>' + this.estado + '</i></div><button id="' + this.id + '_btn" class="button" onclick="AddContact(' + c + this.id + c + ',' + c + this.username + c + ',' + c + this.name + c + ')" ' + dis + '><span id="' + this.id + '_span" class="mdi ' + icon + '"></span></button></div>';
         resultDiv.innerHTML += structure;
     }
 }
@@ -67,8 +75,8 @@ class Room {
     miembros: number;
     categorias: string;
     chips: string = "";
-    isAdded:boolean;
-    constructor(id_: string, title_: string, miembros_: number, categorias_: string, isAdd:boolean) {
+    isAdded: boolean;
+    constructor(id_: string, title_: string, miembros_: number, categorias_: string, isAdd: boolean) {
         this.id = id_;
         this.title = title_;
         this.miembros = miembros_;
@@ -77,7 +85,7 @@ class Room {
     }
     Show() {
         let c = "'";
-        let icon:string;
+        let icon: string;
         let dis = "";
         if (this.categorias !== "") {
             if (this.categorias.includes(",")) {
@@ -91,13 +99,13 @@ class Room {
         } else {
             this.chips = "";
         }
-        if(this.isAdded){
+        if (this.isAdded) {
             icon = 'mdi-check'
             dis = "disabled"
-        }else{
+        } else {
             icon = 'mdi-chat-plus'
         }
-        let structure = '<div class="userCard z-depth-3"><img src="../icons/userAvatar.png" loading="lazy" alt="imagen de perfil"><div><p>' + this.title + '</p><i>' + this.miembros + ' miembros</i><br>' + this.chips + '</div><button class="button" id="'+this.id+'_btn" onclick="Join(' + c + this.id + c + ',' + c + this.title + c + ')" '+dis+'><span id="'+this.id+'_span" class="mdi '+icon+'"></span></button></div>';
+        let structure = '<div class="userCard z-depth-3"><img src="../icons/userAvatar.png" loading="lazy" alt="imagen de perfil"><div><p>' + this.title + '</p><i>' + this.miembros + ' miembros</i><br>' + this.chips + '</div><button class="button" id="' + this.id + '_btn" onclick="Join(' + c + this.id + c + ',' + c + this.title + c + ')" ' + dis + '><span id="' + this.id + '_span" class="mdi ' + icon + '"></span></button></div>';
         resultDiv.innerHTML += structure;
     }
 }
@@ -144,7 +152,7 @@ function Search() {
                 snapshot.forEach((element) => {
                     let data = element.val();
                     if (data.nombre.toLowerCase().includes(searchValue) && !data.private) {
-                        let sala = new Room(element.key, data.nombre, data.miembros.isPrototypeOf.length, data.keywords, adds.includes(element.key));
+                        let sala = new Room(element.key, data.nombre, Object.keys(data.miembros).length, data.keywords, adds.includes(element.key));
                         sala.Show()
                     }
                 });
@@ -156,18 +164,31 @@ function Search() {
 }
 function Join(id: string, name: string) {
     ipcRenderer.send('joinRoom', { id: id, name: name })
-    let button = <HTMLButtonElement> document.getElementById(id+'_btn');
+    let button = <HTMLButtonElement>document.getElementById(id + '_btn');
     button.disabled = true;
-    let span = document.getElementById(id+"_span");
+    let span = document.getElementById(id + "_span");
     span.classList.remove("mdi-chat-plus");
     span.classList.add("mdi-check")
 }
 
 function AddContact(id: string, user: string, name: string) {
     ipcRenderer.send('addContact', { id: id, user: user, name: name })
-    let button = <HTMLButtonElement> document.getElementById(id+'_btn');
+    let button = <HTMLButtonElement>document.getElementById(id + '_btn');
     button.disabled = true;
-    let span = document.getElementById(id+"_span");
+    let span = document.getElementById(id + "_span");
     span.classList.remove("mdi-account-plus");
     span.classList.add("mdi-check")
+}
+
+function ChangeSearch (){
+    let button = document.getElementById('searchType')
+    button.classList.toggle('mdi-account-plus')
+    button.classList.toggle('mdi-account-multiple-plus')
+    if(searchType == "Usuarios"){
+        searchType = "Salas"
+        inputSearch.placeholder = "Salas de chat";
+    }else{
+        searchType = "Usuarios"
+        inputSearch.placeholder = "Buscar usuarios";
+    }
 }

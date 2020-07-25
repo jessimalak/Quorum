@@ -22,7 +22,7 @@ function system() {
 
 let bar = new Titlebar({
     backgroundColor: Color.fromHex('#b37feb'),
-    // menu: null,
+    menu: null,
     iconsTheme: system().theme,
     order: system().order,
     //@ts-ignore

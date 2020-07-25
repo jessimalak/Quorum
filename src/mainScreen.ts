@@ -14,22 +14,17 @@ document.title = 'Quorum - ' + username;
 bar.updateTitle();
 
 ipcRenderer.send('loadingchange', 'Desencrpitando...|Importando chats')
-let chatsData: { name: string, time: number }[] = new Array();
+let chatsData: { name: string, time: number, key:string }[] = new Array();
+let contacts:{name:string, username:string, key:string}[] = new Array();
 
 const mensajeInput = <HTMLInputElement>document.getElementById('mensaje-input');
 
 let loadedChat: { id: string, tipo: string, nombre: string, tiempo: number };
 
-const contactSelector = <HTMLInputElement>document.getElementById('contactSelect');
-const contactC = <HTMLOptGroupElement>document.getElementById('contactC')
-const searchContact_btn = document.getElementById('searchContact_btn');
-
-const contactSelectorD = document.getElementById('contactSelectD');
 const options = <HTMLElement>document.getElementsByClassName("custom-options")[0]
 let c = "'";
-let ContRooms: string[] = new Array();
-let chating: string[] = new Array();
 
+// settingsIcon()
 
 let roomData: { admin: boolean, isPrivate: boolean }
 // let admin:boolean;
@@ -42,7 +37,7 @@ firebase.database().ref('Usuarios/' + uid + '/chats').on('value',
         chats.innerHTML = ""
         snapshot.forEach((element) => {
             let data = element.val();
-            chatsData.push({ name: data.nombre, time: data.tiempo })
+            chatsData.push({ name: data.nombre, time: data.tiempo, key: element.key })
             let Rname = "";
             if (data.tipo == "Contacto") {
                 Rname = decrypt(data.name, code, "A");
@@ -55,8 +50,6 @@ firebase.database().ref('Usuarios/' + uid + '/chats').on('value',
             }
             chats_ += '<li class="contact-item" id="chat_' + id + '" onclick="OpenChat(' + c + element.key + c + ',' + c + data.tipo + c + ',' + c + id + c + ', ' + c + Rname + c + ', ' + data.tiempo + ')"><img src="../icons/userAvatar.png" alt="perfi"><div><p>' + data.nombre + '</p><span>' + Rname + '</span>' + notify + '</div></li>';
             id++;
-            ContRooms.push(element.key);
-            chating.push(element.key);
         });
         chats.innerHTML = chats_;
     })
@@ -68,17 +61,16 @@ firebase.auth().onAuthStateChanged(user => {
         firebase.database().ref("Usuarios/" + uid + "/contactos").once("value").then((snapshot) => {
             snapshot.forEach((element) => {
                 let data = element.val();
-                if (!ContRooms.includes(data.id)) {
-                    options.innerHTML += '<div class="custom-option" onclick="showContact(' + c + data.username + c + ', ' + c + data.id + c + ', ' + c + decrypt(data.nombre, code, "A") + c + ')"><p>' + data.username + ' </p><span> ' + decrypt(data.nombre, code, "A") + '</span></div>'
-                    ContRooms.push(data.id);
+                let id = decrypt(data.id, code, "A")
+                let nombre = decrypt(data.nombre, code, "A")
+                let username =  decrypt(data.username, code, "A")
+                if (!chatsData.toString().includes(id)) {
+                    contacts.push({name: nombre, username: username, key: id})
                 }
             });
         }).finally(() => {
-            localStorage.setItem('ContRoomS', ContRooms.toString())
+            localStorage.setItem('ContRoomS', chatsData.toString())
             ipcRenderer.send('loading', false);
-            if(options.childElementCount == 0){
-                options.innerHTML += '<div class="custom-option"><p>Sin contactos disponibles</p></div>'
-            }
         })
 
     }
@@ -89,9 +81,9 @@ const selectors_ = document.querySelectorAll('select');
 let instances = M.FormSelect.init(selectors_);
 
 
-settings_btn.addEventListener('click', () => {
+function openSettings (){
     ipcRenderer.send('openSettings', true);
-})
+}
 
 ipcRenderer.on('signOut', (e) => {
     firebase.auth().signOut();
@@ -103,7 +95,6 @@ ipcRenderer.on('updateTheme', (e, val) => {
 })
 
 function OpenSearch(type: string) {
-    localStorage.setItem('searchType', type);
     ipcRenderer.send('search', type);
 }
 
@@ -168,13 +159,12 @@ ipcRenderer.on('joinRoom', (e, values) => {
         })
     })
     showChat(values.name, values.id, "Sala", "", Date.now());
-    ContRooms.push(values.id)
-    localStorage.setItem('ContRoomS', ContRooms.toString())
+    localStorage.setItem('ContRoomS', chatsData.toString()+ contacts.toString())
 })
 
 function showChat(name, id, tipo, Rname, tiempo) {
     let c = "'";
-    chatsData.push({ name: name, time: tiempo });
+    chatsData.push({ name: name, time: tiempo, key: id });
     let index = chatsData.length - 1;
     chats.innerHTML += '<li class="contact-item" id="chat_' + index + '" onclick="OpenChat(' + c + id + c + ',' + c + tipo + c + ',' + c + index + c + ',' + c + Rname + c + ')"><img src="../icons/userAvatar.png" alt="perfi"><div><p>' + name + '</p><span>' + Rname + '</span></div></li>';
 }
@@ -354,20 +344,15 @@ function Scroll() {
 
 ipcRenderer.on('addContact', (e, values) => {
     firebase.database().ref("Usuarios/" + uid + "/contactos").push({
-        id: values.id,
+        id: encrypt(values.id, code, "A"),
         nombre: encrypt(values.name, code, "A"),
-        username: values.user
+        username: encrypt(values.user, code, "A")
     }).then(() => {
         options.innerHTML += '<div class="custom-option" onclick="showContact(' + c + values.user + c + ', ' + c + values.id + c + ', ' + c + values.name + c + ')"><p>' + values.user + ' </p><span> ' + values.name + '</span></div>'
     })
-    ContRooms.push(values.id);
-    localStorage.setItem('ContRoomS', ContRooms.toString())
+    contacts.push({name:values.name , username: values.user, key:values.id});
+    localStorage.setItem('ContRoomS', contacts.toString()+ chatsData.toString())
 })
-
-searchContact_btn.addEventListener('click', () => {
-    contactSelectorD.classList.toggle('visible');
-})
-
 
 async function JoinPrivate() {
     const { value: id } = await Swal.fire({
@@ -480,14 +465,9 @@ function Command(mensaje: string): string {
     return newmessage
 }
 
-contactSelectorD.addEventListener('click', function () {
-    this.querySelector('.custom-select').classList.toggle('open');
-})
 
 function showContact(name, id, Rname) {
-    let values = contactSelector.value.split("|");
-    if (!chating.includes(id)) {
-        chating.push(id)
+    if (!chatsData.toString().includes(id)) {
         showChat(name, id, "Contacto", Rname, Date.now())
         let index = chatsData.length - 1;
         document.getElementById('chat_' + index).click();
@@ -652,3 +632,15 @@ document.getElementById('modal-clear').addEventListener('click', async () => {
         })
     }
 })
+
+function showContacts(){
+    let html ="<div><p>Ya estás conversando con todos tus contactos</p></div>"
+    if(contacts.length > 0){
+        html = "<p>hay contactos</p>"
+    }
+    Swal.fire({
+        title: "Contactos",
+        html: html,
+        showCloseButton: true
+    })
+}

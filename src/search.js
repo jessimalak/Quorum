@@ -1,32 +1,37 @@
 const { ipcRenderer } = require('electron');
-const searchType = localStorage.getItem('searchType');
+let searchType = "Usuarios";
 const inputSearch = document.getElementById('SearchInput');
 const resultDiv = document.getElementById('resultados');
 const progressbar = document.getElementsByClassName('progress')[0];
 let adds = localStorage.getItem('ContRoomS');
-if (searchType == "Salas") {
-    progressbar.style.display = "block";
-    inputSearch.placeholder = "Sala de chat";
-    let count = 0;
-    firebase.database().ref("Salas").once("value").then((snapshot) => {
-        snapshot.forEach((element) => {
-            let data = element.val();
-            if (!data.private) {
-                let sala = new Room(element.key, data.nombre, Object.keys(data.miembros).length, data.keywords, adds.includes(element.key));
-                sala.Show();
-                if (count == 5) {
-                    return true;
-                }
-                count++;
-            }
-        });
-    }).finally(() => {
-        progressbar.style.display = "none";
+progressbar.style.display = "block";
+resultDiv.innerHTML += '<p style="margin: 0 1rem">Sala aleatorias</p>';
+let count = 0;
+firebase.database().ref("Salas").once("value").then((snapshot) => {
+    let rooms = [];
+    console.log(Object.keys(snapshot.val()).length);
+    snapshot.forEach(element => {
+        let data = element.val();
+        let room = { key: element.key, nombre: data.nombre, miembros: data.miembros, keywords: data.keywords, private: data.private };
+        rooms.push(room);
     });
-}
-else {
-    inputSearch.placeholder = "@username";
-}
+    for (count; count < 5; count++) {
+        let index = Math.floor(Math.random() * (rooms.length - 1));
+        console.log(index);
+        let data = rooms[index];
+        console.log(data);
+        if (!data.private) {
+            let sala = new Room(data.key, data.nombre, Object.keys(data.miembros).length, data.keywords, adds.includes(data.key));
+            sala.Show();
+            if (count == 5) {
+                return true;
+            }
+        }
+    }
+    ;
+}).finally(() => {
+    progressbar.style.display = "none";
+});
 class User {
     constructor(user_name, name_, estado_, id_) {
         this.username = user_name;
@@ -131,7 +136,7 @@ function Search() {
                 snapshot.forEach((element) => {
                     let data = element.val();
                     if (data.nombre.toLowerCase().includes(searchValue) && !data.private) {
-                        let sala = new Room(element.key, data.nombre, data.miembros.isPrototypeOf.length, data.keywords, adds.includes(element.key));
+                        let sala = new Room(element.key, data.nombre, Object.keys(data.miembros).length, data.keywords, adds.includes(element.key));
                         sala.Show();
                     }
                 });
@@ -156,5 +161,18 @@ function AddContact(id, user, name) {
     let span = document.getElementById(id + "_span");
     span.classList.remove("mdi-account-plus");
     span.classList.add("mdi-check");
+}
+function ChangeSearch() {
+    let button = document.getElementById('searchType');
+    button.classList.toggle('mdi-account-plus');
+    button.classList.toggle('mdi-account-multiple-plus');
+    if (searchType == "Usuarios") {
+        searchType = "Salas";
+        inputSearch.placeholder = "Salas de chat";
+    }
+    else {
+        searchType = "Usuarios";
+        inputSearch.placeholder = "Buscar usuarios";
+    }
 }
 //# sourceMappingURL=search.js.map

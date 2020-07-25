@@ -14,22 +14,22 @@
 <body>
     <div class="content Ui">
         <div class="contactsPanel panel">
-            <div class="searchDiv z-depth-3">
+            <div class="searchDiv z-depth-3" style="justify-content: space-around;">
                 <!-- <input type="search" name="search" id="searchInput" class="inputText"> -->
-                <span class="mdi mdi-dots-vertical button dash-button" id="menu_btn">
+                <!-- <span class="mdi mdi-dots-vertical button dash-button" id="menu_btn">
                     <ul class="menu">
-                        <li class="menu-item" onclick="CreateRoom()"><i class="mdi mdi-account-group"></i><span>Crear
+                        <li class="menu-item" ><span>Crear
                                 sala</span></li>
-                        <li class="menu-item" onclick="JoinPrivate()"><i
-                                class="mdi mdi-guy-fawkes-mask"></i><span>Entrar a sala privada</span></li>
+                        <li class="menu-item" "><span>Entrar a sala privada</span></li>
                         <li class="menu-item" id="settings_btn"><i class="mdi mdi-cog"></i><span>Configuración</span>
                         </li>
                     </ul>
-                </span>
-                <i class="mdi mdi-account-multiple-plus button dash-button" onclick="OpenSearch('Salas')"></i>
-                <i class="mdi mdi-account-plus button dash-button" onclick="OpenSearch('Usuarios')"></i>
-                <i class="mdi mdi-magnify button dash-button" id="searchContact_btn"></i>
-                <div id="contactSelectD" class="selector">
+                </span> -->
+                <i class="mdi mdi-magnify button dash-button" onclick="OpenSearch()"></i>
+                <i class="mdi mdi-account-group button dash-button" onclick="CreateRoom()"></i>
+                <i class="mdi mdi-guy-fawkes-mask button dash-button" onclick="JoinPrivate()"></i>
+                
+                <!-- <div id="contactSelectD" class="selector">
                     <div class="custom-select">
                         <div class="custom-select__trigger"><span>Contactos</span>
                             <div class="arrow"></div>
@@ -38,16 +38,14 @@
 
                         </div>
                     </div>
-                </div>
-                <select style="display: none;" name="contactos" id="contactSelect" class="inputText selector">
-                    <optgroup label="Contactos" id="contactC">
-
-                    </optgroup>
-                </select>
+                </div> -->
             </div>
             <ul id="chat-list" class="z-depth-3">
 
             </ul>
+            <div id="floating" class="z-depth-2" onclick="showContacts()">
+                <span class="mdi mdi-chat-plus"></span>
+            </div>
         </div>
         <div id="rightPanel" class="content">
             <div id="welcomeMessage" class="content">
