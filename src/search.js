@@ -19,7 +19,7 @@ firebase.database().ref("Salas").once("value").then((snapshot) => {
         let index = Math.floor(Math.random() * (rooms.length - 1));
         console.log(index);
         let data = rooms[index];
-        console.log(data);
+        console.log(rooms.length);
         if (!data.private) {
             let sala = new Room(data.key, data.nombre, Object.keys(data.miembros).length, data.keywords, adds.includes(data.key));
             sala.Show();
@@ -117,7 +117,7 @@ function Search() {
                 snapshot.forEach((element) => {
                     let data = element.val();
                     let username = data.username;
-                    let nombre = decrypt(data.nombre, code, "B");
+                    let nombre = decrypt(data.nombre, code[4], "B");
                     if (username !== localStorage.getItem('username')) {
                         result = true;
                         let user = new User(data.username, nombre, data.estado, element.key);
@@ -135,7 +135,7 @@ function Search() {
             firebase.database().ref("Salas").once("value").then((snapshot) => {
                 snapshot.forEach((element) => {
                     let data = element.val();
-                    if (data.nombre.toLowerCase().includes(searchValue) && !data.private) {
+                    if (data.nombre.toLowerCase().includes(searchValue) || data.keywords.toLowerCase().includes(searchValue) && !data.private) {
                         let sala = new Room(element.key, data.nombre, Object.keys(data.miembros).length, data.keywords, adds.includes(element.key));
                         sala.Show();
                     }

@@ -44,15 +44,11 @@
                     <option value="menta-light">Menta</option>
                     <option value="violeta-light">Ultravioleta</option>
                     <option value="azul-light">Azul como el mar azul</option>
-                    <option value="rojo-light">Rojo pasión</option>
-                    <option value="hiedra-light">Hiedra venenosa</option>
                     <option value="light-light">El lado luminoso</option>
                 </optgroup>
                 <optgroup label="Oscuro">
                     <option value="menta-dark">Menta</option>
                     <option value="violeta-dark">Ultravioleta</option>
-                    <option value="azul-dark">Azul como el mar azul</option>
-                    <option value="rojo-dark">Rojo pasión</option>
                     <option value="hiedra-dark">Hiedra venenosa</option>
                     <option value="dark-dark">El lado oscuro</option>
                 </optgroup>
@@ -69,12 +65,23 @@
             <input style="width: 5rem; font-size: 0.5rem; display: none;" type="file" name="imgFondo" id="imgFondo">
         </div>
         <div class="switch" style="display: none;">
+            <p>posición botones</p>
             <label>
               Izquierda
               <input id="orderSwitch" type="checkbox" checked>
               <span class="lever"></span>
               Derecha
             </label>
+          </div>
+          <div class="switch">
+            <p>Diferentes Colores (Burbujas de chat)</p>
+            <label>
+              No
+              <input id="colorsSwitch" type="checkbox" checked>
+              <span class="lever"></span>
+              Dámelos!
+            </label>
+            <span class="mdi mdi-comment-eye-outline" onclick="previewColors()"></span>
           </div>
         <div id="chatMessages" style="height: fit-content; margin: 0;">
             <div class="mensaje reciver">

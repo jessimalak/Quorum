@@ -14,6 +14,7 @@ ipcRenderer.send('loadingchange', 'Desencrpitando...|Importando chats');
 let chatsData = new Array();
 let contacts = new Array();
 const mensajeInput = document.getElementById('mensaje-input');
+const sendButton = document.getElementById('sender');
 let loadedChat;
 const options = document.getElementsByClassName("custom-options")[0];
 let c = "'";
@@ -22,12 +23,13 @@ firebase.database().ref('Usuarios/' + uid + '/chats').on('value', (snapshot) => 
     let id = 0;
     let chats_ = "";
     chats.innerHTML = "";
+    chatsData = [];
     snapshot.forEach((element) => {
         let data = element.val();
         chatsData.push({ name: data.nombre, time: data.tiempo, key: element.key });
         let Rname = "";
         if (data.tipo == "Contacto") {
-            Rname = decrypt(data.name, code, "A");
+            Rname = decrypt(data.name, code[4], "A");
         }
         let notify = "";
         if (data.leido !== undefined) {
@@ -35,7 +37,7 @@ firebase.database().ref('Usuarios/' + uid + '/chats').on('value', (snapshot) => 
                 notify = '<span id="' + element.key + '_notify" class="mdi mdi-bell-circle notify"></span>';
             }
         }
-        chats_ += '<li class="contact-item" id="chat_' + id + '" onclick="OpenChat(' + c + element.key + c + ',' + c + data.tipo + c + ',' + c + id + c + ', ' + c + Rname + c + ', ' + data.tiempo + ')"><img src="../icons/userAvatar.png" alt="perfi"><div><p>' + data.nombre + '</p><span>' + Rname + '</span>' + notify + '</div></li>';
+        chats_ += '<li class="contact-item" id="chat_' + id + '" onclick="OpenChat(' + c + element.key + c + ',' + c + data.tipo + c + ',' + c + id + c + ', ' + c + Rname + c + ', ' + data.tiempo + ', false)"><img src="../icons/userAvatar.png" alt="perfi"><div><p>' + data.nombre + '</p><span>' + Rname + '</span>' + notify + '</div></li>';
         id++;
     });
     chats.innerHTML = chats_;
@@ -45,25 +47,26 @@ firebase.auth().onAuthStateChanged(user => {
         window.location.replace('login.html');
     }
     else {
+        let html = "";
         ipcRenderer.send('loadingchange', 'Desencrpitando...|Importando contactos');
         firebase.database().ref("Usuarios/" + uid + "/contactos").once("value").then((snapshot) => {
             snapshot.forEach((element) => {
                 let data = element.val();
-                let id = decrypt(data.id, code, "A");
-                let nombre = decrypt(data.nombre, code, "A");
-                let username = decrypt(data.username, code, "A");
+                let id = decrypt(data.id, code[4], "A");
+                let nombre = decrypt(data.nombre, code[4], "A");
+                let username = decrypt(data.username, code[4], "A");
                 if (!chatsData.toString().includes(id)) {
                     contacts.push({ name: nombre, username: username, key: id });
+                    html += '<div class="contact-item" onclick="showChat(' + c + username + c + ', ' + c + id + c + ', ' + c + 'Contacto' + c + ', ' + c + nombre + c + ', ' + Date.now() + ', true)"><div><p>' + nombre + '</p><span>' + username + '</span></div></div>';
                 }
             });
         }).finally(() => {
             localStorage.setItem('ContRoomS', chatsData.toString());
             ipcRenderer.send('loading', false);
+            document.getElementById('contacts').innerHTML += html;
         });
     }
 });
-const selectors_ = document.querySelectorAll('select');
-let instances = M.FormSelect.init(selectors_);
 function openSettings() {
     ipcRenderer.send('openSettings', true);
 }
@@ -80,7 +83,7 @@ function OpenSearch(type) {
 function CreateRoom() {
     Swal.fire({
         title: "Crear nueva Sala",
-        html: '<input class="inputText searchHeader" type="text" placeholder="Nombre" maxlength="24" name="roomName" id="roomNameInput">' +
+        html: '<input class="inputText searchHeader" type="text" placeholder="Nombre" maxlength="60" name="roomName" id="roomNameInput">' +
             '<input class="inputText searchHeader" type="text" placeholder="Etiquetas (separadas por comas ( , ))" name="roomkeys" id="roomKeywordsInput">' +
             '<label><input type="checkbox" class="filled-in pink" id="privateCheck"><span style="font-size: 1.5rem;">Sala privada</span></label>',
         showCloseButton: true,
@@ -136,24 +139,26 @@ ipcRenderer.on('joinRoom', (e, values) => {
             tipo: "Sala"
         });
     });
-    showChat(values.name, values.id, "Sala", "", Date.now());
+    showChat(values.name, values.id, "Sala", "", Date.now(), false);
     localStorage.setItem('ContRoomS', chatsData.toString() + contacts.toString());
 });
-function showChat(name, id, tipo, Rname, tiempo) {
+function showChat(name, id, tipo, Rname, tiempo, myfirst) {
     let c = "'";
     chatsData.push({ name: name, time: tiempo, key: id });
     let index = chatsData.length - 1;
-    chats.innerHTML += '<li class="contact-item" id="chat_' + index + '" onclick="OpenChat(' + c + id + c + ',' + c + tipo + c + ',' + c + index + c + ',' + c + Rname + c + ')"><img src="../icons/userAvatar.png" alt="perfi"><div><p>' + name + '</p><span>' + Rname + '</span></div></li>';
+    chats.innerHTML += '<li class="contact-item" id="chat_' + index + '" onclick="OpenChat(' + c + id + c + ',' + c + tipo + c + ',' + c + index + c + ',' + c + Rname + c + ',' + tiempo + ',' + myfirst + ' )"><img src="../icons/userAvatar.png" alt="perfi"><div><p>' + name + '</p><span>' + Rname + '</span></div></li>';
 }
 class Mensaje {
-    constructor(sender_, time_, texto_) {
+    constructor(key_, sender_, id_, time_, texto_) {
         this.senderlabel = "";
-        this.sender = decrypt(sender_, code, "A");
+        this.key = key_;
+        this.sender = decrypt(sender_, code[4], "A");
+        this.id = id_;
         this.time = time_;
-        this.texto = decrypt(texto_, code, "A");
+        this.texto = decrypt(texto_, code[4], "A");
     }
     Show() {
-        if (this.sender == username) {
+        if (this.id == uid) {
             this.class = "sender";
             this.senderlabel = "";
         }
@@ -163,16 +168,19 @@ class Mensaje {
                 this.senderlabel = '<span class="senderLabel">' + this.sender + '</span>';
             }
         }
-        let resource = '<div class="mensaje ' + this.class + '">' + this.senderlabel + '<div class="mensaje-content ' + this.class + '-content"><p class="messageText">' + this.texto + '</p><p class="mensaje-time">' + this.time + '</p></div></div>';
+        let resource = '<div id="mensaje' + this.key + '" class="mensaje ' + this.class + '">' + this.senderlabel + '<div class="mensaje-content ' + this.class + '-content"><p class="messageText">' + this.texto + '</p><p class="mensaje-time">' + this.time + '</p></div></div>';
         chatContainer.innerHTML += resource;
         Scroll();
     }
 }
-let firstTime;
-function OpenChat(id, tipo, index, nombre, tiempo) {
+let firstTimeOther;
+let myFirstTime;
+function OpenChat(id, tipo, index, nombre, tiempo, myfirst) {
     welcomeScreen.style.display = "none";
     chat.style.display = "flex";
-    loadedChat = { id, tipo, nombre, tiempo };
+    let username_ = chatsData[index].name;
+    loadedChat = { id, tipo, nombre, username_, tiempo };
+    myFirstTime = myfirst;
     chatContainer.innerHTML = "";
     mensajeInput.focus();
     let titleP = document.getElementById('chatName');
@@ -195,7 +203,9 @@ function OpenChat(id, tipo, index, nombre, tiempo) {
             chatContainer.innerHTML = "";
             snapshot.forEach((element) => {
                 let data = element.val();
-                let mensaje = new Mensaje(decrypt(data.sender, id, "R"), timeStamp(data.time), decrypt(data.texto, id, "R"));
+                let senderenc = decrypt(data.sender_id, id, "R");
+                let sender = decrypt(senderenc, code[2], "B");
+                let mensaje = new Mensaje(element.key, decrypt(data.sender, id, "R"), sender, timeStamp(data.time), decrypt(data.texto, id, "R"));
                 mensaje.Show();
                 twemoji.parse(chatContainer);
             });
@@ -210,22 +220,24 @@ function OpenChat(id, tipo, index, nombre, tiempo) {
             firebase.database().ref("Usuarios/" + id + "/chats/" + uid).once('value')
                 .then((snapshot) => {
                 if (snapshot.val() == null) {
-                    firstTime = true;
+                    firstTimeOther = true;
                 }
             });
             snapshot.forEach((element) => {
                 let data = element.val();
                 let decryptCode;
-                let sender = decrypt(data.sender, code, "A");
-                if (sender == username) {
+                let senderenc = decrypt(data.sender_id, code[6], "R");
+                let sender = decrypt(senderenc, code[2], "B");
+                if (sender == uid) {
                     decryptCode = id;
                 }
                 else {
                     decryptCode = uid;
                 }
-                let mensaje = new Mensaje(data.sender, timeStamp(data.time), decrypt(data.texto, decryptCode, "R"));
+                let mensaje = new Mensaje(element.key, decrypt(data.sender, code[2], "R"), sender, timeStamp(data.time), decrypt(data.texto, decryptCode, "R"));
                 mensaje.Show();
                 twemoji.parse(chatContainer);
+                console.log(sender);
                 firebase.database().ref("Usuarios/" + uid + "/chats/" + id).update({
                     leido: true
                 });
@@ -238,59 +250,84 @@ function OpenChat(id, tipo, index, nombre, tiempo) {
     titleP.innerText = chatsData[index].name;
     subTitleP.innerText = nombre;
 }
+mensajeInput.addEventListener('focusin', (e)=>{
+    console.log(e)
+})
+mensajeInput.addEventListener('focusout', (e)=>{
+    console.log(e)
+})
 mensajeInput.addEventListener('keyup', (k) => {
-    if (k.keyCode == 13 && !k.shiftKey) {
-        SendMessage();
+    if (firstTimeOther) {
+        if (k.key == "Enter" && !k.shiftKey) {
+            SendMessage();
+        }
+    }
+});
+mensajeInput.addEventListener('input', () => {
+    if (mensajeInput.value.trim() == "") {
+        sendButton.style.display = "none";
+    }
+    else {
+        sendButton.style.display = "block";
     }
 });
 function SendMessage() {
-    let preMessage = mensajeInput.value;
+    let preMessage = mensajeInput.value.trim();
     if (preMessage.includes("~")) {
         preMessage = Command(preMessage);
     }
-    if (!preMessage.includes("$invalid_")) {
-        let mensaje = encrypt(preMessage, code, "A");
-        let sender = encrypt(username, code, "A");
-        if (mensaje !== "") {
-            if (loadedChat.tipo == "Sala") {
-                firebase.database().ref("Salas/" + loadedChat.id + "/mensajes").push({
-                    sender: encrypt(sender, loadedChat.id, "R"),
-                    time: Date.now(),
-                    texto: encrypt(mensaje, loadedChat.id, "R")
-                });
-            }
-            else if (loadedChat.tipo == "Contacto") {
-                if (firstTime) {
-                    firebase.database().ref("Usuarios/" + loadedChat.id + "/chats/" + uid).set({
-                        nombre: username,
-                        name: encrypt(localStorage.getItem('nombre'), code, "A"),
-                        tipo: "Contacto",
-                        tiempo: Date.now()
-                    });
-                    firstTime = false;
-                }
-                firebase.database().ref("Usuarios/" + loadedChat.id + "/chats/" + uid + "/mensajes/").push({
-                    sender: sender,
-                    time: Date.now(),
-                    texto: encrypt(mensaje, loadedChat.id, "R")
-                }).then(() => {
-                    firebase.database().ref("Usuarios/" + uid + "/chats/" + loadedChat.id + "/mensajes/").push({
-                        sender: sender,
-                        time: Date.now(),
-                        texto: encrypt(mensaje, loadedChat.id, "R")
-                    });
-                });
-                firebase.database().ref("Usuarios/" + loadedChat.id + "/chats/" + uid).update({
-                    leido: false
-                });
-            }
+    let mensaje = encrypt(preMessage, code[4], "A");
+    let sender = encrypt(username, code[4], "A");
+    let id_ = encrypt(uid, code[2], "B");
+    if (preMessage.trim() !== "") {
+        if (loadedChat.tipo == "Sala") {
+            firebase.database().ref("Salas/" + loadedChat.id + "/mensajes").push({
+                sender: encrypt(sender, loadedChat.id, "R"),
+                sender_id: encrypt(id_, loadedChat.id, "R"),
+                time: Date.now(),
+                texto: encrypt(mensaje, loadedChat.id, "R")
+            });
         }
-        mensajeInput.value = "";
+        else if (loadedChat.tipo == "Contacto") {
+            if (firstTimeOther) {
+                firebase.database().ref("Usuarios/" + loadedChat.id + "/chats/" + uid).set({
+                    nombre: username,
+                    name: encrypt(localStorage.getItem('nombre'), code[4], "A"),
+                    tipo: "Contacto",
+                    tiempo: Date.now()
+                });
+                firstTimeOther = false;
+            }
+            if (myFirstTime) {
+                firebase.database().ref("Usuarios/" + uid + "/chats/" + loadedChat.id).update({
+                    name: encrypt(loadedChat.nombre, code[4], "A"),
+                    nombre: loadedChat.username_,
+                    tiempo: loadedChat.tiempo,
+                    tipo: loadedChat.tipo
+                }).then(() => {
+                    myFirstTime = false;
+                });
+            }
+            firebase.database().ref("Usuarios/" + loadedChat.id + "/chats/" + uid + "/mensajes/").push({
+                sender: encrypt(sender, code[2], "R"),
+                sender_id: encrypt(id_, code[6], "R"),
+                time: Date.now(),
+                texto: encrypt(mensaje, loadedChat.id, "R")
+            }).then(() => {
+                firebase.database().ref("Usuarios/" + uid + "/chats/" + loadedChat.id + "/mensajes/").push({
+                    sender: encrypt(sender, code[2], "R"),
+                    sender_id: encrypt(id_, code[6], "R"),
+                    time: Date.now(),
+                    texto: encrypt(mensaje, loadedChat.id, "R")
+                });
+            });
+            firebase.database().ref("Usuarios/" + loadedChat.id + "/chats/" + uid).update({
+                leido: false
+            });
+        }
     }
-    else {
-        Toast.fire({ title: "Comando invalido, revisalo bien", icon: 'warning' });
-        mensajeInput.value = mensajeInput.value.slice(0, -1);
-    }
+    mensajeInput.value = "";
+    sendButton.style.display = "none";
     mensajeInput.focus();
 }
 function timeStamp(time) {
@@ -310,13 +347,12 @@ function Scroll() {
 }
 ipcRenderer.on('addContact', (e, values) => {
     firebase.database().ref("Usuarios/" + uid + "/contactos").push({
-        id: encrypt(values.id, code, "A"),
-        nombre: encrypt(values.name, code, "A"),
-        username: encrypt(values.user, code, "A")
+        id: encrypt(values.id, code[4], "A"),
+        nombre: encrypt(values.name, code[4], "A"),
+        username: encrypt(values.user, code[4], "A")
     }).then(() => {
-        options.innerHTML += '<div class="custom-option" onclick="showContact(' + c + values.user + c + ', ' + c + values.id + c + ', ' + c + values.name + c + ')"><p>' + values.user + ' </p><span> ' + values.name + '</span></div>';
+        contacts.push({ name: values.name, username: values.user, key: values.id });
     });
-    contacts.push({ name: values.name, username: values.user, key: values.id });
     localStorage.setItem('ContRoomS', contacts.toString() + chatsData.toString());
 });
 async function JoinPrivate() {
@@ -361,7 +397,7 @@ async function JoinPrivate() {
                 Toast.fire({ title: "Ninguna sala privada usa ese código", icon: 'warning' });
             }
             else {
-                showChat(nombre, id, "Sala", "", Date.now());
+                showChat(nombre, id, "Sala", "", Date.now(), false);
                 let index = chatsData.length - 1;
                 document.getElementById('chat_' + index).click();
             }
@@ -389,7 +425,7 @@ function Command(mensaje) {
     let message;
     switch (type) {
         default:
-            message = "$invalid_";
+            message = "~" + type;
             break;
         case "holi":
             let indexS = Math.floor(Math.random() * saludos.length);
@@ -430,12 +466,12 @@ function Command(mensaje) {
 }
 function showContact(name, id, Rname) {
     if (!chatsData.toString().includes(id)) {
-        showChat(name, id, "Contacto", Rname, Date.now());
+        showChat(name, id, "Contacto", Rname, Date.now(), true);
         let index = chatsData.length - 1;
         document.getElementById('chat_' + index).click();
         firebase.database().ref("Usuarios/" + uid + "/chats/" + id).set({
             nombre: name,
-            name: encrypt(Rname, code, "A"),
+            name: encrypt(Rname, code[4], "A"),
             tipo: "Contacto",
             tiempo: Date.now()
         });
@@ -522,12 +558,12 @@ function ShowInfo(id, tipo) {
             else {
                 title.innerHTML += '<span class="mdi mdi-close verifyIcon" style="color: var(--primary)"><i class="tooltip">Usuario no verificado</i><span>';
             }
-            document.getElementById('modal-name').innerText = decrypt(data.nombre, code, "B");
+            document.getElementById('modal-name').innerText = decrypt(data.nombre, code[4], "B");
             document.getElementById('modal-estado').innerText = data.estado;
         });
     }
     document.getElementById('modal-time').innerText = CalcTime(loadedChat.tiempo);
-    Modal(true);
+    Modal('modal-info', 'modal-content', true);
 }
 function CopyKey() {
     let input = document.getElementById('private_key');
@@ -535,16 +571,16 @@ function CopyKey() {
     document.execCommand('copy');
     Toast.fire({ title: "clave copiada", icon: 'success' });
 }
-function Modal(show) {
-    document.getElementById('modal-content').classList.toggle('visible');
+function Modal(back, window, show) {
+    document.getElementById(window).classList.toggle('visible');
     if (show) {
-        document.getElementById('modal').style.display = 'flex';
-        document.getElementById('modal-content').style.display = 'block';
+        document.getElementById(back).style.display = 'flex';
+        document.getElementById(window).style.display = 'block';
     }
     else {
         setTimeout(() => {
-            document.getElementById('modal').style.display = 'none';
-            document.getElementById('modal-content').style.display = 'none';
+            document.getElementById(back).style.display = 'none';
+            document.getElementById(window).style.display = 'none';
         }, 200);
     }
 }
@@ -593,13 +629,15 @@ document.getElementById('modal-clear').addEventListener('click', async () => {
 });
 function showContacts() {
     let html = "<div><p>Ya estás conversando con todos tus contactos</p></div>";
+    const c = "Contacto";
     if (contacts.length > 0) {
-        html = "<p>hay contactos</p>";
+        let conthtml = "";
+        console.log(contacts);
+        contacts.forEach((elem) => {
+            conthtml += "<div class='contact-item' onclick='showChat(" + elem.username + ", " + elem.key + ", " + c + ", " + elem.name + ", " + Date.now() + ")'><div><p>" + elem.name + "</p><p>" + elem.username + "</p></div></div>";
+        });
+        html = conthtml;
     }
-    Swal.fire({
-        title: "Contactos",
-        html: html,
-        showCloseButton: true
-    });
+    document.getElementById('modal-contacts').classList.add('visible');
 }
 //# sourceMappingURL=mainScreen.js.map

@@ -26,7 +26,6 @@ function encrypt(value, key_, method) {
 function decrypt(value, key_, method) {
     let decrypted;
     let reverse = Reverse(key_);
-    console.log(value);
     const codeM1 = CryptoJS.SHA3(key_, { outputLength: 512 }).toString(CryptoJS.enc.Hex);
     const codeM2 = CryptoJS.SHA3(reverse, { outputLength: 512 }).toString(CryptoJS.enc.Hex);
     const codeSHA = CryptoJS.SHA256(key_).toString(CryptoJS.enc.Hex);

@@ -1041,9 +1041,13 @@ optgroup{
     color: var(--accent);
 }
 
-.modal-window p, .modal-window h1{
+#modal-info p, .modal-window h1{
     margin: 1rem 2px;
     text-align: center;
+}
+
+.modal-window h1{
+    font-size: 3rem;
 }
 
 .verifyIcon{

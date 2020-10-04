@@ -173,3 +173,19 @@ ipcMain.on('addContact', (e, values) => {
 ipcMain.on('showWindow', (e, val) => {
   win.show()
 })
+
+ipcMain.on('previewColors', ()=>{
+  let wini = new BrowserWindow({
+    height: 650,
+    width: 550,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true
+    },
+    parent: win,
+    modal: true,
+    frame: false
+  })
+  wini.setMenu(null)
+  wini.loadFile('src/ayudas/colores.html')
+})

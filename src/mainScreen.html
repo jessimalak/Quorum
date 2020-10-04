@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" media="all" href="../css/materialdesignicons.min.css" type="text/css">
+    <link rel="stylesheet" href="colors.css">
+    <link rel="stylesheet" href="animations.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="../css/materialize.css">
     <link rel="shortcut icon" href="../icons/favicon.ico" type="image/x-icon">
@@ -43,7 +45,7 @@
             <ul id="chat-list" class="z-depth-3">
 
             </ul>
-            <div id="floating" class="z-depth-2" onclick="showContacts()">
+            <div id="floating" class="z-depth-2" onclick="Modal('modal-contacts', 'contacts',true)">
                 <span class="mdi mdi-chat-plus"></span>
             </div>
         </div>
@@ -59,8 +61,9 @@
                 <div class="mensaje-input">
                     <textarea name="mensaje-input" placeholder="Escribe un mensaje..." class="materialize-textarea" id="mensaje-input" cols="30"
                         rows="1" class="inputText"></textarea>
-                    <i class="mdi mdi-send button send" onclick="SendMessage()"></i>
-                    <i class="mdi mdi-image button send"></i>
+                    <i class="mdi mdi-send button send" id="sender" onclick="SendMessage()"></i>
+                    <i class="mdi mdi-image button bar-button"></i>
+                    <i class="mdi mdi-microphone button bar-button" id="voice_button"></i>
                 </div>
                 <div id="chatMessages">
                     <div class="mensaje reciver">
@@ -82,10 +85,16 @@
                 </div>
             </div>
         </div>
-        <div class="modal-back" id="modal">
+        <div class="modal-back" id="modal-contacts">
+            <div class="modal-window" id="contacts">
+                <i style="padding: 1rem; top: 0;" onclick="Modal('modal-contacts', 'contacts',false)" class="mdi mdi-close"></i>
+                <h1>Contactos</h1>
+            </div>
+        </div>
+        <div class="modal-back" id="modal-info">
             <div class="modal-window" id="modal-content">
                 <span id="modal-time"></span>
-                <i style="padding: 1rem; top: 0;" onclick="Modal(false)" class="mdi mdi-close"></i>
+                <i style="padding: 1rem; top: 0;" onclick="Modal('modal-info', 'modal-content',false)" class="mdi mdi-close"></i>
                 <h1 id="modal-title"></h1>
                 <div id="modal-sala">
                     <p style="font-size: 14pt;" id="modal-date"></p>

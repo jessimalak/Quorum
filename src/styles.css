@@ -74,10 +74,10 @@ body{
 }
 
 .violeta-light{
-    --primary: #b37feb;
-    --primaryDark: b#9254de;
-    --accent: #7159f7;
-    --accentDark: #7c4ee7;
+    --primary:#7159f7;
+    --primaryDark: #5d46df;
+    --accent:#b859f7;
+    --accentDark: #ba45dd;
     --hover: #b37feb91;
     --text: #111;
     --textAccent: #151515;
@@ -168,8 +168,8 @@ body{
 .violeta-dark{
     --primary: #51258f;
     --primaryDark: #391085;
-    --accent: #202675;
-    --accentDark: #292075;
+    --accent: #75204f;
+    --accentDark: #61163f;
     --hover: #51258f91;
     --text: #fff;
     --textAccent: rgb(165, 165, 165);
@@ -205,7 +205,7 @@ body{
 }
 
 .dark-dark{
-    --primary: #111111;
+    --primary: #161616;
     --primaryDark: #080808;
     --accent: #4d4b4b;
     --accentDark: #333333;
@@ -330,9 +330,23 @@ input{
 }
 
 .send{
-    padding: 10px 10px;
+    padding: 10px;
     border-radius: 2rem;
     margin: 0.5rem;
+    animation: popout 200ms ease;
+}
+
+.bar-button{
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: 50%;
+    padding: 5px;
+    margin: 0.5rem 0.1rem;
+    font-size: 1.5rem;
+}
+
+#sender{
+display: none;
 }
 
 .button-container{
@@ -379,6 +393,13 @@ option, optgroup{
 
 optgroup{
     font-weight: 400;
+}
+
+.switch p{
+    font-weight: 200;
+    font-size: 12pt;
+    margin: 0;
+    margin-top: 5px;
 }
 
 .panel{
@@ -759,8 +780,8 @@ optgroup{
 
 .senderLabel{
     position: absolute;
-    left: 1rem;
-    top: 5px
+    left: 1.5rem;
+    top: 2px
 }
 
 .mensaje p{
@@ -906,13 +927,6 @@ optgroup{
     border-radius: 5px;
 } */
 
-@keyframes indeterminate{
-    0%{transform: translate(0); background-color: var(--primary);}
-    25%{background-color: var(--primaryDark);}
-    50%{transform: translate(450px); background-color: var(--primary);}
-    75%{background-color: var(--primaryDark);}
-    100%{transform: translate(0); background-color: var(--primary);}
-}
 
 .progress-value{
     position: absolute;
@@ -1003,11 +1017,6 @@ optgroup{
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-@keyframes popout{
-    from{transform: scale(0); opacity: 0;}
-    to{transform: scale(1); opacity: 1;}
-}
-
 .modal-window{
     transform: scale(0);
     position: relative;
@@ -1034,9 +1043,13 @@ optgroup{
     color: var(--accent);
 }
 
-.modal-window p, .modal-window h1{
+#modal-info p, .modal-window h1{
     margin: 1rem 2px;
     text-align: center;
+}
+
+.modal-window h1{
+    font-size: 3rem;
 }
 
 .verifyIcon{

@@ -18,6 +18,7 @@ else {
 let user;
 let order = null;
 const name_ = document.getElementById('usernameP');
+const fp = document.getElementById('perfil');
 const mail_ = document.getElementById('mailP');
 const state_ = document.getElementById('stateP');
 const save_btn = document.getElementById('save-btn');
@@ -50,6 +51,19 @@ _switch.addEventListener('change', () => {
         });
     }
 });
+fp.addEventListener('click', () => {
+    Swal.fire({
+        title: 'No has verificado tu correo',
+        text: 'Ésto es para asegurarnos que tu correo es real y no una cuenta falsa',
+        confirmButtonColor: 'var(--primary)',
+        confirmButtonText: 'Verificar',
+        showCloseButton: true
+    }).then((result) => {
+        if (result) {
+            console.log(result);
+        }
+    });
+});
 function logout() {
     ipcRenderer.send('signOut', true);
 }
@@ -64,7 +78,7 @@ mail_btn.addEventListener('click', () => {
         confirmButtonText: 'Verificar',
         showCloseButton: true
     }).then((result) => {
-        if (result) {
+        if (result.isConfirmed) {
             firebase.auth().currentUser.sendEmailVerification()
                 .then(function () {
                 Toast.fire({ title: 'Te hemos enviado un mensaje de confirmación a tu correo', icon: 'success' });
@@ -251,5 +265,8 @@ function ShowQR() {
     }).catch((err) => {
         console.log(err);
     });
+}
+function previewColors() {
+    ipcRenderer.send('previewColors', true);
 }
 //# sourceMappingURL=settings.js.map

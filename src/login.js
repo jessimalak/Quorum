@@ -118,8 +118,8 @@ firebase.auth().onAuthStateChanged(user => {
                 .then(function (snapshot) {
                 let user = snapshot.val();
                 console.log(user.username);
-                let mail = decrypt(user.mail, code, "B");
-                let nombre = decrypt(user.nombre, code, "B");
+                let mail = decrypt(user.mail, code[4], "B");
+                let nombre = decrypt(user.nombre, code[4], "B");
                 localStorage.setItem('username', user.username);
                 localStorage.setItem('mail', mail);
                 localStorage.setItem('estado', user.estado);
@@ -138,9 +138,9 @@ firebase.auth().onAuthStateChanged(user => {
             localStorage.setItem('nombre', personalname);
             firebase.database().ref('Usuarios/' + uid).set({
                 'username': username,
-                "mail": encrypt(mail, code, "B"),
+                "mail": encrypt(mail, code[4], "B"),
                 "estado": "Hola, soy nuev@ en Quorum",
-                "nombre": encrypt(personalname, code, "B"),
+                "nombre": encrypt(personalname, code[4], "B"),
                 "verified": false
             }).then(() => {
                 window.location.replace(mainScreen);

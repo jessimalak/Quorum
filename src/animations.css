@@ -1,0 +1,12 @@
+@keyframes indeterminate{
+    0%{transform: translate(0); background-color: var(--primary);}
+    25%{background-color: var(--primaryDark);}
+    50%{transform: translate(450px); background-color: var(--primary);}
+    75%{background-color: var(--primaryDark);}
+    100%{transform: translate(0); background-color: var(--primary);}
+}
+
+@keyframes popout{
+    from{transform: scale(0); opacity: 0;}
+    to{transform: scale(1); opacity: 1;}
+}

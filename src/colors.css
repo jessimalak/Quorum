@@ -1,0 +1,156 @@
+/* NOCHE */
+
+.noche .mensaje-content{
+    background-color: #164c7e;
+    color: whitesmoke;
+}
+
+.noche .reciver-content::before{
+    border-color: transparent transparent #164c7e transparent;
+}
+
+.noche .sender-content::after{
+    border-color: transparent transparent #164c7e transparent;
+}
+
+/* ROSA */
+
+.rosa .mensaje-content{
+    background-color:  #ff5d60;
+}
+
+.rosa .reciver-content::before{
+    border-color: transparent transparent #ff5d60 transparent;
+}
+
+.rosa .sender-content::after{
+    border-color: transparent transparent  #ff5d60 transparent;
+}
+
+/* ROJO */
+
+.rojo .mensaje-content{
+    background-color:  #a8071a;
+    color: whitesmoke;
+}
+
+.rojo .reciver-content::before{
+    border-color: transparent transparent #a8071a transparent;
+}
+
+.rojo .sender-content::after{
+    border-color: transparent transparent  #a8071a transparent;
+}
+
+/* VERDE */
+
+.verde .mensaje-content{
+    background-color:  #56d13d;
+}
+
+.verde .reciver-content::before{
+    border-color: transparent transparent #56d13d transparent;
+}
+
+.verde .sender-content::after{
+    border-color: transparent transparent  #56d13d transparent;
+}
+
+/* LIMA */
+.lima .mensaje-content{
+    background-color:  #a7cf2d;
+}
+
+.lima .reciver-content::before{
+    border-color: transparent transparent #a7cf2d transparent;
+}
+
+.lima .sender-content::after{
+    border-color: transparent transparent  #a7cf2d transparent;
+}
+
+/* NEGRO */
+
+.negro .mensaje-content{
+    background-color:  #000;
+    color: whitesmoke;
+}
+
+.negro .reciver-content::before{
+    border-color: transparent transparent #000 transparent;
+}
+
+.negro .sender-content::after{
+    border-color: transparent transparent  #000 transparent;
+}
+
+/* NARANJA */
+
+.naranja .mensaje-content{
+    background-color: #fa8c16;
+}
+
+.naranja .reciver-content::before{
+    border-color: transparent transparent #fa8c16 transparent;
+}
+
+.naranja .sender-content::after{
+    border-color: transparent transparent #fa8c16 transparent;
+}
+
+/* LAVA */
+
+.lava .mensaje-content{
+    background-color: #fa541c;
+}
+
+.lava .reciver-content::before{
+    border-color: transparent transparent #fa541c transparent;
+}
+
+.lava .sender-content::after{
+    border-color: transparent transparent #fa541c transparent;
+}
+
+/* CELESTE */
+
+.celeste .mensaje-content{
+    background-color: #91d5ff;
+}
+
+.celeste .reciver-content::before{
+    border-color: transparent transparent#91d5ff transparent;
+}
+
+.celeste .sender-content::after{
+    border-color: transparent transparent #91d5ff transparent;
+}
+
+/* AZUL */
+
+.azul .mensaje-content{
+    background-color: #096dd9;
+}
+
+.azul .reciver-content::before{
+    border-color: transparent transparent #096dd9 transparent;
+}
+
+.azul .sender-content::after{
+    border-color: transparent transparent #096dd9 transparent;
+}
+
+/* MENTA */
+
+.menta .mensaje-content{
+    background-color: #52ab8a;
+    color: #111;
+}
+
+.menta .reciver-content::before{
+    border-color: transparent transparent #52ab8a transparent;
+}
+
+.menta .sender-content::after{
+    border-color: transparent transparent #52ab8a transparent;
+}
