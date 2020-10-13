@@ -1,0 +1,26 @@
+@font-face{
+    font-family: 'Raleway';
+    src: url('../fonts/Raleway-Medium.ttf');
+    font-weight: 500;
+}
+@font-face{
+    font-family: 'Raleway';
+    src: url('../fonts/Raleway-Regular.ttf');
+    font-weight: 400;
+}
+@font-face{
+    font-family: 'Raleway';
+    src: url('../fonts/Raleway-Light.ttf');
+    font-weight: 300;
+}
+
+@font-face{
+    font-family: 'Raleway';
+    src: url('../fonts/Raleway-Thin.ttf');
+    font-weight: 200;
+}
+
+@font-face{
+    font-family: 'notoemoji';
+    src: url('../fonts/NotoColorEmoji_13.ttf');
+}

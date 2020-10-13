@@ -1,6 +1,6 @@
 /* NOCHE */
 
-.noche .mensaje-content{
+.noche .mensaje-content, .selector, #color_button{
     background-color: #164c7e;
     color: whitesmoke;
 }
@@ -15,7 +15,7 @@
 
 /* ROSA */
 
-.rosa .mensaje-content{
+.rosa .mensaje-content, .selector, #color_button{
     background-color:  #ff5d60;
 }
 
