@@ -20,11 +20,14 @@ let contacts: { name: string, username: string, key: string }[] = new Array();
 const mensajeInput = <HTMLInputElement>document.getElementById('mensaje-input');
 const sendButton = document.getElementById('sender');
 const voideButton = document.getElementById('voice_button');
+const emojiPicker = document.getElementById('emoji_picker')
 
 let loadedChat: { id: string, tipo: string, nombre: string, username_: string, tiempo: number };
 
 const options = <HTMLElement>document.getElementsByClassName("custom-options")[0]
 let c = "'";
+
+let dataToLoad = "";
 
 // settingsIcon()
 
@@ -53,6 +56,8 @@ firebase.database().ref('Usuarios/' + uid + '/chats').on('value',
             id++;
         });
         chats.innerHTML = chats_;
+        //@ts-ignore
+        twemoji.parse(chats);
     })
 firebase.auth().onAuthStateChanged(user => {
     if (!user) {
@@ -79,6 +84,23 @@ firebase.auth().onAuthStateChanged(user => {
 
     }
 })
+
+//@ts-ignore
+new FgEmojiPicker({
+    trigger: 'i#emoji_picker',
+    position: ['top', 'right'],
+    emit(obj, triggerElement) {
+        const emoji = obj.emoji;
+        mensajeInput.value += emoji;
+    }
+});
+
+
+//@ts-ignore
+new FgStickerPicker({
+    trigger: 'i#sticker_picker',
+    position: ['top', 'right']
+});
 
 
 function openSettings() {
@@ -179,7 +201,7 @@ class Mensaje {
     time: string;
     class: string;
     senderlabel: string = "";
-    constructor(key_, sender_, id_, time_, texto_, type_, data_?) {
+    constructor(key_, sender_, id_, time_, texto_, type_, data_) {
         this.key = key_;
         this.sender = decrypt(sender_, code[4], "A");
         this.id = id_;
@@ -198,11 +220,16 @@ class Mensaje {
                 this.senderlabel = '<span class="senderLabel">' + this.sender + '</span>'
             }
         }
+        if (this.texto == "🏳️‍⚧️" || this.texto == "🏳️‍🌈" || this.texto == "🫓") {
+            this.class = "big " + this.class;
+        }
         let resource;
         if (this.type == "text") {
             resource = '<div id="mensaje' + this.key + '" class="mensaje ' + this.class + '">' + this.senderlabel + '<div class="mensaje-content ' + this.class + '-content"><p class="messageText">' + this.texto + '</p><p class="mensaje-time">' + this.time + '</p></div></div>'
-        }else if (this.type == "img"){
+        } else if (this.type == "img") {
             resource = '<div id="mensaje' + this.key + '" class="mensaje ' + this.class + '">' + this.senderlabel + '<div class="mensaje-content ' + this.class + '-content"><img class="messageImg" src="' + this.data + '"/><p class="mensaje-time">' + this.time + '</p></div></div>'
+        }else if(this.type == "sticker"){
+            resource = '<div id="mensaje' + this.key + '" class="mensaje ' + this.class + '">' + this.senderlabel + '<div class="mensaje-content ' + this.class + '-content sticker-content"><img class="messageSticker" src="' + this.data + '"/><p class="mensaje-time">' + this.time + '</p></div></div>'
         }
         chatContainer.innerHTML += resource;
         Scroll();
@@ -236,21 +263,40 @@ function OpenChat(id: string, tipo: string, index: number, nombre: string, tiemp
                 }
             });
             roomData = { isPrivate: isPrivate, admin: isAdmin }
+        }).catch((err) => {
+            Swal.fire({
+                title: "Tal parece que esta sala ya no está disponible",
+                icon: "error",
+                text: "Vuelve a intentarlo mas tarde o elimina la sala de tu lista.",
+                confirmButtonText: "Abandonar sala",
+                showCloseButton: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    firebase.database().ref("Usuarios/" + uid + "/chats/" + id).remove().then(() => {
+                        Toast.fire({ title: "Ya no haces parte de " + nombre, icon: "success" })
+                        chat.style.display = "none";
+                        welcomeScreen.style.display = "flex"
+                    }).catch((err) => {
+                        Toast.fire({ title: err, icon: "error" })
+                    })
+                }
+            })
         })
         firebase.database().ref("Salas/" + id + "/mensajes").on("value",
             (snapshot) => {
                 chatContainer.innerHTML = "";
                 snapshot.forEach((element) => {
                     let data = element.val();
-                    let senderenc = decrypt(data.sender_id, id, "R");
-                    let sender = decrypt(senderenc, code[2], "B")
-                    let url = "";
+                    let senderenc = decrypt(data.sender_id, code[6], "R");
+                    let sender = Reverse(decrypt(senderenc, code[2], "B"))
+                    let url = "none";
                     let url_enc = decrypt(data.data, id, "R");
                     let url_dec = decrypt(url_enc, code[2], "B");
                     if (url_dec != "none") {
                         url = url_dec;
-                    }
-                    let mensaje = new Mensaje(element.key, decrypt(data.sender, id, "R"), sender, timeStamp(data.time), decrypt(data.texto, id, "R"), decrypt(data.type_, id, "R"), url);
+                    } console.log();
+                    let mensaje = new Mensaje(element.key, decrypt(data.sender, id, "R"), sender, timeStamp(data.time), decrypt(data.texto, Reverse(id), "R"), decrypt(data.type, id, "R"), url);
+
                     mensaje.Show();
                     //@ts-ignore
                     twemoji.parse(chatContainer);
@@ -273,19 +319,20 @@ function OpenChat(id: string, tipo: string, index: number, nombre: string, tiemp
                     let data = element.val();
                     let decryptCode: string;
                     let senderenc = decrypt(data.sender_id, code[6], "R");
-                    let sender = decrypt(senderenc, code[2], "B")
+                    let sender = Reverse(decrypt(senderenc, code[2], "B"))
                     if (sender == uid) {
                         decryptCode = id
                     } else {
                         decryptCode = uid;
                     }
+                    console.log(decryptCode)
                     let url = "";
-                    let url_enc = decrypt(data.data, id, "R");
+                    let url_enc = decrypt(data.data, decryptCode, "R");
                     let url_dec = decrypt(url_enc, code[2], "B");
                     if (url_dec != "none") {
                         url = url_dec;
                     }
-                    let mensaje = new Mensaje(element.key, decrypt(data.sender, code[2], "R"), sender, timeStamp(data.time), decrypt(data.texto, decryptCode, "R"), decrypt(data.type_, id, "R"))
+                    let mensaje = new Mensaje(element.key, decrypt(data.sender, code[2], "R"), sender, timeStamp(data.time), decrypt(data.texto, Reverse(decryptCode), "R"), decrypt(data.type, decryptCode, "R"), url)
                     mensaje.Show();
                     //@ts-ignore
                     twemoji.parse(chatContainer);
@@ -315,7 +362,7 @@ mensajeInput.addEventListener('focusout', (e) => {
 mensajeInput.addEventListener('keyup', (k) => {
     if (focusInput) {
         if (k.key == "Enter" && !k.shiftKey) {
-            SendMessage();
+            SendMessage("text");
         }
     }
 })
@@ -332,21 +379,39 @@ mensajeInput.addEventListener('input', () => {
 
 
 
-function SendMessage() {
-    let preMessage = mensajeInput.value.trim();
-    if (preMessage.includes("~")) {
-        preMessage = Command(preMessage);
+function SendMessage(type_: string, sticker?:string) {
+    let preMessage = "";
+    let data_ = "none";
+    if (type_ == "text") {
+        preMessage = mensajeInput.value.trim();
+        if (preMessage.includes("~")) {
+            preMessage = Command(preMessage);
+        }
+        resetInput();
+    } else if (type_ == "img") {
+        preMessage = mensajeInput.value.trim();
+        if (preMessage.includes("~")) {
+            preMessage = Command(preMessage);
+        }
+        //SUBIR ARCHIVO...
+    }else if(type_ == "sticker"){
+        data_ = sticker;
+        preMessage = "Sticker";
     }
+    console.log(type_)
     let mensaje = encrypt(preMessage, code[4], "A");
     let sender = encrypt(username, code[4], "A");
-    let id_ = encrypt(uid, code[2], "B")
+    let id_ = encrypt(Reverse(uid), code[2], "B");
+    data_ = encrypt(data_, code[2], "B");
     if (preMessage.trim() !== "") {
         if (loadedChat.tipo == "Sala") {
             firebase.database().ref("Salas/" + loadedChat.id + "/mensajes").push({
                 sender: encrypt(sender, loadedChat.id, "R"),
-                sender_id: encrypt(id_, loadedChat.id, "R"),
+                sender_id: encrypt(id_, code[6], "R"),
                 time: Date.now(),
-                texto: encrypt(mensaje, loadedChat.id, "R")
+                texto: encrypt(mensaje, Reverse(loadedChat.id), "R"),
+                data: encrypt(data_, loadedChat.id, "R"),
+                type: encrypt(type_, loadedChat.id, "R")
             });
         } else if (loadedChat.tipo == "Contacto") {
             if (firstTimeOther) {
@@ -372,13 +437,17 @@ function SendMessage() {
                 sender: encrypt(sender, code[2], "R"),
                 sender_id: encrypt(id_, code[6], "R"),
                 time: Date.now(),
-                texto: encrypt(mensaje, loadedChat.id, "R")
+                texto: encrypt(mensaje, Reverse(loadedChat.id), "R"),
+                data: encrypt(data_, loadedChat.id, "R"),
+                type: encrypt(type_, loadedChat.id, "R")
             }).then(() => {
                 firebase.database().ref("Usuarios/" + uid + "/chats/" + loadedChat.id + "/mensajes/").push({
                     sender: encrypt(sender, code[2], "R"),
                     sender_id: encrypt(id_, code[6], "R"),
                     time: Date.now(),
-                    texto: encrypt(mensaje, loadedChat.id, "R")
+                    texto: encrypt(mensaje, Reverse(loadedChat.id), "R"),
+                    data: encrypt(data_, loadedChat.id, "R"),
+                    type: encrypt(type_, loadedChat.id, "R")
                 })
             });
             firebase.database().ref("Usuarios/" + loadedChat.id + "/chats/" + uid).update({
@@ -386,15 +455,23 @@ function SendMessage() {
             })
         }
     }
-    mensajeInput.value = "";
-    sendButton.style.display = "none";
-    voideButton.style.display = "block";
     mensajeInput.focus();
 
 }
 
+function resetInput(){
+    mensajeInput.value = "";
+    sendButton.style.display = "none";
+    voideButton.style.display = "block";
+}
+
 function timeStamp(time: number): string {
+    let today = new Date(Date.now());
+    let today_day = today.getDate();
+    let today_month = today.getMonth() + 1;
+
     let date = new Date(time);
+    let d = date.getDate();
     let M = date.getMonth() + 1;
     let m: string;
     if (date.getMinutes() < 10) {
@@ -402,7 +479,14 @@ function timeStamp(time: number): string {
     } else {
         m = date.getMinutes().toString()
     }
-    return date.getDate() + '/' + M + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + m;
+
+    if (today_day == d && today_month == M) {
+        return "Hoy " + date.getHours() + ":" + m
+    } else if (today_day == d + 1 && today_month == M) {
+        return "Ayer " + date.getHours() + ":" + m
+    } else {
+        return d + '/' + M + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + m;
+    }
 }
 
 function Scroll() {
@@ -522,6 +606,12 @@ function Command(mensaje: string): string {
             break;
         case "tflag":
             message = "🏳️‍⚧️"
+            break;
+        case "pflag":
+            message = "🏳️‍🌈"
+            break;
+        case "arepita":
+            message = "🫓"
             break;
         case "hechizo":
             message = "si fue hechizo o no fue hechizo,\n" +
@@ -671,6 +761,12 @@ function editUser(id: string, username: string) {
         background: 'var(--panel-color)',
         showCloseButton: true,
         showCancelButton: true
+    }).then((value) => {
+        if (value.isConfirmed) {
+            console.log("eliminado");
+        } else if (value.isDismissed) {
+            console.log("admin");
+        }
     })
 }
 

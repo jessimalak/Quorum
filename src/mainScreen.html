@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-ES">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" media="all" href="../css/materialdesignicons.min.css" type="text/css">
     <link rel="stylesheet" href="colors.css">
+    <link rel="stylesheet" href="./fonts.css">
+    <link rel="stylesheet" href="./classes/picker.css">
     <link rel="stylesheet" href="animations.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="../css/materialize.css">
@@ -27,9 +29,9 @@
                         </li>
                     </ul>
                 </span> -->
-                <i class="mdi mdi-magnify button dash-button" onclick="OpenSearch()"></i>
-                <i class="mdi mdi-account-group button dash-button" onclick="CreateRoom()"></i>
-                <i class="mdi mdi-guy-fawkes-mask button dash-button" onclick="JoinPrivate()"></i>
+                <i class="mdi mdi-magnify button dash-button" onclick="OpenSearch()"><i class="tip">Busca usuarios y salas</i></i>
+                <i class="mdi mdi-account-group button dash-button" onclick="CreateRoom()"><i class="tip">Crea una sala</i></i>
+                <i class="mdi mdi-guy-fawkes-mask button dash-button" onclick="JoinPrivate()"><i class="tip">Entra a una sala privada</i></i>
                 
                 <!-- <div id="contactSelectD" class="selector">
                     <div class="custom-select">
@@ -52,16 +54,18 @@
         <div id="rightPanel" class="content">
             <div id="welcomeMessage" class="content">
                 <img src="../icons/logoC1.png" alt="Quorum Logo">
-                <p>Chatea de forma segura con tus amigos, familiares, conocidos y con quien quieras de forma
-                    completamante segura.</p>
+                <p>Chatea de forma segura con tus amigos, familiares, conocidos y con quien quieras.</p>
                 <p>Tus mensajes e información están completamente cifrados y alejados de gente friki con ganas de chisme
                     y del gobierno de turno.</p>
             </div>
             <div id="chatPanel" class="content" style="display: none;">
                 <div class="mensaje-input">
+                    <i class="mdi mdi-emoticon-wink-outline button bar-button" id="emoji_picker"></i>
+                    <i class="mdi mdi-sticker-emoji button bar-button" id="sticker_picker"></i>
+                    <i id="color_button" class="button bar-button rosa"></i>
                     <textarea name="mensaje-input" placeholder="Escribe un mensaje..." class="materialize-textarea" id="mensaje-input" cols="30"
                         rows="1" class="inputText"></textarea>
-                    <i class="mdi mdi-send button send" id="sender" onclick="SendMessage()"></i>
+                    <i class="mdi mdi-send button send" id="sender" onclick="SendMessage('text')"></i>
                     <i class="mdi mdi-image button bar-button"></i>
                     <i class="mdi mdi-microphone button bar-button" id="voice_button"></i>
                 </div>
@@ -138,5 +142,7 @@
 <script src="classes/crypto.js"></script>
 <script src="classes/firebase.js"></script>
 <script src="../css/materialize.js"></script>
+<script src="classes/fgEmojiPicker.js"></script>
+<script src="classes/fgStickerPicker.js"></script>
 <script src="mainScreen.js"></script>
 </html>

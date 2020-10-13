@@ -1,0 +1,238 @@
+{
+    "Emotes":[
+        {
+            "no": 0,
+            "name": "emoji-01",
+            "description": "sonrisa 1",
+            "keywords":[
+                "sonrisa",
+                "feliz"
+            ]
+        },
+        {
+            "no": 1,
+            "name": "emoji-02",
+            "description": "sonrisa 2",
+            "keywords":[
+                "sonrisa",
+                "feliz"
+            ]
+        },
+        {
+            "no": 2,
+            "name": "emoji-03",
+            "description": "sonroradx",
+            "keywords":[
+                "sonrisa",
+                "feliz"
+            ]
+        }
+        ,
+        {
+            "no": 3,
+            "name": "emoji-04",
+            "description": "sonroradx",
+            "keywords":[
+                "sonrisa",
+                "feliz"
+            ]
+        },
+        {
+            "no": 4,
+            "name": "emoji-05",
+            "description": "sonroradx",
+            "keywords":[
+                "sonrisa",
+                "feliz"
+            ]
+        },
+        {
+            "no": 5,
+            "name": "emoji-06",
+            "description": "sonroradx",
+            "keywords":[
+                "sonrisa",
+                "feliz"
+            ]
+        },
+        {
+            "no": 6,
+            "name": "emoji-07",
+            "description": "sonroradx",
+            "keywords":[
+                "sonrisa",
+                "feliz"
+            ]
+        },
+        {
+            "no": 7,
+            "name": "emoji-08",
+            "description": "sonroradx",
+            "keywords":[
+                "sonrisa",
+                "feliz"
+            ]
+        },
+        {
+            "no": 8,
+            "name": "emoji-09",
+            "description": "sonroradx",
+            "keywords":[
+                "sonrisa",
+                "feliz"
+            ]
+        }
+    ],
+    "Kimiiazy":[
+        {
+            "no": 50,
+            "name": "kimi-01",
+            "description": "sonriente boquita cerrada",
+            "keywords":[
+                "sonrisa",
+                "feliz",
+                "ojos cerrados"
+            ]
+        },
+        {
+            "no": 51,
+            "name": "kimi-02",
+            "description": "gritando",
+            "keywords":[
+                "enojada",
+                "furiosa",
+                "emputada"
+            ]
+        },
+        {
+            "no": 52,
+            "name": "kimi-03",
+            "description": "sonrojada",
+            "keywords":[
+                "sonrisa",
+                "timida"
+            ]
+        },
+        {
+            "no": 53,
+            "name": "kimi-04",
+            "description": "super sonriente",
+            "keywords":[
+                "sonrisa",
+                "feliz",
+                "ojos cerrados"
+            ]
+        },
+        {
+            "no": 54,
+            "name": "kimi-05",
+            "description": "camaleona enojada",
+            "keywords":[
+                "enojada",
+                "emputada",
+                "encabronada"
+            ]
+        },
+        {
+            "no": 55,
+            "name": "kimi-06",
+            "description": "llorando",
+            "keywords":[
+                "triste",
+                "aongojada",
+                "melancolica"
+            ]
+        },
+        {
+            "no": 56,
+            "name": "kimi-07",
+            "description": "sorprendida",
+            "keywords":[
+                "sorprendida",
+                "alarmada"
+            ]
+        },
+        {
+            "no": 57,
+            "name": "kimi-08",
+            "description": "asustada",
+            "keywords":[
+                "sorprendida",
+                "alarmada",
+                "asustada"
+            ]
+        },
+        {
+            "no": 58,
+            "name": "kimi-09",
+            "description": "contenta",
+            "keywords":[
+                "sonrisa",
+                "feliz",
+                "boca abierta",
+                "ojos abiertos"
+            ]
+        },
+        {
+            "no": 59,
+            "name": "kimi-10",
+            "description": "inexpresiva",
+            "keywords":[
+                "seria",
+                "inexpresiva"
+            ]
+        }
+    ],
+    "Caritas UwU":[
+        {
+            "no": 100,
+            "name": "uwu-01",
+            "description": "feliz 1",
+            "keywords":[
+                "alegre",
+                "contento",
+                "contenta"
+            ]
+        },
+        {
+            "no": 101,
+            "name": "uwu-02",
+            "description": "feliz 2",
+            "keywords":[
+                "alegre",
+                "contento",
+                "contenta"
+            ]
+        },
+        {
+            "no": 102,
+            "name": "uwu-03",
+            "description": "feliz 3",
+            "keywords":[
+                "alegre",
+                "contento",
+                "contenta"
+            ]
+        },
+        {
+            "no": 103,
+            "name": "uwu-04",
+            "description": "feliz 4",
+            "keywords":[
+                "alegre",
+                "contento",
+                "contenta"
+            ]
+        },
+        {
+            "no": 104,
+            "name": "uwu-05",
+            "description": "feliz 5",
+            "keywords":[
+                "alegre",
+                "contento",
+                "contenta"
+            ]
+        }
+    ]
+}
