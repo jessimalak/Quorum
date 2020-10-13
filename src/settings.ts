@@ -17,7 +17,7 @@ else {
     fondoSelector.value = 'imagen';
 }
 let user;
-let order:string = null;
+let order   = customOrder;
 
 const name_ = document.getElementById('usernameP');
 const fp = document.getElementById('perfil');
