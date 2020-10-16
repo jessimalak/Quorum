@@ -227,9 +227,9 @@ class Mensaje {
         if (this.type == "text") {
             resource = '<div id="mensaje' + this.key + '" class="mensaje ' + this.class + '">' + this.senderlabel + '<div class="mensaje-content ' + this.class + '-content"><p class="messageText">' + this.texto + '</p><p class="mensaje-time">' + this.time + '</p></div></div>'
         } else if (this.type == "img") {
-            resource = '<div id="mensaje' + this.key + '" class="mensaje ' + this.class + '">' + this.senderlabel + '<div class="mensaje-content ' + this.class + '-content"><img class="messageImg" src="' + this.data + '"/><p class="mensaje-time">' + this.time + '</p></div></div>'
+            resource = '<div id="mensaje' + this.key + '" class="mensaje ' + this.class + '">' + this.senderlabel + '<div class="mensaje-content ' + this.class + '-content"><img loading="lazy" class="messageImg" src="' + this.data + '"/><p class="mensaje-time">' + this.time + '</p></div></div>'
         }else if(this.type == "sticker"){
-            resource = '<div id="mensaje' + this.key + '" class="mensaje ' + this.class + '">' + this.senderlabel + '<div class="mensaje-content ' + this.class + '-content sticker-content"><img class="messageSticker" src="' + this.data + '"/><p class="mensaje-time">' + this.time + '</p></div></div>'
+            resource = '<div id="mensaje' + this.key + '" class="mensaje ' + this.class + '">' + this.senderlabel + '<div class="mensaje-content ' + this.class + '-content sticker-content"><img loading="lazy" class="messageSticker" src="' + this.data + '"/><p class="mensaje-time">' + this.time + '</p></div></div>'
         }
         chatContainer.innerHTML += resource;
         Scroll();
@@ -294,7 +294,7 @@ function OpenChat(id: string, tipo: string, index: number, nombre: string, tiemp
                     let url_dec = decrypt(url_enc, code[2], "B");
                     if (url_dec != "none") {
                         url = url_dec;
-                    } console.log();
+                    } 
                     let mensaje = new Mensaje(element.key, decrypt(data.sender, id, "R"), sender, timeStamp(data.time), decrypt(data.texto, Reverse(id), "R"), decrypt(data.type, id, "R"), url);
 
                     mensaje.Show();
@@ -325,7 +325,7 @@ function OpenChat(id: string, tipo: string, index: number, nombre: string, tiemp
                     } else {
                         decryptCode = uid;
                     }
-                    console.log(decryptCode)
+                    
                     let url = "";
                     let url_enc = decrypt(data.data, decryptCode, "R");
                     let url_dec = decrypt(url_enc, code[2], "B");
@@ -336,7 +336,7 @@ function OpenChat(id: string, tipo: string, index: number, nombre: string, tiemp
                     mensaje.Show();
                     //@ts-ignore
                     twemoji.parse(chatContainer);
-                    console.log(sender)
+                    
                     firebase.database().ref("Usuarios/" + uid + "/chats/" + id).update({
                         leido: true
                     })
@@ -398,7 +398,7 @@ function SendMessage(type_: string, sticker?:string) {
         data_ = sticker;
         preMessage = "Sticker";
     }
-    console.log(type_)
+    
     let mensaje = encrypt(preMessage, code[4], "A");
     let sender = encrypt(username, code[4], "A");
     let id_ = encrypt(Reverse(uid), code[2], "B");
@@ -490,7 +490,11 @@ function timeStamp(time: number): string {
 }
 
 function Scroll() {
+    console.log("top "+chatContainer.scrollTop)
+    console.log("height "+chatContainer.scrollHeight)
+    if(chatContainer.scrollTop == chatContainer.scrollHeight){
     chatContainer.scrollTo(0, chatContainer.scrollHeight)
+}
 }
 
 ipcRenderer.on('addContact', (e, values) => {
@@ -802,7 +806,6 @@ function showContacts() {
     const c = "Contacto";
     if (contacts.length > 0) {
         let conthtml = "";
-        console.log(contacts)
         contacts.forEach((elem) => {
             conthtml += "<div class='contact-item' onclick='showChat(" + elem.username + ", " + elem.key + ", " + c + ", " + elem.name + ", " + Date.now() + ")'><div><p>" + elem.name + "</p><p>" + elem.username + "</p></div></div>"
         })

@@ -1,8 +1,13 @@
 /* NOCHE */
 
-.noche .mensaje-content, .selector, #color_button{
+.noche .mensaje-content, .noche .colors{
     background-color: #164c7e;
     color: whitesmoke;
+}
+
+.noche .mensaje-time{
+    background-color: #164c7e !important;
+    color: rgb(177, 177, 177);
 }
 
 .noche .reciver-content::before{
@@ -15,8 +20,14 @@
 
 /* ROSA */
 
-.rosa .mensaje-content, .selector, #color_button{
+.rosa .mensaje-content,.rosa .colors, #color_button{
     background-color:  #ff5d60;
+    color: #111;
+}
+
+.rosa .mensaje-time{
+    background-color: #ff5d60 !important;
+    color: #333;
 }
 
 .rosa .reciver-content::before{
@@ -29,9 +40,14 @@
 
 /* ROJO */
 
-.rojo .mensaje-content{
+.rojo .mensaje-content,.rojo .colors{
     background-color:  #a8071a;
     color: whitesmoke;
+}
+
+.rojo .mensaje-time{
+    background-color: #a8071a !important;
+    color: rgb(177, 177, 177);
 }
 
 .rojo .reciver-content::before{
@@ -44,8 +60,14 @@
 
 /* VERDE */
 
-.verde .mensaje-content{
+.verde .mensaje-content,.verde .colors{
     background-color:  #56d13d;
+    color: #111;
+}
+
+.verde .mensaje-time{
+    background-color: #56d13d !important;
+    color: #333;
 }
 
 .verde .reciver-content::before{
@@ -57,8 +79,14 @@
 }
 
 /* LIMA */
-.lima .mensaje-content{
+.lima .mensaje-content,.lima .colors{
     background-color:  #a7cf2d;
+    color: #111;
+}
+
+.lima .mensaje-time{
+    background-color: #a7cf2d !important;
+    color: #333;
 }
 
 .lima .reciver-content::before{
@@ -71,9 +99,14 @@
 
 /* NEGRO */
 
-.negro .mensaje-content{
+.negro .mensaje-content,.negro .colors{
     background-color:  #000;
     color: whitesmoke;
+}
+
+.negro .mensaje-time{
+    background-color: #000 !important;
+    color: rgb(177, 177, 177);
 }
 
 .negro .reciver-content::before{
@@ -86,8 +119,14 @@
 
 /* NARANJA */
 
-.naranja .mensaje-content{
+.naranja .mensaje-content,.naranja .colors{
     background-color: #fa8c16;
+    color: #111;
+}
+
+.naranja .mensaje-time{
+    background-color: #fa8c16 !important;
+    color: #333;
 }
 
 .naranja .reciver-content::before{
@@ -100,8 +139,14 @@
 
 /* LAVA */
 
-.lava .mensaje-content{
+.lava .mensaje-content,.lava .colors{
     background-color: #fa541c;
+    color: #111;
+}
+
+.lava .mensaje-time{
+    background-color: #fa541c !important;
+    color: #333;
 }
 
 .lava .reciver-content::before{
@@ -114,8 +159,14 @@
 
 /* CELESTE */
 
-.celeste .mensaje-content{
+.celeste .mensaje-content,.celeste .colors{
     background-color: #91d5ff;
+    color: #111;
+}
+
+.celeste .mensaje-time{
+    background-color: #91d5ff !important;
+    color: #333;
 }
 
 .celeste .reciver-content::before{
@@ -128,8 +179,14 @@
 
 /* AZUL */
 
-.azul .mensaje-content{
+.azul .mensaje-content,.azul .colors{
     background-color: #096dd9;
+    color: #111;
+}
+
+.azul .mensaje-time{
+    background-color: #096dd9 !important;
+    color: #333;
 }
 
 .azul .reciver-content::before{
@@ -142,9 +199,14 @@
 
 /* MENTA */
 
-.menta .mensaje-content{
+.menta .mensaje-content,.menta .colors{
     background-color: #52ab8a;
     color: #111;
+}
+
+.menta .mensaje-time{
+    background-color: #52ab8a !important;
+    color: #333;
 }
 
 .menta .reciver-content::before{
