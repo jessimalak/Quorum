@@ -20,7 +20,7 @@
 
 /* ROSA */
 
-.rosa .mensaje-content,.rosa .colors, #color_button{
+.rosa .mensaje-content,.rosa .colors{
     background-color:  #ff5d60;
     color: #111;
 }

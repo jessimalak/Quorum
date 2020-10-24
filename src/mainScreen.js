@@ -17,6 +17,9 @@ const mensajeInput = document.getElementById('mensaje-input');
 const sendButton = document.getElementById('sender');
 const voideButton = document.getElementById('voice_button');
 const emojiPicker = document.getElementById('emoji_picker');
+let customColors = localStorage.getItem('customColors');
+const colorSelector = document.getElementById('color_button');
+let color = "none";
 let loadedChat;
 const options = document.getElementsByClassName("custom-options")[0];
 let c = "'";
@@ -82,6 +85,11 @@ new FgEmojiPicker({
 new FgStickerPicker({
     trigger: 'i#sticker_picker',
     position: ['top', 'right']
+});
+AvalibleCustomColors();
+ipcRenderer.on('colors', (e, val) => {
+    customColors = val;
+    AvalibleCustomColors();
 });
 function openSettings() {
     ipcRenderer.send('openSettings', true);
@@ -165,7 +173,7 @@ function showChat(name, id, tipo, Rname, tiempo, myfirst) {
     chats.innerHTML += '<li class="contact-item" id="chat_' + index + '" onclick="OpenChat(' + c + id + c + ',' + c + tipo + c + ',' + c + index + c + ',' + c + Rname + c + ',' + tiempo + ',' + myfirst + ' )"><img src="../icons/userAvatar.png" alt="perfi"><div><p>' + name + '</p><span>' + Rname + '</span></div></li>';
 }
 class Mensaje {
-    constructor(key_, sender_, id_, time_, texto_, type_, data_) {
+    constructor(key_, sender_, id_, time_, texto_, type_, data_, color_) {
         this.senderlabel = "";
         this.key = key_;
         this.sender = decrypt(sender_, code[4], "A");
@@ -174,6 +182,7 @@ class Mensaje {
         this.data = data_;
         this.time = time_;
         this.texto = decrypt(texto_, code[4], "A");
+        this.color = color_;
     }
     Show() {
         if (this.id == uid) {
@@ -185,6 +194,9 @@ class Mensaje {
             if (loadedChat.tipo == "Sala") {
                 this.senderlabel = '<span class="senderLabel">' + this.sender + '</span>';
             }
+        }
+        if (color != "none") {
+            this.class = this.color + " " + this.class;
         }
         if (this.texto == "🏳️‍⚧️" || this.texto == "🏳️‍🌈" || this.texto == "🫓") {
             this.class = "big " + this.class;
@@ -259,7 +271,7 @@ function OpenChat(id, tipo, index, nombre, tiempo, myfirst) {
                 if (url_dec != "none") {
                     url = url_dec;
                 }
-                let mensaje = new Mensaje(element.key, decrypt(data.sender, id, "R"), sender, timeStamp(data.time), decrypt(data.texto, Reverse(id), "R"), decrypt(data.type, id, "R"), url);
+                let mensaje = new Mensaje(element.key, decrypt(data.sender, id, "R"), sender, timeStamp(data.time), decrypt(data.texto, Reverse(id), "R"), decrypt(data.type, id, "R"), url, decrypt(data.color, id, "R"));
                 mensaje.Show();
                 twemoji.parse(chatContainer);
             });
@@ -294,7 +306,7 @@ function OpenChat(id, tipo, index, nombre, tiempo, myfirst) {
                 if (url_dec != "none") {
                     url = url_dec;
                 }
-                let mensaje = new Mensaje(element.key, decrypt(data.sender, code[2], "R"), sender, timeStamp(data.time), decrypt(data.texto, Reverse(decryptCode), "R"), decrypt(data.type, decryptCode, "R"), url);
+                let mensaje = new Mensaje(element.key, decrypt(data.sender, code[2], "R"), sender, timeStamp(data.time), decrypt(data.texto, Reverse(decryptCode), "R"), decrypt(data.type, decryptCode, "R"), url, decrypt(data.color, decryptCode, "R"));
                 mensaje.Show();
                 twemoji.parse(chatContainer);
                 firebase.database().ref("Usuarios/" + uid + "/chats/" + id).update({
@@ -365,7 +377,8 @@ function SendMessage(type_, sticker) {
                 time: Date.now(),
                 texto: encrypt(mensaje, Reverse(loadedChat.id), "R"),
                 data: encrypt(data_, loadedChat.id, "R"),
-                type: encrypt(type_, loadedChat.id, "R")
+                type: encrypt(type_, loadedChat.id, "R"),
+                color: encrypt(color, loadedChat.id, "R")
             });
         }
         else if (loadedChat.tipo == "Contacto") {
@@ -394,7 +407,8 @@ function SendMessage(type_, sticker) {
                 time: Date.now(),
                 texto: encrypt(mensaje, Reverse(loadedChat.id), "R"),
                 data: encrypt(data_, loadedChat.id, "R"),
-                type: encrypt(type_, loadedChat.id, "R")
+                type: encrypt(type_, loadedChat.id, "R"),
+                color: encrypt(color, loadedChat.id, "R")
             }).then(() => {
                 firebase.database().ref("Usuarios/" + uid + "/chats/" + loadedChat.id + "/mensajes/").push({
                     sender: encrypt(sender, code[2], "R"),
@@ -402,7 +416,8 @@ function SendMessage(type_, sticker) {
                     time: Date.now(),
                     texto: encrypt(mensaje, Reverse(loadedChat.id), "R"),
                     data: encrypt(data_, loadedChat.id, "R"),
-                    type: encrypt(type_, loadedChat.id, "R")
+                    type: encrypt(type_, loadedChat.id, "R"),
+                    color: encrypt(color, loadedChat.id, "R")
                 });
             });
             firebase.database().ref("Usuarios/" + loadedChat.id + "/chats/" + uid).update({
@@ -442,11 +457,7 @@ function timeStamp(time) {
     }
 }
 function Scroll() {
-    console.log("top " + chatContainer.scrollTop);
-    console.log("height " + chatContainer.scrollHeight);
-    if (chatContainer.scrollTop == chatContainer.scrollHeight) {
-        chatContainer.scrollTo(0, chatContainer.scrollHeight);
-    }
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
 }
 ipcRenderer.on('addContact', (e, values) => {
     firebase.database().ref("Usuarios/" + uid + "/contactos").push({
@@ -553,7 +564,7 @@ function Command(mensaje) {
             message = "🐱🍼";
             break;
         case "pandita":
-            message = "for(🐼){💜++}";
+            message = "for( 🐼 ){\n \t💜++\n}";
             break;
         case "tflag":
             message = "🏳️‍⚧️";
@@ -754,5 +765,38 @@ function showContacts() {
         html = conthtml;
     }
     document.getElementById('modal-contacts').classList.add('visible');
+}
+function AvalibleCustomColors() {
+    console.log(customColors);
+    if (customColors == "true") {
+        colorSelector.style.display = "block";
+    }
+    else {
+        colorSelector.style.display = "none";
+    }
+}
+colorSelector.addEventListener('click', () => {
+    let panel = document.getElementById('selectores');
+    if (panel.style.display != "block") {
+        panel.style.display = "block";
+    }
+    else {
+        panel.style.display = "none";
+    }
+});
+function changeColor(new_color) {
+    if (color != "none") {
+        document.getElementById(color + '-button').classList.remove('selected');
+    }
+    if (new_color != color) {
+        document.getElementById(new_color + '-button').classList.add('selected');
+       
+        colorSelector.classList.remove(color);
+        colorSelector.classList.add(new_color); color = new_color;
+    }
+    else {
+        colorSelector.classList.remove(color);
+        color = "none";
+    }
 }
 //# sourceMappingURL=mainScreen.js.map

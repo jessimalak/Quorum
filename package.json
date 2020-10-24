@@ -10,6 +10,7 @@
     "cryptojs": "^2.5.3",
     "custom-electron-titlebar": "^3.2.2-hotfix62",
     "firebase": "^7.15.3",
+    "jquery": "^3.5.1",
     "qrcode": "^1.4.4",
     "sweetalert2": "^9.15.1"
   },

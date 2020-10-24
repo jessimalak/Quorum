@@ -175,6 +175,7 @@ ipcMain.on('showWindow', (e, val) => {
 })
 
 ipcMain.on('previewColors', ()=>{
+
   let wini = new BrowserWindow({
     height: 650,
     width: 550,
@@ -188,4 +189,8 @@ ipcMain.on('previewColors', ()=>{
   })
   wini.setMenu(null)
   wini.loadFile('src/ayudas/colores.html')
+})
+
+ipcMain.on('colors', (e, val)=>{
+  win.webContents.send('colors', val);
 })

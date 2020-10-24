@@ -1,6 +1,7 @@
 //@ts-ignore
 const { ipcRenderer } = require('electron');
 const Swalert = require('sweetalert2');
+const qr = require('qrcode');
 
 const themeSelector = <HTMLInputElement>document.getElementById('theme_selector');
 themeSelector.value = theme;
@@ -18,6 +19,11 @@ else {
 }
 let user;
 let order   = customOrder;
+let c_colors = localStorage.getItem('customColors');
+const colorSwitch = <HTMLInputElement> document.getElementById('colorsSwitch');
+if(c_colors == 'true'){
+    colorSwitch.checked = true;
+}
 
 const name_ = document.getElementById('usernameP');
 const fp = document.getElementById('perfil');
@@ -108,8 +114,11 @@ save_btn.addEventListener('click', () => {
     localStorage.setItem('theme', theme);
     localStorage.setItem('fondo', fondo);
     localStorage.setItem('buttonOrder', order);
+    localStorage.setItem('customColors', c_colors)
     customOrder = order,
     ipcRenderer.send('updateTheme', { theme: theme, fondo: fondo })
+    ipcRenderer.send('colors', c_colors);
+    Toast.fire({title: "Cambios guardados", icon: "success"})
 })
 const verifyText = document.getElementById('verified');
 
@@ -269,7 +278,9 @@ colorPicker.addEventListener('change', () => {
     _body.style.background = color;
 })
 
-const qr = require('qrcode');
+colorSwitch.addEventListener('change', (val)=>{
+    c_colors = colorSwitch.checked.toString();
+})
 
 function ShowQR() {
     qr.toDataURL('Quorum |' + user.uid).then((result) => {

@@ -335,10 +335,11 @@ input{
     width: 20px;
     margin-right: 5px;
     box-sizing: border-box;
+    border: 1.5px solid var(--text);
 }
 
 #color_button:hover{
-    border: 2px solid var(--text);
+    border: 2px solid var(--textAccent);
 }
 
 #sender{
@@ -850,13 +851,6 @@ optgroup{
     bottom: 0; 
     padding-left: 1rem;
     position: relative;
-}
-
-.mensaje-input #selectores{
-    position: absolute;
-    top: -6rem;
-    width: 10rem;
-    height: 6rem;
 }
 
 .mensaje-input textarea{
