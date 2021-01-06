@@ -115,6 +115,8 @@ sendReset_btn.addEventListener('click', async () => {
 }
 )
 
+const usuarios = firebase.firestore().collection('usuarios');
+
 firebase.auth().onAuthStateChanged(user => {
     ipcRenderer.send('showWindow', true)
     if (user) {
@@ -124,36 +126,49 @@ firebase.auth().onAuthStateChanged(user => {
         localStorage.setItem('uid', uid)
         if (eventType == 'login') {
             Load(true, "Leyendo información","Desencriptando perfil");
-            firebase.database().ref('Usuarios/' + uid).once('value')
+            usuarios.doc(uid).get()
+            // firebase.database().ref('Usuarios/' + uid).once('value')
                 .then(function (snapshot) {
                     let user = snapshot.val();
                     console.log(user.username);
-                    let mail = decrypt(user.mail, code[4], "B");
-                    let nombre = decrypt(user.nombre, code[4], "B");
-                    localStorage.setItem('username', user.username);
-                    localStorage.setItem('mail', mail);
-                    localStorage.setItem('estado', user.estado);
-                    localStorage.setItem('nombre', nombre);
+                    let mail = decrypt(user.mail, code[7], "B", true, false);
+                    let username = decrypt(user.username, code[7], "B", true, false)
+                    let estado = decrypt(user.estado, code[7], "B", true, false)
+                    let nombre = decrypt(user.nombre, code[7], "B", true, false)
+                    localStorage.setItem('username', decrypt(username, code[4], "A", false, false));
+                    localStorage.setItem('mail', decrypt(mail, code[4], "A", false, false));
+                    localStorage.setItem('estado', decrypt(estado, code[4], "A", false, false));
+                    localStorage.setItem('nombre', decrypt(nombre, code[4], "A", false, false));
                     window.location.replace(mainScreen);
                 })
         } else if (eventType == 'register') {
             Load(true, "Registrando","Encriptando perfil");
-            let username = register_user.value;
-            let mail = register_mail.value;
-            let personalname = register_name.value;
+            let username = encrypt(register_user.value, code[4], "A", false, false);
+            let mail = encrypt(register_mail.value, code[4], "A", false, false);
+            let personalname = encrypt(register_name.value, code[4], "A", false, false);
+            let estado = encrypt("Hola, soy nuev@ en Quorum", code[4], "A", false, false)
             localStorage.setItem('username', username);
             localStorage.setItem('mail', mail);
             localStorage.setItem('estado', 'Hola, soy nuev@ en Quorum');
             localStorage.setItem('nombre', personalname);
-            firebase.database().ref('Usuarios/' + uid).set({
-                'username': username,
-                "mail": encrypt(mail, code[4], "B"),
-                "estado": "Hola, soy nuev@ en Quorum",
-                "nombre": encrypt(personalname, code[4], "B"),
-                "verified": false
-            }).then(() => {
-                window.location.replace(mainScreen);
+            usuarios.doc(uid).set({
+                username: encrypt(username, code[7], "B", true, false),
+                mail: encrypt(mail, code[7], "B", true, false),
+                estado: encrypt(estado, code[7], "B", true, false),
+                nombre: encrypt(personalname, code[7], "B", true, false),
+                verified: false
+            }).then(()=>{
+                window.location.replace(mainScreen);    
             })
+            // firebase.database().ref('Usuarios/' + uid).set({
+            //     'username': username,
+            //     "mail": encrypt(mail, code[4], "B"),
+            //     "estado": "Hola, soy nuev@ en Quorum",
+            //     "nombre": encrypt(personalname, code[4], "B"),
+            //     "verified": false
+            // }).then(() => {
+            //     window.location.replace(mainScreen);
+            // })
         } else {
             window.location.replace(mainScreen);
         }

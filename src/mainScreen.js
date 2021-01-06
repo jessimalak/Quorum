@@ -35,7 +35,7 @@ firebase.database().ref('Usuarios/' + uid + '/chats').on('value', (snapshot) => 
         chatsData.push({ name: data.nombre, time: data.tiempo, key: element.key });
         let Rname = "";
         if (data.tipo == "Contacto") {
-            Rname = decrypt(data.name, code[4], "A");
+            Rname = decrypt(data.name, code[4], "A", false, false);
         }
         let notify = "";
         if (data.leido !== undefined) {
@@ -59,9 +59,9 @@ firebase.auth().onAuthStateChanged(user => {
         firebase.database().ref("Usuarios/" + uid + "/contactos").once("value").then((snapshot) => {
             snapshot.forEach((element) => {
                 let data = element.val();
-                let id = decrypt(data.id, code[4], "A");
-                let nombre = decrypt(data.nombre, code[4], "A");
-                let username = decrypt(data.username, code[4], "A");
+                let id = decrypt(data.id, code[4], "A", false, false);
+                let nombre = decrypt(data.nombre, code[4], "A", false, false);
+                let username = decrypt(data.username, code[4], "A", false, false);
                 if (!chatsData.toString().includes(id)) {
                     contacts.push({ name: nombre, username: username, key: id });
                     html += '<div class="contact-item" onclick="showChat(' + c + username + c + ', ' + c + id + c + ', ' + c + 'Contacto' + c + ', ' + c + nombre + c + ', ' + Date.now() + ', true)"><div><p>' + nombre + '</p><span>' + username + '</span></div></div>';
@@ -176,12 +176,12 @@ class Mensaje {
     constructor(key_, sender_, id_, time_, texto_, type_, data_, color_) {
         this.senderlabel = "";
         this.key = key_;
-        this.sender = decrypt(sender_, code[4], "A");
+        this.sender = decrypt(sender_, code[4], "A", false, false);
         this.id = id_;
         this.type = type_;
         this.data = data_;
         this.time = time_;
-        this.texto = decrypt(texto_, code[4], "A");
+        this.texto = decrypt(texto_, code[4], "A", false, false);
         this.color = color_;
     }
     Show() {
@@ -195,7 +195,7 @@ class Mensaje {
                 this.senderlabel = '<span class="senderLabel">' + this.sender + '</span>';
             }
         }
-        if (color != "none") {
+        if (this.color != "none") {
             this.class = this.color + " " + this.class;
         }
         if (this.texto == "🏳️‍⚧️" || this.texto == "🏳️‍🌈" || this.texto == "🫓") {
@@ -262,17 +262,6 @@ function OpenChat(id, tipo, index, nombre, tiempo, myfirst) {
         firebase.database().ref("Salas/" + id + "/mensajes").on("value", (snapshot) => {
             chatContainer.innerHTML = "";
             snapshot.forEach((element) => {
-                let data = element.val();
-                let senderenc = decrypt(data.sender_id, code[6], "R");
-                let sender = Reverse(decrypt(senderenc, code[2], "B"));
-                let url = "none";
-                let url_enc = decrypt(data.data, id, "R");
-                let url_dec = decrypt(url_enc, code[2], "B");
-                if (url_dec != "none") {
-                    url = url_dec;
-                }
-                let mensaje = new Mensaje(element.key, decrypt(data.sender, id, "R"), sender, timeStamp(data.time), decrypt(data.texto, Reverse(id), "R"), decrypt(data.type, id, "R"), url, decrypt(data.color, id, "R"));
-                mensaje.Show();
                 twemoji.parse(chatContainer);
             });
         });
@@ -291,24 +280,6 @@ function OpenChat(id, tipo, index, nombre, tiempo, myfirst) {
             });
             snapshot.forEach((element) => {
                 let data = element.val();
-                let decryptCode;
-                let senderenc = decrypt(data.sender_id, code[6], "R");
-                let sender = Reverse(decrypt(senderenc, code[2], "B"));
-                if (sender == uid) {
-                    decryptCode = id;
-                }
-                else {
-                    decryptCode = uid;
-                }
-                let url = "";
-                let url_enc = decrypt(data.data, decryptCode, "R");
-                let url_dec = decrypt(url_enc, code[2], "B");
-                if (url_dec != "none") {
-                    url = url_dec;
-                }
-                let mensaje = new Mensaje(element.key, decrypt(data.sender, code[2], "R"), sender, timeStamp(data.time), decrypt(data.texto, Reverse(decryptCode), "R"), decrypt(data.type, decryptCode, "R"), url, decrypt(data.color, decryptCode, "R"));
-                mensaje.Show();
-                twemoji.parse(chatContainer);
                 firebase.database().ref("Usuarios/" + uid + "/chats/" + id).update({
                     leido: true
                 });
@@ -365,65 +336,7 @@ function SendMessage(type_, sticker) {
         data_ = sticker;
         preMessage = "Sticker";
     }
-    let mensaje = encrypt(preMessage, code[4], "A");
-    let sender = encrypt(username, code[4], "A");
-    let id_ = encrypt(Reverse(uid), code[2], "B");
-    data_ = encrypt(data_, code[2], "B");
     if (preMessage.trim() !== "") {
-        if (loadedChat.tipo == "Sala") {
-            firebase.database().ref("Salas/" + loadedChat.id + "/mensajes").push({
-                sender: encrypt(sender, loadedChat.id, "R"),
-                sender_id: encrypt(id_, code[6], "R"),
-                time: Date.now(),
-                texto: encrypt(mensaje, Reverse(loadedChat.id), "R"),
-                data: encrypt(data_, loadedChat.id, "R"),
-                type: encrypt(type_, loadedChat.id, "R"),
-                color: encrypt(color, loadedChat.id, "R")
-            });
-        }
-        else if (loadedChat.tipo == "Contacto") {
-            if (firstTimeOther) {
-                firebase.database().ref("Usuarios/" + loadedChat.id + "/chats/" + uid).set({
-                    nombre: username,
-                    name: encrypt(localStorage.getItem('nombre'), code[4], "A"),
-                    tipo: "Contacto",
-                    tiempo: Date.now()
-                });
-                firstTimeOther = false;
-            }
-            if (myFirstTime) {
-                firebase.database().ref("Usuarios/" + uid + "/chats/" + loadedChat.id).update({
-                    name: encrypt(loadedChat.nombre, code[4], "A"),
-                    nombre: loadedChat.username_,
-                    tiempo: loadedChat.tiempo,
-                    tipo: loadedChat.tipo
-                }).then(() => {
-                    myFirstTime = false;
-                });
-            }
-            firebase.database().ref("Usuarios/" + loadedChat.id + "/chats/" + uid + "/mensajes/").push({
-                sender: encrypt(sender, code[2], "R"),
-                sender_id: encrypt(id_, code[6], "R"),
-                time: Date.now(),
-                texto: encrypt(mensaje, Reverse(loadedChat.id), "R"),
-                data: encrypt(data_, loadedChat.id, "R"),
-                type: encrypt(type_, loadedChat.id, "R"),
-                color: encrypt(color, loadedChat.id, "R")
-            }).then(() => {
-                firebase.database().ref("Usuarios/" + uid + "/chats/" + loadedChat.id + "/mensajes/").push({
-                    sender: encrypt(sender, code[2], "R"),
-                    sender_id: encrypt(id_, code[6], "R"),
-                    time: Date.now(),
-                    texto: encrypt(mensaje, Reverse(loadedChat.id), "R"),
-                    data: encrypt(data_, loadedChat.id, "R"),
-                    type: encrypt(type_, loadedChat.id, "R"),
-                    color: encrypt(color, loadedChat.id, "R")
-                });
-            });
-            firebase.database().ref("Usuarios/" + loadedChat.id + "/chats/" + uid).update({
-                leido: false
-            });
-        }
     }
     mensajeInput.focus();
 }
@@ -460,20 +373,12 @@ function Scroll() {
     chatContainer.scrollTo(0, chatContainer.scrollHeight);
 }
 ipcRenderer.on('addContact', (e, values) => {
-    firebase.database().ref("Usuarios/" + uid + "/contactos").push({
-        id: encrypt(values.id, code[4], "A"),
-        nombre: encrypt(values.name, code[4], "A"),
-        username: encrypt(values.user, code[4], "A")
-    }).then(() => {
-        contacts.push({ name: values.name, username: values.user, key: values.id });
-    });
     localStorage.setItem('ContRoomS', contacts.toString() + chatsData.toString());
 });
 async function JoinPrivate() {
     const { value: id } = await Swal.fire({
         title: "Entrar a sala privada",
         input: 'text',
-        background: "var(--panel-color)",
         inputPlaceholder: 'Código de acceso',
         imageUrl: '../icons/GuyFawkesIcon.png',
         imageWidth: 150,
@@ -591,7 +496,6 @@ function showContact(name, id, Rname) {
         document.getElementById('chat_' + index).click();
         firebase.database().ref("Usuarios/" + uid + "/chats/" + id).set({
             nombre: name,
-            name: encrypt(Rname, code[4], "A"),
             tipo: "Contacto",
             tiempo: Date.now()
         });
@@ -678,7 +582,6 @@ function ShowInfo(id, tipo) {
             else {
                 title.innerHTML += '<span class="mdi mdi-close verifyIcon" style="color: var(--primary)"><i class="tooltip">Usuario no verificado</i><span>';
             }
-            document.getElementById('modal-name').innerText = decrypt(data.nombre, code[4], "B");
             document.getElementById('modal-estado').innerText = data.estado;
         });
     }
@@ -790,13 +693,14 @@ function changeColor(new_color) {
     }
     if (new_color != color) {
         document.getElementById(new_color + '-button').classList.add('selected');
-       
         colorSelector.classList.remove(color);
-        colorSelector.classList.add(new_color); color = new_color;
+        colorSelector.classList.add(new_color);
+        color = new_color;
     }
     else {
         colorSelector.classList.remove(color);
         color = "none";
     }
+    document.getElementById('selectores').style.display = "none";
 }
 //# sourceMappingURL=mainScreen.js.map
