@@ -2,6 +2,7 @@ const Swal = require('sweetalert2')
 const firebase = require('firebase/app');
 require('firebase/auth');
 require('firebase/database');
+require('firebase/firestore');
 
 const firebaseConfig = {
     apiKey: "AIzaSyDGLP6V1uQx9Mxc6FXp6oO6HKD7qZbnbeE",
@@ -13,7 +14,14 @@ const firebaseConfig = {
     appId: "1:339371371649:web:1e68336580ea7117003180",
     measurementId: "G-VL1T8FXBQM"
 };
+
 firebase.initializeApp(firebaseConfig);
+
+
+const db = firebase.firestore();
+// const usuarios = db.collection('Usuarios');
+// const salas = db.ccollection('Salas');
+
 const Toast = Swal.mixin({
     toast: true,
     position: 'center',

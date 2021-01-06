@@ -2,6 +2,7 @@ const Swal = require('sweetalert2');
 const firebase = require('firebase/app');
 require('firebase/auth');
 require('firebase/database');
+require('firebase/firestore');
 const firebaseConfig = {
     apiKey: "AIzaSyDGLP6V1uQx9Mxc6FXp6oO6HKD7qZbnbeE",
     authDomain: "quorumchat.firebaseapp.com",
@@ -13,6 +14,7 @@ const firebaseConfig = {
     measurementId: "G-VL1T8FXBQM"
 };
 firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 const Toast = Swal.mixin({
     toast: true,
     position: 'center',
