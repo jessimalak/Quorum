@@ -86,7 +86,6 @@ document.addEventListener('keyup', (k) => {
                 case "getrandom":
                     firebase.database().ref("Usuarios/" + uid_ + "/random").once("value").then((snap) => {
                         snap.forEach((element) => {
-                            olds.innerHTML += '<span>' + element.val() + '</span><span>' + decrypt(element.val(), code[4], "R") + '</span>';
                         });
                     });
                     break;
@@ -104,12 +103,6 @@ document.addEventListener('keyup', (k) => {
             }
             else {
                 type = command.split("~")[1];
-                if (decoding) {
-                    olds.innerHTML += '<span>' + decrypt(command.split("~")[0], code[4], type) + '</span>';
-                }
-                else {
-                    olds.innerHTML += '<span>' + encrypt(command.split("~")[0], code[4], type) + '</span>';
-                }
             }
         }
     }
