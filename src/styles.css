@@ -23,13 +23,13 @@ body{
     margin: 0;
     padding: 0;
     font-size: 16pt;
-    height: 100vh;
+    height: 100vh !important;
     width: 100vw;
     font-family: Raleway;
     font-weight: 400;
     color: var(--text);
     transition: ease 200ms;
-    background: var(--back-color)
+    background: var(--back-color) !important;
 }
 
 /*BEGING THEMES*/
@@ -1084,13 +1084,14 @@ optgroup{
 .modal-window{
     transform: scale(0);
     position: relative;
-    background-color: var(--panel-color);
+    background-color: #ffffff30;
     border-radius: 1rem;
     padding: 1rem;
     opacity: 1;
     animation: popout ease 200ms;
     transition: ease 200ms;
     max-height: 90%;
+    backdrop-filter: blur(15px);
 }
 
 .modal-window.visible{
@@ -1170,6 +1171,20 @@ optgroup{
 
 #settings_btn:hover{
     background-color: var(--primaryDark);
+}
+
+.swal2-popup{
+    background-color: #ffffff30 !important;
+    backdrop-filter: blur(15px);
+    border-radius: 1rem !important;
+}
+
+.swal2-title, .swal2-input{
+    color: var(--text) !important;
+}
+
+.swal2-input::placeholder{
+    color: var(--textAccent) !important;
 }
 
 ::-webkit-scrollbar {
