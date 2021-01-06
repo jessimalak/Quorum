@@ -134,10 +134,10 @@ function Search() {
                     snapshot.forEach((element) => {
                         let data = element.val();
                         let username = data.username;
-                        let nombre = decrypt(data.nombre, code[4], "B")
+                        // let nombre = decrypt(data.nombre, code[4], "B")
                         if (username !== localStorage.getItem('username')) {
                             result = true;
-                            let user = new User(data.username, nombre, data.estado, element.key);
+                            // let user = new User(data.username, nombre, data.estado, element.key);
                             user.Show();
                         }
                     });
