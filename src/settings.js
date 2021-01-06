@@ -119,16 +119,6 @@ firebase.auth().onAuthStateChanged((userData) => {
     else {
         document.getElementById('verifyIcon').style.display = 'none';
     }
-    firebase.database().ref("Usuarios/" + user.uid + "/verified").once('value')
-        .then((snap) => {
-        let data = snap.val();
-        console.log(data);
-        if (verified !== data) {
-            firebase.database().ref("Usuarios/" + user.uid).update({
-                verified: true
-            });
-        }
-    });
 });
 async function ChangeUsername(initValue, title) {
     const { value: val } = await Swalert.fire({
@@ -153,15 +143,6 @@ async function ChangeUsername(initValue, title) {
                             displayName: val
                         }).then(() => {
                             localStorage.setItem('username', name);
-                            firebase.database().ref("Usuarios/" + uid).update({
-                                username: name
-                            }).then(() => {
-                                name_.innerHTML = "@" + name;
-                                localStorage.setItem('username', name);
-                                console.log('listo');
-                            }).catch(() => {
-                                console.log('error al escribir');
-                            });
                         }).catch(() => {
                             Toast.fire({ title: "algo pasó, intentalo mas tarde" });
                         });
@@ -266,7 +247,10 @@ colorSwitch.addEventListener('change', (val) => {
     c_colors = colorSwitch.checked.toString();
 });
 function ShowQR() {
-    qr.toDataURL('Quorum |' + user.uid).then((result) => {
+    let name = encrypt(user.displayName, code[9], "A", false, false);
+    let id_ = encrypt(Reverse(user.uid), code[9], "A", true, false);
+    let type = encrypt("usuario", code[9], "A", false, true);
+    qr.toDataURL('QUORUM µ' + type + "µ" + id_ + "µ" + name).then((result) => {
         Swal.fire({
             title: "Mi QR",
             imageUrl: result,

@@ -18,10 +18,10 @@ else {
     fondoSelector.value = 'imagen';
 }
 let user;
-let order   = customOrder;
+let order = customOrder;
 let c_colors = localStorage.getItem('customColors');
-const colorSwitch = <HTMLInputElement> document.getElementById('colorsSwitch');
-if(c_colors == 'true'){
+const colorSwitch = <HTMLInputElement>document.getElementById('colorsSwitch');
+if (c_colors == 'true') {
     colorSwitch.checked = true;
 }
 
@@ -54,7 +54,7 @@ _switch.addEventListener('change', () => {
     } else {
         order = 'left'
     }
-    if(order !== customOrder){
+    if (order !== customOrder) {
         Toast.fire({
             title: 'Es necesario reiniciar Qourum para aplicar el cambio',
             icon: 'warning'
@@ -62,7 +62,7 @@ _switch.addEventListener('change', () => {
     }
 })
 
-fp.addEventListener('click', ()=>{
+fp.addEventListener('click', () => {
     Swal.fire({
         title: 'No has verificado tu correo',
         text: 'Ésto es para asegurarnos que tu correo es real y no una cuenta falsa',
@@ -116,9 +116,9 @@ save_btn.addEventListener('click', () => {
     localStorage.setItem('buttonOrder', order);
     localStorage.setItem('customColors', c_colors)
     customOrder = order,
-    ipcRenderer.send('updateTheme', { theme: theme, fondo: fondo })
+        ipcRenderer.send('updateTheme', { theme: theme, fondo: fondo })
     ipcRenderer.send('colors', c_colors);
-    Toast.fire({title: "Cambios guardados", icon: "success"})
+    Toast.fire({ title: "Cambios guardados", icon: "success" })
 })
 const verifyText = document.getElementById('verified');
 
@@ -131,16 +131,20 @@ firebase.auth().onAuthStateChanged((userData) => {
         document.getElementById('verifyIcon').style.display = 'none'
     }
 
-    firebase.database().ref("Usuarios/" + user.uid + "/verified").once('value')
-        .then((snap) => {
-            let data = snap.val()
-            console.log(data)
-            if (verified !== data) {
-                firebase.database().ref("Usuarios/" + user.uid).update({
-                    verified: true
-                })
-            }
-        })
+    // firebase.firestore().collection('Usuarios').doc(user.uid).get()
+    //     // firebase.database().ref("Usuarios/" + user.uid + "/verified").once('value')
+    //     .then((snap) => {
+    //         let data = snap.val();
+    //         console.log(data);
+    //         if (verified !== data.verified) {
+    //             firebase.firestore().collection('Usuarios').doc(user.uid).update({
+    //                 verified: true
+    //             })
+    //             // firebase.database().ref("Usuarios/" + user.uid).update({
+    //             //     verified: true
+    //             // })
+    //         }
+    //     })
 });
 
 async function ChangeUsername(initValue: string, title: string) {
@@ -166,15 +170,24 @@ async function ChangeUsername(initValue: string, title: string) {
                             displayName: val
                         }).then(() => {
                             localStorage.setItem('username', name)
-                            firebase.database().ref("Usuarios/" + uid).update({
-                                username: name
-                            }).then(() => {
-                                name_.innerHTML = "@" + name;
-                                localStorage.setItem('username', name)
-                                console.log('listo')
-                            }).catch(() => {
-                                console.log('error al escribir')
-                            })
+                            // firebase.firestore().collection('Usuarios').doc(uid).update({
+                            //     username: encrypt(name, code[4], "B")
+                            // }).then(() => {
+                            //     name_.innerHTML = "@" + name;
+                            //     localStorage.setItem('username', name)
+                            //     console.log('listo')
+                            // }).catch(() => {
+                            //     console.log('error al escribir')
+                            // })
+                            // firebase.database().ref("Usuarios/" + uid).update({
+                            //     username: name
+                            // }).then(() => {
+                            //     name_.innerHTML = "@" + name;
+                            //     localStorage.setItem('username', name)
+                            //     console.log('listo')
+                            // }).catch(() => {
+                            //     console.log('error al escribir')
+                            // })
                         }).catch(() => {
                             Toast.fire({ title: "algo pasó, intentalo mas tarde" })
                         })
@@ -278,12 +291,15 @@ colorPicker.addEventListener('change', () => {
     _body.style.background = color;
 })
 
-colorSwitch.addEventListener('change', (val)=>{
+colorSwitch.addEventListener('change', (val) => {
     c_colors = colorSwitch.checked.toString();
 })
 
 function ShowQR() {
-    qr.toDataURL('Quorum |' + user.uid).then((result) => {
+    let name = encrypt(user.displayName, code[9], "A", false, false)
+    let id_ = encrypt(Reverse(user.uid), code[9], "A", true, false)
+    let type = encrypt("usuario", code[9], "A", false, true)
+    qr.toDataURL('QUORUM µ' + type + "µ" + id_ + "µ" + name).then((result) => {
         Swal.fire({
             title: "Mi QR",
             imageUrl: result,
@@ -296,6 +312,6 @@ function ShowQR() {
 
 }
 
-function previewColors(){
+function previewColors() {
     ipcRenderer.send('previewColors', true);
 }
