@@ -14,7 +14,7 @@ img.emoji {
     --accentDark: #18b3b3;
     --text: #111;
     --textAccent: #333;
-    --panel-color: rgb(247, 247, 247);
+    --panel-color: #ffffff99;
     --menu: rgb(200,200,200);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
@@ -42,7 +42,7 @@ body{
     --hover: #b37feb91;
     --text: #111;
     --textAccent: #333;
-    --panel-color: rgb(247, 247, 247);
+    --panel-color: #ffffff99;
     --menu: rgb(200,200,200);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
@@ -55,7 +55,7 @@ body{
     --hover: #b37feb91;
     --text: #111;
     --textAccent: #151515;
-    --panel-color: rgb(247, 247, 247);
+    --panel-color: #ffffff99;
     --menu: rgb(200,200,200);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
@@ -68,7 +68,7 @@ body{
     --hover: #40a9ff91;
     --text: #111;
     --textAccent: #333;
-    --panel-color: rgb(247, 247, 247);
+    --panel-color: #ffffff99;
     --menu: rgb(200,200,200);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
@@ -81,7 +81,7 @@ body{
     --hover: #ff787591;
     --text: #111;
     --textAccent: #252525;
-    --panel-color: rgb(247, 247, 247);
+    --panel-color: #ffffff99;
     --menu: rgb(200,200,200);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
@@ -94,7 +94,7 @@ body{
     --hover: #56d13d91;
     --text: #111;
     --textAccent: #333;
-    --panel-color: rgb(247, 247, 247);
+    --panel-color: #ffffff99;
     --menu: rgb(200,200,200);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
@@ -107,7 +107,7 @@ body{
     --hover: #30303091;
     --text: #111;
     --textAccent: #333;
-    --panel-color: rgb(247, 247, 247);
+    --panel-color: #ffffff99;
     --menu: rgb(200,200,200);
     --back-color: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
 }
@@ -1173,11 +1173,11 @@ optgroup{
     background-color: var(--primaryDark);
 }
 
-.swal2-popup{
+/* .swal2-popup{
     background-color: #ffffff30 !important;
     backdrop-filter: blur(15px);
     border-radius: 1rem !important;
-}
+} */
 
 .swal2-title, .swal2-input{
     color: var(--text) !important;
