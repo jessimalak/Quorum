@@ -15,7 +15,7 @@
     "sweetalert2": "^9.15.1"
   },
   "devDependencies": {
-    "electron": "^9.0.4"
+    "electron": "^18.3.7"
   },
   "description": "App de chat",
   "repository": {
